@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">Authcoin Android</string>
+    <string name="app_name">Authcoin</string>
+    <string name="identity">Identity</string>
+    <string name="challenges">Challenges</string>
+    <string name="trusted_parties">Trust</string>
+    <string name="title_activity_challenge">ChallengeActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>
