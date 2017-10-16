@@ -2,13 +2,13 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.authcoinandroid.fragment.IdentityFragment">
+                tools:context=".ui.fragment.IdentityFragment">
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Identity"
+            android:text="@string/identity"
             android:textSize="30sp"/>
 
 </RelativeLayout>

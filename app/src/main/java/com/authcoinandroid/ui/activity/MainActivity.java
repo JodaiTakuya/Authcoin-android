@@ -1,4 +1,4 @@
-package com.authcoinandroid.activity;
+package com.authcoinandroid.ui.activity;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,9 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import com.authcoinandroid.R;
-import com.authcoinandroid.fragment.ChallengeFragment;
-import com.authcoinandroid.fragment.IdentityFragment;
-import com.authcoinandroid.fragment.TrustFragment;
+import com.authcoinandroid.ui.fragment.ChallengeFragment;
+import com.authcoinandroid.ui.fragment.IdentityFragment;
+import com.authcoinandroid.ui.fragment.TrustFragment;
 
 public class MainActivity extends AppCompatActivity {
 
