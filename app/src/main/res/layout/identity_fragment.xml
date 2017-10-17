@@ -5,10 +5,60 @@
                 tools:context=".ui.fragment.IdentityFragment">
 
     <TextView
+            android:text="@string/password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:id="@+id/tv_create_identity_password"
+            android:layout_centerHorizontal="true"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/et_create_identity_password"
+            android:layout_below="@+id/tv_create_identity_password" android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"/>
+    <TextView
+            android:text="@string/password_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_create_identity_password_confirm"
+            android:layout_marginTop="40dp"
+            android:layout_below="@+id/et_create_identity_password" android:layout_centerHorizontal="true"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/et_create_identity_password_confirm"
+            android:layout_below="@+id/tv_create_identity_password_confirm" android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"/>
+    <Button
+            android:text="@string/create_identity_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" android:layout_below="@+id/et_create_identity_password_confirm"
+            android:id="@+id/btn_create_identity"/>
+    <TextView
+            android:text="@string/wallet_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_wallet_address_label"
+            android:layout_marginTop="40dp"
             android:layout_centerHorizontal="true"
-            android:text="@string/identity"
-            android:textSize="30sp"/>
-
+            android:layout_below="@+id/btn_create_identity"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_wallet_address"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tv_wallet_address_label"/>
+    <Button
+            android:text="@string/delete_identity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" android:layout_marginBottom="50dp"
+            android:id="@+id/btn_delete_identity"/>
 </RelativeLayout>

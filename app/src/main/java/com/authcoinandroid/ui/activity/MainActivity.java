@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void applyFragment(Fragment selectedFragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.addToBackStack(null);
         transaction.replace(R.id.frame_layout, selectedFragment);
         transaction.commit();
     }
