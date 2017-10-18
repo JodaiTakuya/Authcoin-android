@@ -2,6 +2,7 @@ package com.authcoinandroid.service;
 
 import android.content.Context;
 import com.authcoinandroid.util.AuthCoinNetParams;
+import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import org.bitcoinj.wallet.Wallet;
@@ -12,6 +13,7 @@ import java.security.SecureRandom;
 
 import static org.bitcoinj.core.Utils.currentTimeSeconds;
 import static org.bitcoinj.wallet.DeterministicSeed.DEFAULT_SEED_ENTROPY_BITS;
+import static org.bitcoinj.wallet.KeyChain.KeyPurpose.RECEIVE_FUNDS;
 
 public class WalletService {
 
@@ -40,6 +42,21 @@ public class WalletService {
     public Wallet loadWalletFromFile(Context context) throws UnreadableWalletException {
         keyStorageDirectory = resolveKeyStorageDirectory(context);
         return Wallet.loadFromFile(keyStorageDirectory);
+    }
+
+    public String getWalletAddress(Context context) {
+        String walletAddress = "";
+
+        try {
+            Wallet wallet = WalletService.getInstance().loadWalletFromFile(context);
+            DeterministicKey key = wallet.getActiveKeyChain().getKey(RECEIVE_FUNDS);
+            walletAddress = key.toAddress(AuthCoinNetParams.getNetParams()).toString();
+        } catch (UnreadableWalletException e) {
+            // TODO show exceptions nicely
+            e.printStackTrace();
+        }
+
+        return walletAddress;
     }
 
     public void deleteWallet(Context context) {
