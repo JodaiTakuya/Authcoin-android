@@ -21,11 +21,7 @@ import com.authcoinandroid.ui.fragment.WelcomeFragment;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-
     private final static String LOG_TAG = "MainActivity";
-    private final IdentityFragment identityFragment = new IdentityFragment();
-    private final ChallengeFragment challengeFragment = new ChallengeFragment();
-    private final TrustFragment trustFragment = new TrustFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +36,15 @@ public class MainActivity extends AppCompatActivity {
                         Fragment selectedFragment = null;
                         switch (item.getItemId()) {
                             case R.id.action_identity:
-                                selectedFragment = identityFragment;
+                                selectedFragment = new IdentityFragment();
                                 Log.d(LOG_TAG, "User opened identity fragment");
                                 break;
                             case R.id.action_challenges:
-                                selectedFragment = challengeFragment;
+                                selectedFragment = new ChallengeFragment();
                                 Log.d(LOG_TAG, "User opened challenges fragment");
                                 break;
                             case R.id.action_trust:
-                                selectedFragment = trustFragment;
+                                selectedFragment = new TrustFragment();
                                 Log.d(LOG_TAG, "User opened trust fragment");
                                 break;
                         }
@@ -60,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         String walletAddress = WalletService.getInstance().getWalletAddress(getApplicationContext());
 
         if (!Objects.equals(walletAddress, "")) {
-            applyFragment(identityFragment, false);
+            applyFragment(new IdentityFragment(), false);
         } else {
             applyFragment(new WelcomeFragment(), false);
             bottomNavigationView.setVisibility(View.INVISIBLE);
