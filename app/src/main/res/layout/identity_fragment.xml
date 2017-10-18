@@ -34,12 +34,21 @@
             android:id="@+id/et_create_identity_password_confirm"
             android:layout_below="@+id/tv_create_identity_password_confirm" android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"/>
+    <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:id="@+id/pb_identity_creation"
+            android:layout_below="@+id/et_create_identity_password_confirm"
+            android:layout_toLeftOf="@+id/btn_create_identity" android:layout_toStartOf="@+id/btn_create_identity"
+            android:layout_marginRight="12dp" android:layout_marginEnd="12dp" android:layout_marginTop="51dp"/>
     <Button
             android:text="@string/create_identity_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" android:layout_below="@+id/et_create_identity_password_confirm"
-            android:id="@+id/btn_create_identity"/>
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btn_create_identity" android:layout_alignTop="@+id/pb_identity_creation"/>
     <TextView
             android:text="@string/wallet_address"
             android:layout_width="wrap_content"

@@ -43,17 +43,19 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(LOG_TAG, "User opened trust fragment");
                                 break;
                         }
-                        applyFragment(selectedFragment);
+                        applyFragment(selectedFragment, true);
                         return true;
                     }
                 });
 
-        applyFragment(new IdentityFragment());
+        applyFragment(new IdentityFragment(), false);
     }
 
-    private void applyFragment(Fragment selectedFragment) {
+    private void applyFragment(Fragment selectedFragment, boolean addToBackStack) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.addToBackStack(null);
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
         transaction.replace(R.id.frame_layout, selectedFragment);
         transaction.commit();
     }

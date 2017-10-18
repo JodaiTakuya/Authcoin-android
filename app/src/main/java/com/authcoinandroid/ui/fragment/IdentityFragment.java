@@ -1,24 +1,26 @@
 package com.authcoinandroid.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
+import com.authcoinandroid.model.Identity;
 import com.authcoinandroid.service.WalletService;
+import com.authcoinandroid.task.IdentityCreationTask;
+import com.authcoinandroid.task.response.IdentityCreationResponse;
+import com.authcoinandroid.task.result.AsyncTaskResult;
 import com.authcoinandroid.util.AuthCoinNetParams;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import org.bitcoinj.wallet.Wallet;
-
-import java.io.IOException;
 
 import static org.bitcoinj.wallet.KeyChain.KeyPurpose.RECEIVE_FUNDS;
 
@@ -34,38 +36,77 @@ public class IdentityFragment extends Fragment {
     @BindView(R.id.tv_wallet_address)
     TextView walletAddress;
 
-    public IdentityFragment() {
+    @BindView(R.id.pb_identity_creation)
+    ProgressBar progressBarIdentityCreation;
 
+    @BindView(R.id.btn_create_identity)
+    Button buttonCreateIdentity;
+
+    public IdentityFragment() {
     }
 
     @OnClick({R.id.btn_create_identity})
-    public void onCreateIdentityClick(View view) {
+    void onCreateIdentityClick(View view) {
         String password = createIdentityPassword.getText().toString();
-        // TODO check if passwords match and display errors
-        // TODO create wallet on separate thread
-        try {
-            WalletService.getInstance().createWallet(this.getContext(), password);
-        } catch (UnreadableWalletException | IOException e) {
-            //TODO handle errors
-            e.printStackTrace();
-        }
+        final Context context = this.getContext();
+        disableElements();
+        new IdentityCreationTask(context, password, new IdentityCreationResponse() {
+            @Override
+            public void processFinish(AsyncTaskResult<Identity> result) {
+                enableElements();
+                if (result.getError() != null) {
+                    // TODO display errors
+                    Log.d(LOG_TAG, "Failed to create identity");
+                } else {
+                    // TODO move user to identity screen.
+                    Log.d(LOG_TAG, "Created identity");
+                    Toast.makeText(context, "Identity created", Toast.LENGTH_LONG).show();
+                    clearInputFields();
+                    displayWalletAddress(result.getResult().getWallet());
+                }
+            }
+        }).execute();
+    }
+
+    private void clearInputFields() {
+        createIdentityPassword.setText("");
+        createIdentityPasswordConfirm.setText("");
+    }
+
+    private void disableElements() {
+        progressBarIdentityCreation.setVisibility(View.VISIBLE);
+        buttonCreateIdentity.setEnabled(false);
+        createIdentityPassword.setEnabled(false);
+        createIdentityPasswordConfirm.setEnabled(false);
+    }
+
+    private void enableElements() {
+        progressBarIdentityCreation.setVisibility(View.INVISIBLE);
+        buttonCreateIdentity.setEnabled(true);
+        createIdentityPassword.setEnabled(true);
+        createIdentityPasswordConfirm.setEnabled(true);
     }
 
     @OnClick({R.id.btn_delete_identity})
-    public void onDeleteWallet(View view) {
+    void onDeleteWallet(View view) {
         String password = createIdentityPassword.getText().toString();
         Log.d(LOG_TAG, "Password is: " + password);
         WalletService.getInstance().deleteWallet(this.getContext());
+        displayWalletAddress();
+    }
+
+    private void displayWalletAddress(Wallet wallet) {
+        // this whole displaying stuff will move to separate view
+        walletAddress.setText("");
+        DeterministicKey key = wallet.getActiveKeyChain().getKey(RECEIVE_FUNDS);
+        walletAddress.setText(key.toAddress(AuthCoinNetParams.getNetParams()).toString());
     }
 
     private void displayWalletAddress() {
         walletAddress.setText("");
         try {
             Wallet wallet = WalletService.getInstance().loadWalletFromFile(this.getContext());
-//            maybe show it later
-//            List<String> mnemonicCode = wallet.getActiveKeyChain().getMnemonicCode();
-            DeterministicKey key = wallet.getActiveKeyChain().getKey(RECEIVE_FUNDS);
-            walletAddress.setText(key.toAddress(AuthCoinNetParams.getNetParams()).toString());
+            displayWalletAddress(wallet);
         } catch (UnreadableWalletException e) {
             // TODO show exceptions nicely
             e.printStackTrace();

@@ -26,12 +26,13 @@ public class WalletService {
     private WalletService() {
     }
 
-    public void createWallet(final Context context, String password) throws UnreadableWalletException, IOException {
+    public Wallet createWallet(final Context context, String password) throws UnreadableWalletException, IOException {
         keyStorageDirectory = resolveKeyStorageDirectory(context);
         String mnemonicCode = generateMnemonicCode();
         DeterministicSeed seed = new DeterministicSeed(mnemonicCode, null, password, DeterministicHierarchy.BIP32_STANDARDISATION_TIME_SECS);
         wallet = Wallet.fromSeed(AuthCoinNetParams.getNetParams(), seed);
         wallet.saveToFile(keyStorageDirectory);
+        return wallet;
     }
 
     public Wallet loadWalletFromFile(Context context) throws UnreadableWalletException {
