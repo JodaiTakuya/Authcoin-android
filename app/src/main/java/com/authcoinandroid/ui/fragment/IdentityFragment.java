@@ -60,6 +60,7 @@ public class IdentityFragment extends Fragment {
                 } else {
                     // TODO move user to identity screen.
                     Log.d(LOG_TAG, "Created identity");
+                    Log.d(LOG_TAG, "Wallet mnemonic code: " + result.getResult().getWallet().getKeyChainSeed().getMnemonicCode());
                     Toast.makeText(context, "Identity created", Toast.LENGTH_LONG).show();
                     clearInputFields();
                     displayWalletAddress(result.getResult().getWallet());
