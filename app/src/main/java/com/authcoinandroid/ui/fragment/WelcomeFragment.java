@@ -54,7 +54,7 @@ public class WelcomeFragment extends Fragment {
                     Toast.makeText(context, "Identity created", Toast.LENGTH_LONG).show();
                     clearInputFields();
                     getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
-                    ((MainActivity) getActivity()).replaceFragment(IdentityFragment.class);
+                    ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false);
                 }
             }
         }).execute();

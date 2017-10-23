@@ -33,22 +33,22 @@ public class MainActivity extends AppCompatActivity {
                 (new OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        Fragment selectedFragment = null;
+                        Class selectedFragment = null;
                         switch (item.getItemId()) {
                             case R.id.action_identity:
-                                selectedFragment = new IdentityFragment();
+                                selectedFragment = IdentityFragment.class;
                                 Log.d(LOG_TAG, "User opened identity fragment");
                                 break;
                             case R.id.action_challenges:
-                                selectedFragment = new ChallengeFragment();
+                                selectedFragment = ChallengeFragment.class;
                                 Log.d(LOG_TAG, "User opened challenges fragment");
                                 break;
                             case R.id.action_trust:
-                                selectedFragment = new TrustFragment();
+                                selectedFragment = TrustFragment.class;
                                 Log.d(LOG_TAG, "User opened trust fragment");
                                 break;
                         }
-                        applyFragment(selectedFragment, true);
+                        applyFragment(selectedFragment, false);
                         return true;
                     }
                 });
@@ -56,32 +56,28 @@ public class MainActivity extends AppCompatActivity {
         String walletAddress = WalletService.getInstance().getWalletAddress(getApplicationContext());
 
         if (!Objects.equals(walletAddress, "")) {
-            applyFragment(new IdentityFragment(), false);
+            applyFragment(IdentityFragment.class, false);
         } else {
-            applyFragment(new WelcomeFragment(), false);
+            applyFragment(WelcomeFragment.class, false);
             bottomNavigationView.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void applyFragment(Fragment selectedFragment, boolean addToBackStack) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        if (addToBackStack) {
-            transaction.addToBackStack(null);
-        }
-        transaction.replace(R.id.fragment_container, selectedFragment);
-        transaction.commit();
-    }
-
-    public void replaceFragment(Class fragmentClass) {
-        // This could be redundant to top method, not sure...
+    public void applyFragment(@NonNull Class fragmentClass, boolean addToBackStack) {
         Fragment fragment = null;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (addToBackStack) {
+                transaction.addToBackStack(null).add(R.id.fragment_container, fragment);
+            } else {
+                transaction.replace(R.id.fragment_container, fragment);
+            }
+
+            transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
-                .commit();
     }
 }

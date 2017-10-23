@@ -26,7 +26,7 @@ public class IdentityFragment extends Fragment {
     void onDeleteWallet(View view) {
         WalletService.getInstance().deleteWallet(this.getContext());
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
-        ((MainActivity) getActivity()).replaceFragment(WelcomeFragment.class);
+        ((MainActivity) getActivity()).applyFragment(WelcomeFragment.class, false);
     }
 
     private void displayWalletAddress() {
