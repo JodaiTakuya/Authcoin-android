@@ -1,4 +1,4 @@
-package com.authcoinandroid.service;
+package com.authcoinandroid.service.identity;
 
 import android.content.Context;
 import com.authcoinandroid.model.Identity;

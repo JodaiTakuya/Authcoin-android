@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import com.authcoinandroid.R;
-import com.authcoinandroid.service.WalletService;
+import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.ui.fragment.ChallengeFragment;
 import com.authcoinandroid.ui.fragment.IdentityFragment;
 import com.authcoinandroid.ui.fragment.TrustFragment;

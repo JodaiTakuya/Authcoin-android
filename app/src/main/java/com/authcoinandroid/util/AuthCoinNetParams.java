@@ -7,4 +7,8 @@ public class AuthCoinNetParams {
     public static NetworkParameters getNetParams() {
         return QtumTestNetParams.get();
     }
+
+    public static String getUrl() {
+        return "http://163.172.251.4:5931/";
+    }
 }
