@@ -9,6 +9,6 @@ public class AuthCoinNetParams {
     }
 
     public static String getUrl() {
-        return "http://163.172.251.4:5931/";
+        return "http://145.239.197.39:5931/";
     }
 }
