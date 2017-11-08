@@ -1,13 +1,19 @@
 package com.authcoinandroid.service.contract;
 
 import android.util.Log;
-import com.authcoinandroid.model.contract.ContractMethodParameter;
 import com.authcoinandroid.model.contract.ContractRequest;
 import com.authcoinandroid.model.contract.ContractResponse;
 import com.authcoinandroid.service.qtum.BlockChainService;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
 import rx.Observable;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.web3j.abi.FunctionEncoder.encode;
+import static org.web3j.utils.Numeric.cleanHexPrefix;
 
 public class AuthcoinContractService {
     private final static String LOG_TAG = "AuthcoinContractService";
@@ -29,16 +35,20 @@ public class AuthcoinContractService {
         this.blockChainService = BlockChainService.getInstance();
     }
 
-    public Observable<ContractResponse> getEirCount() {
-        String encodedMethodCall = new ContractMethodEncoder().encodeMethodCall(GET_EIR_COUNT);
-        Log.d(LOG_TAG, "Encoded method call: " + encodedMethodCall);
-        return callContractMethod(new ContractRequest(new String[]{encodedMethodCall}));
+    public Observable<ContractResponse> registerEir(List<Type> contractMethodParameters) {
+        String encode = encodeFunction(new Function(REGISTER_EIR, contractMethodParameters, new ArrayList<TypeReference<?>>()));
+        Log.d(LOG_TAG, "Encoded method call for register eir: " + encode);
+        return callContractMethod(new ContractRequest(new String[]{encode}));
     }
 
-    public Observable<ContractResponse> registerEir(List<ContractMethodParameter> params) {
-        String encodedMethodCall = new ContractMethodEncoder().encodeParamsForMethod(REGISTER_EIR, params);
-        Log.d(LOG_TAG, "Encoded method call: " + encodedMethodCall);
-        return callContractMethod(new ContractRequest(new String[]{encodedMethodCall}));
+    public Observable<ContractResponse> getEirCount() {
+        String encode = encodeFunction(new Function(GET_EIR_COUNT, new ArrayList<Type>(), new ArrayList<TypeReference<?>>()));
+        Log.d(LOG_TAG, "Encoded method call: " + encode);
+        return callContractMethod(new ContractRequest(new String[]{encode}));
+    }
+
+    private String encodeFunction(Function function) {
+        return cleanHexPrefix(encode(function));
     }
 
     private Observable<ContractResponse> callContractMethod(ContractRequest contractRequest) {
