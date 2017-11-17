@@ -1,9 +1,11 @@
 package com.authcoinandroid.service.contract;
 
 import android.util.Log;
-import com.authcoinandroid.model.contract.ContractRequest;
-import com.authcoinandroid.model.contract.ContractResponse;
+
 import com.authcoinandroid.service.qtum.BlockChainService;
+import com.authcoinandroid.service.qtum.ContractRequest;
+import com.authcoinandroid.service.qtum.ContractResponse;
+
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
@@ -36,6 +38,7 @@ public class AuthcoinContractService {
     }
 
     public Observable<ContractResponse> registerEir(List<Type> contractMethodParameters) {
+        //TODO this doesn't work. use sendRawTransaction method.
         String encode = encodeFunction(new Function(REGISTER_EIR, contractMethodParameters, new ArrayList<TypeReference<?>>()));
         Log.d(LOG_TAG, "Encoded method call for register eir: " + encode);
         return callContractMethod(new ContractRequest(new String[]{encode}));
@@ -52,6 +55,6 @@ public class AuthcoinContractService {
     }
 
     private Observable<ContractResponse> callContractMethod(ContractRequest contractRequest) {
-        return blockChainService.callSmartContract(CONTRACT_ADDRESS, contractRequest);
+        return blockChainService.callContract(CONTRACT_ADDRESS, contractRequest);
     }
 }

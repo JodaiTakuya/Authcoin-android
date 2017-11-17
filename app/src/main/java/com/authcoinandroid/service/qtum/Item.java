@@ -1,9 +1,10 @@
-package com.authcoinandroid.model.contract;
+package com.authcoinandroid.service.qtum;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Item {
+
     @SerializedName("hash")
     @Expose
     private String hash;
@@ -16,7 +17,6 @@ public class Item {
     @SerializedName("gas_used")
     @Expose
     private int gasUsed;
-
 
     public String getExcepted() {
         return excepted;
