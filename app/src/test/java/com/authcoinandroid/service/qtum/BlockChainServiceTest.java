@@ -18,15 +18,6 @@ import java.util.List;
 import rx.Observable;
 
 public class BlockChainServiceTest {
-    private Wallet createWallet(String password, File file) throws Exception {
-        if (file.exists()) {
-            return Wallet.loadFromFile(file);
-        }
-        DeterministicSeed seed = new DeterministicSeed("sa oled ka ka ads sdfs fsdf", null, password, System.currentTimeMillis() / 1000);
-        Wallet wallet = Wallet.fromSeed(QtumTestNetParams.get(), seed);
-        wallet.saveToFile(file);
-        return wallet;
-    }
 
     // replaceValues parameters: bytes32 + int
     private String ABI_PARAMS = "00000000000000000000000000000000000000000000000000000000000101060000000000000000000000000000000000000000000000000000000000000008";
@@ -67,12 +58,13 @@ public class BlockChainServiceTest {
      */
     @Test
     public void testGetUnspentOutput() throws Exception {
-        Wallet wallet = createWallet("kalakala", new File("mywallet"));
+        Wallet wallet = createWallet("mypassword", new File("mywallet"));
         final DeterministicKey key = wallet.freshReceiveKey();
         System.out.println("Key: " + key.toAddress(QtumTestNetParams.get()).toBase58());
         final BlockChainService bcs = BlockChainService.getInstance();
         Observable<List<UnspentOutput>> observable = bcs.getUnspentOutput(Arrays.asList(key.toAddress(QtumTestNetParams.get()).toBase58()));
         List<UnspentOutput> unspentOutputs = observable.toBlocking().first();
+        // replaceValues -> 700279dd
         Script script = TransactionUtil.createScript("700279dd", ABI_PARAMS, 250000, 40, "ae6dfc1cbaf19990fa6f6a975c1427d47b16edec");
 
         String tx = TransactionUtil.createTransaction(script, unspentOutputs, Arrays.asList(key), 25000, 40, BigDecimal.valueOf(0.004), BigDecimal.valueOf(0.1));
@@ -82,6 +74,16 @@ public class BlockChainServiceTest {
         SendRawTransactionResponse response = out.toBlocking().first();
         Assert.assertNotNull(response.getTxid());
         System.out.println(response.getResult() + " :: " + response.getTxid());
+    }
+
+    private Wallet createWallet(String password, File file) throws Exception {
+        if (file.exists()) {
+            return Wallet.loadFromFile(file);
+        }
+        DeterministicSeed seed = new DeterministicSeed("test test test test test test test test", null, password, System.currentTimeMillis() / 1000);
+        Wallet wallet = Wallet.fromSeed(QtumTestNetParams.get(), seed);
+        wallet.saveToFile(file);
+        return wallet;
     }
 
 }
