@@ -5,20 +5,18 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import com.authcoinandroid.R;
 import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.ui.fragment.ChallengeFragment;
 import com.authcoinandroid.ui.fragment.IdentityFragment;
 import com.authcoinandroid.ui.fragment.TrustFragment;
 import com.authcoinandroid.ui.fragment.WelcomeFragment;
-
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private final static String LOG_TAG = "MainActivity";
@@ -48,14 +46,13 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(LOG_TAG, "User opened trust fragment");
                                 break;
                         }
+
                         applyFragment(selectedFragment, false);
                         return true;
                     }
                 });
 
-        String walletAddress = WalletService.getInstance().getWalletAddress(getApplicationContext());
-
-        if (!Objects.equals(walletAddress, "")) {
+        if (WalletService.getInstance().isWalletCreated(getApplicationContext())) {
             applyFragment(IdentityFragment.class, false);
         } else {
             applyFragment(WelcomeFragment.class, false);
@@ -64,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void applyFragment(@NonNull Class fragmentClass, boolean addToBackStack) {
-        Fragment fragment = null;
+        Fragment fragment;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -79,5 +76,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void displayError(String logTag, String message) {
+        Log.e(logTag, message);
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 }

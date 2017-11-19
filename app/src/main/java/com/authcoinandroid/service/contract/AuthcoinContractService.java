@@ -40,15 +40,15 @@ public class AuthcoinContractService {
         return callContract(resolveContractRequest(GET_EIR_COUNT));
     }
 
+    public Observable<List<UnspentOutput>> getUnspentOutputs(DeterministicKey key) {
+        return blockChainService.getUnspentOutput(singletonList(key.toAddress(QtumTestNetParams.get()).toBase58()));
+    }
+
     private Observable<SendRawTransactionResponse> sendRawTransaction(DeterministicKey key, Script script) {
         return getUnspentOutputs(key).switchMap(
                 unspentOutput -> blockChainService.sendRawTransaction(
                         new SendRawTransactionRequest(resolveTransaction(key, script, unspentOutput), 1)
                 ));
-    }
-
-    private Observable<List<UnspentOutput>> getUnspentOutputs(DeterministicKey key) {
-        return blockChainService.getUnspentOutput(singletonList(key.toAddress(QtumTestNetParams.get()).toBase58()));
     }
 
     private Observable<ContractResponse> callContract(ContractRequest contractRequest) {

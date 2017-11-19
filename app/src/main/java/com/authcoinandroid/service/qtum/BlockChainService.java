@@ -44,5 +44,4 @@ public class BlockChainService implements BlockChainApi {
     public Observable<List<UnspentOutput>> getUnspentOutput(List<String> addresses) {
         return blockChainApi.getUnspentOutput(addresses);
     }
-
 }

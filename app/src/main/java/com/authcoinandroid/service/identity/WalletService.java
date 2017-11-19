@@ -13,7 +13,6 @@ import java.security.SecureRandom;
 
 import static org.bitcoinj.core.Utils.currentTimeSeconds;
 import static org.bitcoinj.wallet.DeterministicSeed.DEFAULT_SEED_ENTROPY_BITS;
-import static org.bitcoinj.wallet.KeyChain.KeyPurpose.RECEIVE_FUNDS;
 
 public class WalletService {
 
@@ -39,28 +38,30 @@ public class WalletService {
         return wallet;
     }
 
-    public Wallet loadWalletFromFile(Context context) throws UnreadableWalletException {
+    private Wallet loadWalletFromFile(Context context) throws UnreadableWalletException {
         keyStorageDirectory = resolveKeyStorageDirectory(context);
         return Wallet.loadFromFile(keyStorageDirectory);
     }
 
-    public String getWalletAddress(Context context) {
-        String walletAddress = "";
-
-        try {
-            Wallet wallet = WalletService.getInstance().loadWalletFromFile(context);
-            DeterministicKey key = wallet.getActiveKeyChain().getKey(RECEIVE_FUNDS);
-            walletAddress = key.toAddress(AuthCoinNetParams.getNetParams()).toString();
-        } catch (UnreadableWalletException e) {
-            // TODO show exceptions nicely
-            e.printStackTrace();
-        }
-
-        return walletAddress;
+    public String getWalletAddress(Context context) throws UnreadableWalletException {
+        return loadWalletFromFile(context).freshReceiveAddress().toBase58();
     }
 
     public void deleteWallet(Context context) {
         resolveKeyStorageDirectory(context).delete();
+    }
+
+    public DeterministicKey getReceiveKey(Context context) throws UnreadableWalletException {
+        return loadWalletFromFile(context).freshReceiveKey();
+    }
+
+    public boolean isWalletCreated(Context context) {
+        try {
+            this.loadWalletFromFile(context);
+        } catch (UnreadableWalletException e) {
+            return false;
+        }
+        return true;
     }
 
     private File resolveKeyStorageDirectory(Context context) {
