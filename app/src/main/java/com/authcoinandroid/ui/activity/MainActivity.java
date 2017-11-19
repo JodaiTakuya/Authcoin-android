@@ -47,8 +47,13 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                         }
 
-                        applyFragment(selectedFragment, false);
-                        return true;
+                        Class currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container).getClass();
+                        if (!currentFragment.equals(selectedFragment)) {
+                            applyFragment(selectedFragment, false);
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
                 });
 

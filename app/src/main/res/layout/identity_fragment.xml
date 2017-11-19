@@ -17,6 +17,8 @@
             android:layout_marginTop="20dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/tv_wallet_address_label"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:id="@+id/tv_wallet_address"/>
     <TextView
             android:text="@string/unspent_output"

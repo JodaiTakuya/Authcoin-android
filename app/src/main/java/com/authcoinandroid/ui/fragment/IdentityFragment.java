@@ -1,5 +1,8 @@
 package com.authcoinandroid.ui.fragment;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -7,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -40,6 +44,15 @@ public class IdentityFragment extends Fragment {
         WalletService.getInstance().deleteWallet(this.getContext());
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
         ((MainActivity) getActivity()).applyFragment(WelcomeFragment.class, false);
+    }
+
+    @OnClick({R.id.tv_wallet_address})
+    void onCopyWalletAddress(View view) {
+        ClipboardManager clipboard = (ClipboardManager) this.getContext().getSystemService(Activity.CLIPBOARD_SERVICE);
+        String walletAddressLabel = getString(R.string.wallet_address);
+        walletAddressLabel = walletAddressLabel.substring(0, walletAddressLabel.length()-1);
+        clipboard.setPrimaryClip(ClipData.newPlainText(walletAddressLabel, walletAddress.getText()));
+        Toast.makeText(this.getContext(), walletAddressLabel + " copied", Toast.LENGTH_LONG).show();
     }
 
     @Override
