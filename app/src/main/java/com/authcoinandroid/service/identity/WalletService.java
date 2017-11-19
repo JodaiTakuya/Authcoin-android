@@ -63,6 +63,10 @@ public class WalletService {
         resolveKeyStorageDirectory(context).delete();
     }
 
+    public DeterministicKey getReceiveKey(Context context) throws UnreadableWalletException {
+        return loadWalletFromFile(context).freshReceiveKey();
+    }
+
     private File resolveKeyStorageDirectory(Context context) {
         return new File(context.getFilesDir().getPath() + "/authcoin");
     }

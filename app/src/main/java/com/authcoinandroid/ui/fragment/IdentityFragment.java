@@ -2,22 +2,36 @@ package com.authcoinandroid.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
+import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.WalletService;
+import com.authcoinandroid.service.qtum.UnspentOutput;
 import com.authcoinandroid.ui.activity.MainActivity;
+import org.bitcoinj.wallet.UnreadableWalletException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import java.util.List;
+import java.util.Locale;
 
 public class IdentityFragment extends Fragment {
     private final static String LOG_TAG = "IdentityFragment";
 
     @BindView(R.id.tv_wallet_address)
     TextView walletAddress;
+
+    @BindView(R.id.tv_unspent_output)
+    TextView unspentOutput;
 
     public IdentityFragment() {
     }
@@ -30,7 +44,39 @@ public class IdentityFragment extends Fragment {
     }
 
     private void displayWalletAddress() {
-        walletAddress.setText(WalletService.getInstance().getWalletAddress(this.getContext()));
+        String walletAddress = WalletService.getInstance().getWalletAddress(this.getContext());
+        Log.d(LOG_TAG, "Wallet address is: " + walletAddress);
+        this.walletAddress.setText(walletAddress);
+    }
+
+    private void displayUnspentOutputAmount() {
+        try {
+            AuthcoinContractService.getInstance().getUnspentOutputs(WalletService.getInstance().getReceiveKey(this.getContext()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<List<UnspentOutput>>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            displayError(e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(List<UnspentOutput> unspentOutputs) {
+                            unspentOutput.setText(String.format(Locale.getDefault(), "%f", unspentOutputs.get(0).getAmount()));
+                        }
+                    });
+        } catch (UnreadableWalletException e) {
+            displayError(e.getMessage());
+        }
+    }
+
+    private void displayError(String message) {
+        Log.e(LOG_TAG, message);
+        Toast.makeText(this.getContext(), message, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -43,6 +89,7 @@ public class IdentityFragment extends Fragment {
         View view = inflater.inflate(R.layout.identity_fragment, container, false);
         ButterKnife.bind(this, view);
         displayWalletAddress();
+        displayUnspentOutputAmount();
         return view;
     }
 }
