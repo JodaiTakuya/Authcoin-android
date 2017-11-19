@@ -31,7 +31,7 @@ public class IdentityFragment extends Fragment {
     TextView walletAddress;
 
     @BindView(R.id.tv_unspent_output)
-    TextView unspentOutput;
+    TextView unspentOutputTextView;
 
     public IdentityFragment() {
     }
@@ -41,6 +41,20 @@ public class IdentityFragment extends Fragment {
         WalletService.getInstance().deleteWallet(this.getContext());
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
         ((MainActivity) getActivity()).applyFragment(WelcomeFragment.class, false);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.identity_fragment, container, false);
+        ButterKnife.bind(this, view);
+        displayWalletAddress();
+        displayUnspentOutputAmount();
+        return view;
     }
 
     private void displayWalletAddress() {
@@ -66,7 +80,7 @@ public class IdentityFragment extends Fragment {
 
                         @Override
                         public void onNext(List<UnspentOutput> unspentOutputs) {
-                            unspentOutput.setText(String.format(Locale.getDefault(), "%f", unspentOutputs.get(0).getAmount()));
+                            unspentOutputTextView.setText(String.format(Locale.getDefault(), "%f", unspentOutputs.get(0).getAmount()));
                         }
                     });
         } catch (UnreadableWalletException e) {
@@ -77,19 +91,5 @@ public class IdentityFragment extends Fragment {
     private void displayError(String message) {
         Log.e(LOG_TAG, message);
         Toast.makeText(this.getContext(), message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.identity_fragment, container, false);
-        ButterKnife.bind(this, view);
-        displayWalletAddress();
-        displayUnspentOutputAmount();
-        return view;
     }
 }
