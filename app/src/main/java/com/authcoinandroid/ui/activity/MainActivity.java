@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,8 +16,6 @@ import com.authcoinandroid.ui.fragment.ChallengeFragment;
 import com.authcoinandroid.ui.fragment.IdentityFragment;
 import com.authcoinandroid.ui.fragment.TrustFragment;
 import com.authcoinandroid.ui.fragment.WelcomeFragment;
-
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private final static String LOG_TAG = "MainActivity";
@@ -53,9 +50,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        String walletAddress = WalletService.getInstance().getWalletAddress(getApplicationContext());
-
-        if (!Objects.equals(walletAddress, "")) {
+        if (WalletService.getInstance().isWalletCreated(getApplicationContext())) {
             applyFragment(IdentityFragment.class, false);
         } else {
             applyFragment(WelcomeFragment.class, false);

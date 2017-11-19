@@ -58,9 +58,14 @@ public class IdentityFragment extends Fragment {
     }
 
     private void displayWalletAddress() {
-        String walletAddress = WalletService.getInstance().getWalletAddress(this.getContext());
-        Log.d(LOG_TAG, "Wallet address is: " + walletAddress);
-        this.walletAddress.setText(walletAddress);
+        try {
+            String walletAddress = WalletService.getInstance().getWalletAddress(this.getContext());
+            Log.d(LOG_TAG, "Wallet address is: " + walletAddress);
+            this.walletAddress.setText(walletAddress);
+        } catch (UnreadableWalletException e) {
+            Log.e(LOG_TAG, "Unable to load wallet address: " + e.getMessage());
+            displayError(e.getMessage());
+        }
     }
 
     private void displayUnspentOutputAmount() {
