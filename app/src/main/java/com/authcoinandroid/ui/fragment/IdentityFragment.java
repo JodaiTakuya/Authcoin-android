@@ -10,7 +10,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
-import com.authcoinandroid.service.WalletService;
+import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.ui.activity.MainActivity;
 
 public class IdentityFragment extends Fragment {

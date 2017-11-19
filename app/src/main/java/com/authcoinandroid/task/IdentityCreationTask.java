@@ -3,7 +3,7 @@ package com.authcoinandroid.task;
 import android.content.Context;
 import android.os.AsyncTask;
 import com.authcoinandroid.model.Identity;
-import com.authcoinandroid.service.IdentityService;
+import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.task.response.IdentityCreationResponse;
 import com.authcoinandroid.task.result.AsyncTaskResult;
 import com.authcoinandroid.task.result.IdentityCreationResult;
