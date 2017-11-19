@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import com.authcoinandroid.R;
 import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.ui.fragment.ChallengeFragment;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(LOG_TAG, "User opened trust fragment");
                                 break;
                         }
+
                         applyFragment(selectedFragment, false);
                         return true;
                     }
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void applyFragment(@NonNull Class fragmentClass, boolean addToBackStack) {
-        Fragment fragment = null;
+        Fragment fragment;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -74,5 +76,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void displayError(String logTag, String message) {
+        Log.e(logTag, message);
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 }

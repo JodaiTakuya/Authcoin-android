@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -64,7 +63,7 @@ public class IdentityFragment extends Fragment {
             this.walletAddress.setText(walletAddress);
         } catch (UnreadableWalletException e) {
             Log.e(LOG_TAG, "Unable to load wallet address: " + e.getMessage());
-            displayError(e.getMessage());
+            ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
         }
     }
 
@@ -80,7 +79,8 @@ public class IdentityFragment extends Fragment {
 
                         @Override
                         public void onError(Throwable e) {
-                            displayError(e.getMessage());
+                            unspentOutputTextView.setText(getString(R.string.missing_value));
+                            ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
                         }
 
                         @Override
@@ -89,12 +89,7 @@ public class IdentityFragment extends Fragment {
                         }
                     });
         } catch (UnreadableWalletException e) {
-            displayError(e.getMessage());
+            ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
         }
-    }
-
-    private void displayError(String message) {
-        Log.e(LOG_TAG, message);
-        Toast.makeText(this.getContext(), message, Toast.LENGTH_LONG).show();
     }
 }
