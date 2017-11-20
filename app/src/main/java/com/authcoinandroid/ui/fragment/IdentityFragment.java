@@ -91,13 +91,19 @@ public class IdentityFragment extends Fragment {
 
                         @Override
                         public void onError(Throwable e) {
-                            unspentOutputTextView.setText(getString(R.string.missing_value));
+                            if (isAdded()) {
+                                unspentOutputTextView.setText(getString(R.string.missing_value));
+                            }
                             ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
                         }
 
                         @Override
                         public void onNext(List<UnspentOutput> unspentOutputs) {
-                            unspentOutputTextView.setText(String.format(Locale.getDefault(), "%f", unspentOutputs.get(0).getAmount()));
+                            if (isAdded()) {
+                                unspentOutputTextView.setText(
+                                        String.format(Locale.getDefault(), "%f", unspentOutputs.get(0).getAmount())
+                                );
+                            }
                         }
                     });
         } catch (UnreadableWalletException e) {
