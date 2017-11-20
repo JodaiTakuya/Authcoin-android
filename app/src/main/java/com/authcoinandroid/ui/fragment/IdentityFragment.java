@@ -50,9 +50,8 @@ public class IdentityFragment extends Fragment {
     void onCopyWalletAddress(View view) {
         ClipboardManager clipboard = (ClipboardManager) this.getContext().getSystemService(Activity.CLIPBOARD_SERVICE);
         String walletAddressLabel = getString(R.string.wallet_address);
-        walletAddressLabel = walletAddressLabel.substring(0, walletAddressLabel.length()-1);
-        clipboard.setPrimaryClip(ClipData.newPlainText(walletAddressLabel, walletAddress.getText()));
-        Toast.makeText(this.getContext(), walletAddressLabel + " copied", Toast.LENGTH_LONG).show();
+        clipboard.setPrimaryClip(ClipData.newPlainText(walletAddressLabel.substring(0, walletAddressLabel.length()-1), walletAddress.getText()));
+        Toast.makeText(this.getContext(), getString(R.string.wallet_address_copied), Toast.LENGTH_LONG).show();
     }
 
     @Override
