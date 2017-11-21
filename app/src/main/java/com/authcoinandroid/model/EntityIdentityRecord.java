@@ -1,10 +1,10 @@
 package com.authcoinandroid.model;
 
-import java.security.Key;
+import java.security.PublicKey;
 
 public class EntityIdentityRecord {
     private String[] identifiers;
-    private Key content;
+    private PublicKey content;
     private String contentType;
     private byte[] hash;
     private byte[] signature;
@@ -17,11 +17,11 @@ public class EntityIdentityRecord {
         this.identifiers = identifiers;
     }
 
-    public Key getContent() {
+    public PublicKey getContent() {
         return content;
     }
 
-    public void setContent(Key content) {
+    public void setContent(PublicKey content) {
         this.content = content;
     }
 
