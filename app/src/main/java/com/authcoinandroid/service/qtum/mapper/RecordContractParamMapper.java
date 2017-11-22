@@ -16,9 +16,9 @@ public class RecordContractParamMapper {
         for (String s : eir.getIdentifiers()) {
             identifiers.add(stringToBytes32(s));
         }
-        params.add(new DynamicArray<>(identifiers));
         params.add(new DynamicBytes(eir.getContent().getEncoded()));
         params.add(stringToBytes32(eir.getContentType()));
+        params.add(new DynamicArray<>(identifiers));
         params.add(bytesToBytes32(eir.getHash()));
         params.add(new DynamicBytes(eir.getSignature()));
         return params;
