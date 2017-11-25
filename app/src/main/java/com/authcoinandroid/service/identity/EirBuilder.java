@@ -4,7 +4,9 @@ import android.text.TextUtils;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.util.crypto.CryptoUtil;
 
+import java.io.IOException;
 import java.security.*;
+import java.security.cert.CertificateException;
 
 import static com.authcoinandroid.util.crypto.CryptoUtil.hashSha256;
 
@@ -33,8 +35,8 @@ abstract class EirBuilder {
         return this;
     }
 
-    EirBuilder signHash(PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-        entityIdentityRecord.setSignature(CryptoUtil.sign(privateKey, entityIdentityRecord.getHash()));
+    EirBuilder signHash(String alias) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, CertificateException, UnrecoverableEntryException, KeyStoreException, IOException {
+        entityIdentityRecord.setSignature(CryptoUtil.sign(entityIdentityRecord.getHash(), alias));
         return this;
     }
 

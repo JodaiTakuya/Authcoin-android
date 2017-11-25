@@ -23,7 +23,7 @@ class ContractMethodEncoder {
         String encodedFunction = encodeFunction(new Function(methodName, methodParameters, new ArrayList<>()));
         String abiMethod = encodedFunction.substring(0, 8);
         String abiParams = encodedFunction.substring(8);
-        return createScript(abiMethod, abiParams, 250000, GAS_PRICE, CONTRACT_ADDRESS);
+        return createScript(encodedFunction, 250000, GAS_PRICE, CONTRACT_ADDRESS);
     }
 
     static String resolveTransaction(DeterministicKey key, Script script, List<UnspentOutput> unspentOutput) {

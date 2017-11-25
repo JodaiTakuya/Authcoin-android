@@ -29,11 +29,18 @@ public final class TransactionUtil {
      * Creates a new (bitcoin) script that can be used to call solidity smart contracts.
      */
     public static Script createScript(String abiMethod, String abiParams, int gasLimitInt, int gasPriceInt, String contractAddress) {
+        return createScript(abiMethod + abiParams, gasLimitInt, gasPriceInt, contractAddress);
+    }
+
+    /**
+     * Creates a new (bitcoin) script that can be used to call solidity smart contracts.
+     */
+    public static Script createScript(String encodedFunction, int gasLimitInt, int gasPriceInt, String contractAddress) {
         ScriptBuilder builder = new ScriptBuilder();
         builder.addChunk(new ScriptChunk(VERSION.length, VERSION));
         builder.number(gasLimitInt);
         builder.number(gasPriceInt);
-        builder.data(Hex.decode(abiMethod + abiParams));
+        builder.data(Hex.decode(encodedFunction));
         builder.data(Hex.decode(contractAddress));
         builder.op(OP_CALL);
         return builder.build();

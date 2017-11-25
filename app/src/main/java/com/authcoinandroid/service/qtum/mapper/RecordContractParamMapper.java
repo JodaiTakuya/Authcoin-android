@@ -25,8 +25,7 @@ public class RecordContractParamMapper {
     }
 
     private static Bytes32 stringToBytes32(String string) {
-        byte[] byteValue = string.getBytes();
-        return bytesToBytes32(byteValue);
+        return bytesToBytes32(string.getBytes());
     }
 
     private static Bytes32 bytesToBytes32(byte[] byteValue) {

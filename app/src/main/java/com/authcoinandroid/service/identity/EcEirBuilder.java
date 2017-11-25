@@ -7,7 +7,8 @@ public class EcEirBuilder extends EirBuilder {
 
     @Override
     EirBuilder setContentType() {
-        entityIdentityRecord.setContentType("ec-pub-key");
+        entityIdentityRecord.setContentType("test");
+//        entityIdentityRecord.setContentType("ec-pub-key");
         return this;
     }
 
