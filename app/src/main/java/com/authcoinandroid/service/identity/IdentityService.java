@@ -1,12 +1,11 @@
 package com.authcoinandroid.service.identity;
 
-import android.content.Context;
 import com.authcoinandroid.exception.RegisterEirException;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
-import org.bitcoinj.wallet.UnreadableWalletException;
+import org.bitcoinj.crypto.DeterministicKey;
 import org.web3j.abi.datatypes.Type;
 import rx.Observable;
 
@@ -32,7 +31,7 @@ public class IdentityService {
     private IdentityService() {
     }
 
-    public Observable<SendRawTransactionResponse> registerEirWithEcKey(Context context, String[] identifiers, String alias) throws RegisterEirException {
+    public Observable<SendRawTransactionResponse> registerEirWithEcKey(DeterministicKey key, String[] identifiers, String alias) throws RegisterEirException {
         try {
             KeyPair keyPair = createEcKeyPair(alias);
             EntityIdentityRecord eir = newEcEirBuilder()
@@ -43,11 +42,11 @@ public class IdentityService {
                     .signHash(alias)
                     .getEir();
             List<Type> params = RecordContractParamMapper.resolveEirContractParams(eir);
-            return AuthcoinContractService.getInstance().registerEir(WalletService.getInstance().getReceiveKey(context), params);
+            return AuthcoinContractService.getInstance().registerEir(key, params);
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException |
                 NoSuchProviderException | IOException | SignatureException | CertificateException |
-                InvalidKeyException | UnrecoverableEntryException | KeyStoreException | UnreadableWalletException e) {
-            throw new RegisterEirException("Failed to register eir", e);
+                InvalidKeyException | UnrecoverableEntryException | KeyStoreException e) {
+            throw new RegisterEirException("Failed to register EIR", e);
         }
     }
 }
