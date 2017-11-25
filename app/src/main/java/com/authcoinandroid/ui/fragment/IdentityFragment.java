@@ -39,7 +39,7 @@ public class IdentityFragment extends Fragment {
     public IdentityFragment() {
     }
 
-    @OnClick({R.id.btn_delete_identity})
+    @OnClick({R.id.btn_delete_wallet})
     void onDeleteWallet(View view) {
         WalletService.getInstance().deleteWallet(this.getContext());
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);

@@ -21,61 +21,76 @@ import com.authcoinandroid.ui.activity.MainActivity;
 public class WelcomeFragment extends Fragment {
     private final static String LOG_TAG = "WelcomeFragment";
 
-    @BindView(R.id.et_create_identity_password)
-    EditText createIdentityPassword;
+    @BindView(R.id.et_wallet_password)
+    EditText walletPassword;
 
-    @BindView(R.id.et_create_identity_password_confirm)
-    EditText createIdentityPasswordConfirm;
+    @BindView(R.id.et_wallet_password_confirm)
+    EditText walletPasswordConfirm;
 
-    @BindView(R.id.pb_identity_creation)
-    ProgressBar progressBarIdentityCreation;
+    @BindView(R.id.pb_wallet_creation)
+    ProgressBar progressBar;
 
-    @BindView(R.id.btn_create_identity)
-    Button buttonCreateIdentity;
+    @BindView(R.id.btn_create_wallet)
+    Button buttonCreateWallet;
 
     public WelcomeFragment() {
     }
 
-    @OnClick({R.id.btn_create_identity})
-    void onCreateIdentityClick(View view) {
-        String password = createIdentityPassword.getText().toString();
-        final Context context = this.getContext();
-        disableElements();
-        new WalletCreationTask(context, password, result -> {
-            if (result.getError() != null) {
-                enableElements();
-                // TODO display errors
-                Log.d(LOG_TAG, "Failed to create identity");
-            } else {
-                Log.d(LOG_TAG, "Created identity");
-                Log.d(LOG_TAG, "Wallet mnemonic code: " + result.getResult().getKeyChainSeed().getMnemonicCode());
-                Toast.makeText(context, "Identity created", Toast.LENGTH_LONG).show();
-                clearInputFields();
-                getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
-                ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false);
-            }
-        }).execute();
+    @OnClick({R.id.btn_create_wallet})
+    void onCreateWalletClick(View view) {
+        if (validatePasswords()) {
+            String password = walletPassword.getText().toString();
+            final Context context = this.getContext();
+            disableElements();
+            new WalletCreationTask(context, password, result -> {
+                if (result.getError() != null) {
+                    enableElements();
+                    // TODO display errors
+                    Log.d(LOG_TAG, "Failed to create wallet");
+                } else {
+                    Log.d(LOG_TAG, "Created wallet");
+                    Log.d(LOG_TAG, "Wallet mnemonic code: " + result.getResult().getKeyChainSeed().getMnemonicCode());
+                    Toast.makeText(context, "Wallet created", Toast.LENGTH_LONG).show();
+                    clearInputFields();
+                    getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
+                    ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false);
+                }
+            }).execute();
+        }
+    }
+
+    private boolean validatePasswords() {
+        String password = walletPassword.getText().toString();
+        String passwordConfirm = walletPasswordConfirm.getText().toString();
+
+        if (!password.equals(passwordConfirm)) {
+            Log.d(LOG_TAG, "Passwords don't match");
+            walletPasswordConfirm.setError("Passwords don't match");
+            return false;
+        }
+
+        return true;
     }
 
     private void clearInputFields() {
-        createIdentityPassword.setText("");
-        createIdentityPasswordConfirm.setText("");
+        walletPassword.setText("");
+        walletPasswordConfirm.setText("");
     }
 
     private void disableElements() {
-        progressBarIdentityCreation.setVisibility(View.VISIBLE);
-        buttonCreateIdentity.setEnabled(false);
-        buttonCreateIdentity.setVisibility(View.INVISIBLE);
-        createIdentityPassword.setEnabled(false);
-        createIdentityPasswordConfirm.setEnabled(false);
+        progressBar.setVisibility(View.VISIBLE);
+        buttonCreateWallet.setEnabled(false);
+        buttonCreateWallet.setVisibility(View.INVISIBLE);
+        walletPassword.setEnabled(false);
+        walletPasswordConfirm.setEnabled(false);
     }
 
     private void enableElements() {
-        progressBarIdentityCreation.setVisibility(View.INVISIBLE);
-        buttonCreateIdentity.setVisibility(View.VISIBLE);
-        buttonCreateIdentity.setEnabled(true);
-        createIdentityPassword.setEnabled(true);
-        createIdentityPasswordConfirm.setEnabled(true);
+        progressBar.setVisibility(View.INVISIBLE);
+        buttonCreateWallet.setVisibility(View.VISIBLE);
+        buttonCreateWallet.setEnabled(true);
+        walletPassword.setEnabled(true);
+        walletPasswordConfirm.setEnabled(true);
     }
 
     @Override

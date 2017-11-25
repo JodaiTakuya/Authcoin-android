@@ -36,11 +36,11 @@
             android:layout_below="@+id/tv_unspent_output_label"
             android:id="@+id/tv_unspent_output"/>
     <Button
-            android:text="@string/delete_identity"
+            android:text="@string/delete_wallet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="50dp"
-            android:id="@+id/btn_delete_identity"/>
+            android:id="@+id/btn_delete_wallet"/>
 </RelativeLayout>

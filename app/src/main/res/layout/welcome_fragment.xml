@@ -5,15 +5,7 @@
                 tools:context=".ui.fragment.IdentityFragment">
 
     <TextView
-        android:text="@string/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:id="@+id/tv_create_identity_password"/>
-    <TextView
-        android:text="@string/no_identity_yet_desc"
+        android:text="@string/no_wallet_yet_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
@@ -21,10 +13,10 @@
         android:layout_marginRight="24dp"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
-        android:layout_above="@id/tv_create_identity_password"
-        android:id="@+id/no_identity_yet_desc"/>
+        android:layout_above="@id/tv_wallet_password"
+        android:id="@+id/no_wallet_yet_desc"/>
     <TextView
-        android:text="@string/no_identity_yet"
+        android:text="@string/no_wallet_yet"
         android:textSize="24sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,9 +24,18 @@
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
         android:layout_centerHorizontal="true"
-        android:layout_above="@id/no_identity_yet_desc"
+        android:layout_above="@id/no_wallet_yet_desc"
         android:gravity="center_horizontal"
-        android:id="@+id/no_identity_yet"/>
+        android:id="@+id/no_wallet_yet"/>
+    <TextView
+        android:text="@string/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:labelFor="@+id/et_wallet_password"
+        android:id="@+id/tv_wallet_password"/>
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,16 +43,17 @@
         android:ems="10"
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/tv_create_identity_password"
-        android:id="@+id/et_create_identity_password"/>
+        android:layout_below="@+id/tv_wallet_password"
+        android:id="@+id/et_wallet_password"/>
     <TextView
         android:text="@string/password_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/et_create_identity_password"
-        android:id="@+id/tv_create_identity_password_confirm"/>
+        android:layout_below="@+id/et_wallet_password"
+        android:labelFor="@+id/et_wallet_password_confirm"
+        android:id="@+id/tv_wallet_password_confirm"/>
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,25 +61,25 @@
         android:ems="10"
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/tv_create_identity_password_confirm"
-        android:id="@+id/et_create_identity_password_confirm"/>
+        android:layout_below="@+id/tv_wallet_password_confirm"
+        android:id="@+id/et_wallet_password_confirm"/>
     <Button
-        android:text="@string/create_identity_button"
+        android:text="@string/create_wallet_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/et_create_identity_password_confirm"
-        android:id="@+id/btn_create_identity"/>
+        android:layout_below="@+id/et_wallet_password_confirm"
+        android:id="@+id/btn_create_wallet"/>
     <ProgressBar
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        android:layout_below="@+id/btn_create_identity"
-        android:layout_alignTop="@id/btn_create_identity"
+        android:layout_below="@+id/btn_create_wallet"
+        android:layout_alignTop="@id/btn_create_wallet"
         android:layout_marginEnd="12dp"
         android:layout_centerHorizontal="true"
-        android:id="@+id/pb_identity_creation"/>
+        android:id="@+id/pb_wallet_creation"/>
 
 </RelativeLayout>
