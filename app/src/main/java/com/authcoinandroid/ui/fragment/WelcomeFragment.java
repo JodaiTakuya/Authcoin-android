@@ -7,15 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
-import com.authcoinandroid.model.Identity;
-import com.authcoinandroid.task.IdentityCreationTask;
-import com.authcoinandroid.task.response.IdentityCreationResponse;
-import com.authcoinandroid.task.result.AsyncTaskResult;
+import com.authcoinandroid.task.WalletCreationTask;
 import com.authcoinandroid.ui.activity.MainActivity;
 
 public class WelcomeFragment extends Fragment {
@@ -41,21 +41,18 @@ public class WelcomeFragment extends Fragment {
         String password = createIdentityPassword.getText().toString();
         final Context context = this.getContext();
         disableElements();
-        new IdentityCreationTask(context, password, new IdentityCreationResponse() {
-            @Override
-            public void processFinish(AsyncTaskResult<Identity> result) {
-                if (result.getError() != null) {
-                    enableElements();
-                    // TODO display errors
-                    Log.d(LOG_TAG, "Failed to create identity");
-                } else {
-                    Log.d(LOG_TAG, "Created identity");
-                    Log.d(LOG_TAG, "Wallet mnemonic code: " + result.getResult().getWallet().getKeyChainSeed().getMnemonicCode());
-                    Toast.makeText(context, "Identity created", Toast.LENGTH_LONG).show();
-                    clearInputFields();
-                    getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
-                    ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false);
-                }
+        new WalletCreationTask(context, password, result -> {
+            if (result.getError() != null) {
+                enableElements();
+                // TODO display errors
+                Log.d(LOG_TAG, "Failed to create identity");
+            } else {
+                Log.d(LOG_TAG, "Created identity");
+                Log.d(LOG_TAG, "Wallet mnemonic code: " + result.getResult().getKeyChainSeed().getMnemonicCode());
+                Toast.makeText(context, "Identity created", Toast.LENGTH_LONG).show();
+                clearInputFields();
+                getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
+                ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false);
             }
         }).execute();
     }

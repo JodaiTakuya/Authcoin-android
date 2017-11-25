@@ -9,7 +9,7 @@ import rx.Observable;
 
 import java.util.List;
 
-import static com.authcoinandroid.service.contract.AuthcoinContractParams.CONTRACT_ADDRESS;
+import static com.authcoinandroid.service.contract.AuthcoinContractParams.AUTHCOIN_CONTRACT_ADDRESS;
 import static com.authcoinandroid.service.contract.ContractMethodEncoder.*;
 import static java.util.Collections.singletonList;
 
@@ -52,6 +52,6 @@ public class AuthcoinContractService {
     }
 
     private Observable<ContractResponse> callContract(ContractRequest contractRequest) {
-        return blockChainService.callContract(CONTRACT_ADDRESS, contractRequest);
+        return blockChainService.callContract(AUTHCOIN_CONTRACT_ADDRESS, contractRequest);
     }
 }

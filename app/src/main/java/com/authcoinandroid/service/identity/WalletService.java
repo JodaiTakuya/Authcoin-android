@@ -30,7 +30,7 @@ public class WalletService {
     private WalletService() {
     }
 
-    Wallet createWallet(final Context context, String password) throws UnreadableWalletException, IOException {
+    public Wallet createWallet(final Context context, String password) throws UnreadableWalletException, IOException {
         keyStorageDirectory = resolveKeyStorageDirectory(context);
         DeterministicSeed seed = new DeterministicSeed(new SecureRandom(), DEFAULT_SEED_ENTROPY_BITS, password, currentTimeSeconds());
         wallet = Wallet.fromSeed(AuthCoinNetParams.getNetParams(), seed);

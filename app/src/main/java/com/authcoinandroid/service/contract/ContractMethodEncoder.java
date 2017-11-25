@@ -21,9 +21,7 @@ class ContractMethodEncoder {
 
     static Script resolveScript(String methodName, List<Type> methodParameters) {
         String encodedFunction = encodeFunction(new Function(methodName, methodParameters, new ArrayList<>()));
-        String abiMethod = encodedFunction.substring(0, 8);
-        String abiParams = encodedFunction.substring(8);
-        return createScript(abiMethod, abiParams, 250000, GAS_PRICE, CONTRACT_ADDRESS);
+        return createScript(encodedFunction, FUNCTION_GAS_LIMIT, GAS_PRICE, AUTHCOIN_CONTRACT_ADDRESS);
     }
 
     static String resolveTransaction(DeterministicKey key, Script script, List<UnspentOutput> unspentOutput) {
