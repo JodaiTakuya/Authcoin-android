@@ -12,14 +12,13 @@ public class CryptoUtil {
         return generateKeyPair(alias, KeyProperties.KEY_ALGORITHM_EC);
     }
 
+    public static PublicKey getPublicKeyByAlias(String alias) throws CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException, KeyStoreException, InvalidKeyException {
+        return getEntry(alias).getCertificate().getPublicKey();
+    }
+
     public static byte[] sign(byte[] data, String alias) throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, IOException, CertificateException, KeyStoreException, UnrecoverableEntryException {
-        KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
-        ks.load(null);
-        KeyStore.Entry entry = ks.getEntry(alias, null);
-        if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-            return null;
-        }
-        PrivateKey privateKey = ((KeyStore.PrivateKeyEntry) entry).getPrivateKey();
+        KeyStore.PrivateKeyEntry entry = getEntry(alias);
+        PrivateKey privateKey = entry.getPrivateKey();
         Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
         sig.initSign(privateKey);
         sig.update(data);
@@ -27,17 +26,21 @@ public class CryptoUtil {
     }
 
     public static boolean verify(byte[] signature, byte[] data, String alias) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException, KeyStoreException, IOException, CertificateException, UnrecoverableEntryException {
+        KeyStore.PrivateKeyEntry entry = getEntry(alias);
+        final Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(entry.getPrivateKey().getAlgorithm());
+        sig.initVerify(entry.getCertificate());
+        sig.update(data);
+        return sig.verify(signature);
+    }
+
+    private static KeyStore.PrivateKeyEntry getEntry(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableEntryException, InvalidKeyException {
         KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
         ks.load(null);
         KeyStore.Entry entry = ks.getEntry(alias, null);
         if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-            return false;
+            throw new InvalidKeyException();
         }
-        PrivateKey privateKey = ((KeyStore.PrivateKeyEntry) entry).getPrivateKey();
-        final Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
-        sig.initVerify(((KeyStore.PrivateKeyEntry) entry).getCertificate());
-        sig.update(data);
-        return sig.verify(signature);
+        return (KeyStore.PrivateKeyEntry) entry;
     }
 
     public static byte[] hashSha256(String data) throws NoSuchAlgorithmException {
