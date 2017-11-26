@@ -17,15 +17,15 @@ import static java.util.Collections.singletonList;
 import static org.web3j.abi.FunctionEncoder.encode;
 import static org.web3j.utils.Numeric.cleanHexPrefix;
 
-public class ContractMethodEncoder {
+class ContractMethodEncoder {
 
-    static Script resolveScript(String methodName, List<Type> methodParameters) {
-        String encodedFunction = encodeFunction(new Function(methodName, methodParameters, emptyList()));
-        return createScript(encodedFunction, FUNCTION_GAS_LIMIT, GAS_PRICE, AUTHCOIN_CONTRACT_ADDRESS);
+    static Script resolveAuthCoinScript(String methodName, List<Type> methodParameters) {
+        return resolveScript(methodName, methodParameters, AUTHCOIN_CONTRACT_ADDRESS);
     }
 
-    public static String encodeParameter(Type type) {
-        return encodeFunction(new Function("", singletonList(type), emptyList())).substring(8);
+    private static Script resolveScript(String methodName, List<Type> methodParameters, String contractAddress) {
+        String encodedFunction = encodeFunction(new Function(methodName, methodParameters, emptyList()));
+        return createScript(encodedFunction, FUNCTION_GAS_LIMIT, GAS_PRICE, contractAddress);
     }
 
     static String resolveTransaction(DeterministicKey key, Script script, List<UnspentOutput> unspentOutput) {
@@ -36,7 +36,7 @@ public class ContractMethodEncoder {
         return new ContractRequest(new String[]{encodeFunction(new Function(methodName, methodParameters, emptyList()))});
     }
 
-    static String encodeFunction(Function function) {
+    private static String encodeFunction(Function function) {
         return cleanHexPrefix(encode(function));
     }
 }
