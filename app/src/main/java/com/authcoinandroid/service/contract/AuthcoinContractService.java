@@ -36,15 +36,15 @@ public class AuthcoinContractService {
     }
 
     public Observable<SendRawTransactionResponse> registerEir(final DeterministicKey key, List<Type> methodParameters) {
-        return sendRawTransaction(key, resolveScript(REGISTER_EIR, methodParameters));
+        return sendRawTransaction(key, resolveAuthCoinScript(REGISTER_EIR, methodParameters));
     }
 
     public Observable<ContractResponse> getEirCount() {
-        return callContract(resolveContractRequest(GET_EIR_COUNT, emptyList()));
+        return callAuthCoinContract(resolveContractRequest(GET_EIR_COUNT, emptyList()));
     }
 
     public Observable<ContractResponse> getEir(Bytes32 eirId) {
-        return callContract(resolveContractRequest(GET_EIR, singletonList(eirId)));
+        return callAuthCoinContract(resolveContractRequest(GET_EIR, singletonList(eirId)));
     }
 
     public Observable<List<UnspentOutput>> getUnspentOutputs(DeterministicKey key) {
@@ -58,7 +58,11 @@ public class AuthcoinContractService {
                 ));
     }
 
-    private Observable<ContractResponse> callContract(ContractRequest contractRequest) {
-        return blockChainService.callContract(AUTHCOIN_CONTRACT_ADDRESS, contractRequest);
+    private Observable<ContractResponse> callAuthCoinContract(ContractRequest contractRequest) {
+        return callContract(AUTHCOIN_CONTRACT_ADDRESS, contractRequest);
+    }
+
+    private Observable<ContractResponse> callContract(String contractAddress, ContractRequest contractRequest) {
+        return blockChainService.callContract(contractAddress, contractRequest);
     }
 }
