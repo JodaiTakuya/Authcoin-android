@@ -5,12 +5,14 @@ import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.params.QtumTestNetParams;
 import org.bitcoinj.script.Script;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Bytes32;
 import rx.Observable;
 
 import java.util.List;
 
 import static com.authcoinandroid.service.contract.AuthcoinContractParams.AUTHCOIN_CONTRACT_ADDRESS;
 import static com.authcoinandroid.service.contract.ContractMethodEncoder.*;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class AuthcoinContractService {
@@ -19,6 +21,7 @@ public class AuthcoinContractService {
     private final BlockChainService blockChainService;
 
     private final static String GET_EIR_COUNT = "getEirCount";
+    private final static String GET_EIR = "getEir";
     private final static String REGISTER_EIR = "registerEir";
 
     public static AuthcoinContractService getInstance() {
@@ -37,7 +40,11 @@ public class AuthcoinContractService {
     }
 
     public Observable<ContractResponse> getEirCount() {
-        return callContract(resolveContractRequest(GET_EIR_COUNT));
+        return callContract(resolveContractRequest(GET_EIR_COUNT, emptyList()));
+    }
+
+    public Observable<ContractResponse> getEir(Bytes32 eirId) {
+        return callContract(resolveContractRequest(GET_EIR, singletonList(eirId)));
     }
 
     public Observable<List<UnspentOutput>> getUnspentOutputs(DeterministicKey key) {
