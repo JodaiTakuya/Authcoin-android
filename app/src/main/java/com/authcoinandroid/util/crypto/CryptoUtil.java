@@ -12,11 +12,11 @@ public class CryptoUtil {
         return generateKeyPair(alias, KeyProperties.KEY_ALGORITHM_EC);
     }
 
-    public static PublicKey getPublicKeyByAlias(String alias) throws CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException, KeyStoreException, InvalidKeyException {
+    public static PublicKey getPublicKeyByAlias(String alias) throws GeneralSecurityException, IOException {
         return getEntry(alias).getCertificate().getPublicKey();
     }
 
-    public static byte[] sign(byte[] data, String alias) throws InvalidKeyException, NoSuchAlgorithmException, SignatureException, IOException, CertificateException, KeyStoreException, UnrecoverableEntryException {
+    public static byte[] sign(byte[] data, String alias) throws GeneralSecurityException, IOException {
         KeyStore.PrivateKeyEntry entry = getEntry(alias);
         PrivateKey privateKey = entry.getPrivateKey();
         Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
@@ -25,7 +25,7 @@ public class CryptoUtil {
         return sig.sign();
     }
 
-    public static boolean verify(byte[] signature, byte[] data, String alias) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException, KeyStoreException, IOException, CertificateException, UnrecoverableEntryException {
+    public static boolean verify(byte[] signature, byte[] data, String alias) throws GeneralSecurityException, IOException {
         KeyStore.PrivateKeyEntry entry = getEntry(alias);
         final Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(entry.getPrivateKey().getAlgorithm());
         sig.initVerify(entry.getCertificate());
@@ -33,7 +33,7 @@ public class CryptoUtil {
         return sig.verify(signature);
     }
 
-    private static KeyStore.PrivateKeyEntry getEntry(String alias) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableEntryException, InvalidKeyException {
+    private static KeyStore.PrivateKeyEntry getEntry(String alias) throws GeneralSecurityException, IOException {
         KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
         ks.load(null);
         KeyStore.Entry entry = ks.getEntry(alias, null);

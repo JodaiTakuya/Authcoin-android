@@ -14,8 +14,8 @@ import org.web3j.crypto.Hash;
 import rx.Observable;
 
 import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
 import java.util.List;
 
 import static com.authcoinandroid.service.identity.EcEirBuilder.newEcEirBuilder;
@@ -50,9 +50,7 @@ public class IdentityService {
                     .getEir();
             List<Type> params = RecordContractParamMapper.resolveEirContractParams(eir);
             return AuthcoinContractService.getInstance().registerEir(key, params);
-        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException |
-                NoSuchProviderException | IOException | SignatureException | CertificateException |
-                InvalidKeyException | UnrecoverableEntryException | KeyStoreException e) {
+        } catch (GeneralSecurityException | IOException e) {
             throw new RegisterEirException("Failed to register EIR", e);
         }
     }
@@ -62,8 +60,8 @@ public class IdentityService {
             String pubKeyAsHex = Hex.toHexString(getPublicKeyByAlias(alias).getEncoded());
             String eirId = cleanHexPrefix(Hash.sha3(pubKeyAsHex));
             return AuthcoinContractService.getInstance().getEir(bytesToBytes32(Hex.decode(eirId)));
-        } catch (CertificateException | NoSuchAlgorithmException | UnrecoverableEntryException | IOException | KeyStoreException | InvalidKeyException e) {
-            throw new GetEirException("Failed to get eir", e);
+        } catch (GeneralSecurityException | IOException e) {
+            throw new GetEirException("Failed to get EIR", e);
         }
     }
 }
