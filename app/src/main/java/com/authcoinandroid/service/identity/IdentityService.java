@@ -10,6 +10,7 @@ import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.crypto.Hash;
 import rx.Observable;
 
@@ -57,11 +58,18 @@ public class IdentityService {
 
     public Observable<ContractResponse> getEir(String alias) throws GetEirException {
         try {
-            String pubKeyAsHex = Hex.toHexString(getPublicKeyByAlias(alias).getEncoded());
-            String eirId = cleanHexPrefix(Hash.sha3(pubKeyAsHex));
-            return AuthcoinContractService.getInstance().getEir(bytesToBytes32(Hex.decode(eirId)));
+            return AuthcoinContractService.getInstance().getEir(getEirIdAsBytes32(alias));
         } catch (GeneralSecurityException | IOException e) {
             throw new GetEirException("Failed to get EIR", e);
         }
+    }
+
+    private Bytes32 getEirIdAsBytes32(String alias) throws GeneralSecurityException, IOException {
+        return bytesToBytes32(Hex.decode(getEirId(alias)));
+    }
+
+    private String getEirId(String alias) throws GeneralSecurityException, IOException {
+        String pubKeyAsHex = Hex.toHexString(getPublicKeyByAlias(alias).getEncoded());
+        return cleanHexPrefix(Hash.sha3(pubKeyAsHex));
     }
 }
