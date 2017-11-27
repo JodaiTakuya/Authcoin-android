@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.authcoinandroid.service.contract.AuthcoinContractParams.AUTHCOIN_CONTRACT_ADDRESS;
 import static com.authcoinandroid.service.contract.ContractMethodEncoder.*;
+import static com.authcoinandroid.util.ContractUtil.stripLeadingZeroes;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -23,6 +24,7 @@ public class AuthcoinContractService {
     private final static String GET_EIR_COUNT = "getEirCount";
     private final static String GET_EIR = "getEir";
     private final static String REGISTER_EIR = "registerEir";
+    private final static String GET_EIR_DATA = "getData";
 
     public static AuthcoinContractService getInstance() {
         if (authcoinContractService == null) {
@@ -44,7 +46,14 @@ public class AuthcoinContractService {
     }
 
     public Observable<ContractResponse> getEir(Bytes32 eirId) {
-        return callAuthCoinContract(resolveContractRequest(GET_EIR, singletonList(eirId)));
+        return callAuthCoinContract(resolveContractRequest(GET_EIR, singletonList(eirId)))
+                .switchMap(
+                        contractResponse ->
+                                callContract(
+                                        stripLeadingZeroes(contractResponse.getItems().get(0).getOutput()),
+                                        resolveContractRequest(GET_EIR_DATA, emptyList())
+                                )
+                );
     }
 
     public Observable<List<UnspentOutput>> getUnspentOutputs(DeterministicKey key) {

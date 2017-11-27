@@ -12,4 +12,8 @@ public class ContractUtil {
         System.arraycopy(byteValue, 0, byteValueLen32, 0, byteValue.length);
         return new Bytes32(byteValueLen32);
     }
+
+    public static String stripLeadingZeroes(String s) {
+        return s.replaceAll("^0*", "");
+    }
 }

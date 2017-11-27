@@ -4,7 +4,6 @@ import com.authcoinandroid.exception.GetEirException;
 import com.authcoinandroid.exception.RegisterEirException;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
-import com.authcoinandroid.service.qtum.ContractResponse;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
 import org.bitcoinj.crypto.DeterministicKey;
@@ -56,12 +55,23 @@ public class IdentityService {
         }
     }
 
-    public Observable<ContractResponse> getEir(String alias) throws GetEirException {
+    public Observable<EntityIdentityRecord> getEir(String alias) throws GetEirException {
         try {
-            return AuthcoinContractService.getInstance().getEir(getEirIdAsBytes32(alias));
+            return AuthcoinContractService.getInstance().getEir(getEirIdAsBytes32(alias))
+                    .switchMap(contractResponse -> mapAbiResponseToObservable(contractResponse.getItems().get(0).getOutput()));
         } catch (GeneralSecurityException | IOException e) {
             throw new GetEirException("Failed to get EIR", e);
         }
+    }
+
+    private Observable<EntityIdentityRecord> mapAbiResponseToObservable(String abiResponse) {
+        return Observable.defer(() -> {
+            try {
+                return Observable.just(RecordContractParamMapper.resolveEirFromAbiReturn(abiResponse));
+            } catch (Exception e) {
+                return Observable.error(e);
+            }
+        });
     }
 
     private Bytes32 getEirIdAsBytes32(String alias) throws GeneralSecurityException, IOException {
