@@ -42,8 +42,7 @@ public class IdentityFragment extends Fragment {
     @OnClick({R.id.btn_delete_wallet})
     void onDeleteWallet(View view) {
         WalletService.getInstance().deleteWallet(this.getContext());
-        getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
-        ((MainActivity) getActivity()).applyFragment(WelcomeFragment.class, false);
+        ((MainActivity) getActivity()).applyFragment(WelcomeFragment.class, false, true);
     }
 
     @OnClick({R.id.tv_wallet_address})
@@ -52,6 +51,11 @@ public class IdentityFragment extends Fragment {
         String walletAddressLabel = getString(R.string.wallet_address);
         clipboard.setPrimaryClip(ClipData.newPlainText(walletAddressLabel.substring(0, walletAddressLabel.length()-1), walletAddress.getText()));
         Toast.makeText(this.getContext(), getString(R.string.wallet_address_copied), Toast.LENGTH_LONG).show();
+    }
+
+    @OnClick({R.id.btn_new_identity})
+    void onOpenAddIdentity(View view) {
+        ((MainActivity) getActivity()).applyFragment(NewIdentityFragment.class, true, true);
     }
 
     @Override
@@ -94,7 +98,6 @@ public class IdentityFragment extends Fragment {
                             if (isAdded()) {
                                 unspentOutputTextView.setText(getString(R.string.missing_value));
                             }
-                            ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
                         }
 
                         @Override

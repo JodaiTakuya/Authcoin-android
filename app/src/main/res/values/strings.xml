@@ -14,4 +14,13 @@
     <string name="wallet_address_copied">Wallet address copied</string>
     <string name="delete_wallet">Delete wallet</string>
     <string name="unspent_output">Unspent output:</string>
+    <string name="new_identity">Create a new identity</string>
+    <string name="new_identity_desc">Some description for creating a new identity</string>
+    <string name="alias">Alias</string>
+    <string name="identifier">Identifier</string>
+    <string name="first_identifier">Identifier 1</string>
+    <string name="add_identifier">Add identifier</string>
+    <string name="submit_identity">Submit identity</string>
+
+
 </resources>

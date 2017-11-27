@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
                         Class currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container).getClass();
                         if (!currentFragment.equals(selectedFragment)) {
-                            applyFragment(selectedFragment, false);
+                            applyFragment(selectedFragment, false, false);
                             return true;
                         } else {
                             return false;
@@ -58,23 +58,27 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         if (WalletService.getInstance().isWalletCreated(getApplicationContext())) {
-            applyFragment(IdentityFragment.class, false);
+            applyFragment(IdentityFragment.class, false, false);
         } else {
-            applyFragment(WelcomeFragment.class, false);
-            bottomNavigationView.setVisibility(View.INVISIBLE);
+            applyFragment(WelcomeFragment.class, false, true);
         }
     }
 
-    public void applyFragment(@NonNull Class fragmentClass, boolean addToBackStack) {
+    public void applyFragment(@NonNull Class fragmentClass, boolean addToBackStack, boolean hideNavigation) {
         Fragment fragment;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
 
             if (addToBackStack) {
-                transaction.addToBackStack(null).add(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+            }
+
+            if (hideNavigation) {
+                findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
             } else {
-                transaction.replace(R.id.fragment_container, fragment);
+                findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
             }
 
             transaction.commit();

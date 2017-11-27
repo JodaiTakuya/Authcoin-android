@@ -52,8 +52,7 @@ public class WelcomeFragment extends Fragment {
                     Log.d(LOG_TAG, "Wallet mnemonic code: " + result.getResult().getKeyChainSeed().getMnemonicCode());
                     Toast.makeText(context, "Wallet created", Toast.LENGTH_LONG).show();
                     clearInputFields();
-                    getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
-                    ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false);
+                    ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false, false);
                 }
             }).execute();
         }
