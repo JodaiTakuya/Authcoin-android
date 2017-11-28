@@ -40,7 +40,7 @@ public class NewIdentityFragment extends Fragment {
     }
 
     @OnClick({R.id.btn_add_identifier})
-    private void onAddIdentifier(View view) {
+    public void onAddIdentifier(View view) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         TextInputLayout newTextInputLayout = (TextInputLayout) inflater.inflate(R.layout.material_field_text, null, false);
         LinearLayout identifiersLayout = (LinearLayout) getActivity().findViewById(R.id.identifiers_wrapper);
@@ -50,13 +50,13 @@ public class NewIdentityFragment extends Fragment {
     }
 
     @OnClick({R.id.btn_add_identity})
-    private void onAddIdentity(View view) {
+    public void onAddIdentity(View view) {
         Log.d(LOG_TAG, "Added identity");
 
         if (validateAlias()) {
             String[] identifiers = identifierFields.stream()
                     .map(identifier -> identifier.getText().toString())
-                    .filter(value -> !value.equals("")).toArray(String[]::new);
+                    .filter(value -> !value.isEmpty()).toArray(String[]::new);
             registerEir(identifiers, alias.getText().toString());
         }
     }

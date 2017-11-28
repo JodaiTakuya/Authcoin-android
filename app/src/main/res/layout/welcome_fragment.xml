@@ -2,8 +2,9 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".ui.fragment.IdentityFragment">
-
+                tools:context=".ui.fragment.IdentityFragment"
+                android:focusable="true"
+                android:focusableInTouchMode ="true">
 
     <TextView
         android:text="@string/no_wallet_yet"
