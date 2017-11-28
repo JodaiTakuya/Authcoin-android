@@ -1,5 +1,6 @@
 package com.authcoinandroid.service.contract;
 
+import com.authcoinandroid.exception.GetEirException;
 import com.authcoinandroid.service.qtum.*;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.params.QtumTestNetParams;
@@ -10,6 +11,7 @@ import rx.Observable;
 
 import java.util.List;
 
+import static android.text.TextUtils.isEmpty;
 import static com.authcoinandroid.service.contract.AuthcoinContractParams.AUTHCOIN_CONTRACT_ADDRESS;
 import static com.authcoinandroid.service.contract.ContractMethodEncoder.*;
 import static com.authcoinandroid.util.ContractUtil.stripLeadingZeroes;
@@ -48,11 +50,17 @@ public class AuthcoinContractService {
     public Observable<ContractResponse> getEir(Bytes32 eirId) {
         return callAuthCoinContract(resolveContractRequest(GET_EIR, singletonList(eirId)))
                 .switchMap(
-                        contractResponse ->
-                                callContract(
+                        contractResponse -> {
+                            String eirAddress = stripLeadingZeroes(contractResponse.getItems().get(0).getOutput());
+                            if (isEmpty(eirAddress)) {
+                                return Observable.error(new GetEirException("No such EIR with provided eirId"));
+                            } else {
+                                return callContract(
                                         stripLeadingZeroes(contractResponse.getItems().get(0).getOutput()),
                                         resolveContractRequest(GET_EIR_DATA, emptyList())
-                                )
+                                );
+                            }
+                        }
                 );
     }
 
