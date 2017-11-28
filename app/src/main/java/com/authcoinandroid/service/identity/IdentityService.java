@@ -1,11 +1,13 @@
 package com.authcoinandroid.service.identity;
 
+import com.authcoinandroid.exception.GetAliasException;
 import com.authcoinandroid.exception.GetEirException;
 import com.authcoinandroid.exception.RegisterEirException;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
+import com.authcoinandroid.util.crypto.CryptoUtil;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.datatypes.Type;
@@ -63,6 +65,14 @@ public class IdentityService {
                     .switchMap(contractResponse -> mapAbiResponseToObservable(key, contractResponse.getItems().get(0).getOutput()));
         } catch (GeneralSecurityException | IOException e) {
             throw new GetEirException("Failed to get EIR", e);
+        }
+    }
+
+    public List<String> getAllAliases() throws GetAliasException {
+        try {
+            return CryptoUtil.getAliases();
+        } catch (GeneralSecurityException | IOException e) {
+            throw new GetAliasException("Can not get aliases", e);
         }
     }
 

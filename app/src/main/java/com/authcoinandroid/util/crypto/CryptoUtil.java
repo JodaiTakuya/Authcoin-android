@@ -5,7 +5,8 @@ import android.security.keystore.KeyProperties;
 
 import java.io.IOException;
 import java.security.*;
-import java.security.cert.CertificateException;
+import java.util.Collections;
+import java.util.List;
 
 public class CryptoUtil {
     public static KeyPair createEcKeyPair(String alias) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchProviderException {
@@ -33,9 +34,16 @@ public class CryptoUtil {
         return sig.verify(signature);
     }
 
+    public static byte[] hashSha256(String data) throws NoSuchAlgorithmException {
+        return hash(MessageDigest.getInstance("SHA-256"), data);
+    }
+
+    public static List<String> getAliases() throws GeneralSecurityException, IOException {
+        return Collections.list(getKeyStore().aliases());
+    }
+
     private static KeyStore.PrivateKeyEntry getEntry(String alias) throws GeneralSecurityException, IOException {
-        KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
-        ks.load(null);
+        KeyStore ks = getKeyStore();
         KeyStore.Entry entry = ks.getEntry(alias, null);
         if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
             throw new InvalidKeyException();
@@ -43,8 +51,10 @@ public class CryptoUtil {
         return (KeyStore.PrivateKeyEntry) entry;
     }
 
-    public static byte[] hashSha256(String data) throws NoSuchAlgorithmException {
-        return hash(MessageDigest.getInstance("SHA-256"), data);
+    private static KeyStore getKeyStore() throws GeneralSecurityException, IOException {
+        KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+        ks.load(null);
+        return ks;
     }
 
     private static byte[] hash(MessageDigest messageDigest, String data) {
