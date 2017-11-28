@@ -16,6 +16,7 @@ import rx.Observable;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.List;
 
 import static com.authcoinandroid.service.identity.EcEirBuilder.newEcEirBuilder;
@@ -57,29 +58,28 @@ public class IdentityService {
 
     public Observable<EntityIdentityRecord> getEir(String alias) throws GetEirException {
         try {
-            return AuthcoinContractService.getInstance().getEir(getEirIdAsBytes32(alias))
-                    .switchMap(contractResponse -> mapAbiResponseToObservable(contractResponse.getItems().get(0).getOutput()));
+            PublicKey key = getPublicKeyByAlias(alias);
+            return AuthcoinContractService.getInstance().getEir(getEirIdAsBytes32(key))
+                    .switchMap(contractResponse -> mapAbiResponseToObservable(key, contractResponse.getItems().get(0).getOutput()));
         } catch (GeneralSecurityException | IOException e) {
             throw new GetEirException("Failed to get EIR", e);
         }
     }
 
-    private Observable<EntityIdentityRecord> mapAbiResponseToObservable(String abiResponse) {
+    private Observable<EntityIdentityRecord> mapAbiResponseToObservable(PublicKey key, String abiResponse) {
         return Observable.defer(() -> {
             try {
-                return Observable.just(RecordContractParamMapper.resolveEirFromAbiReturn(abiResponse));
+                EntityIdentityRecord eir = RecordContractParamMapper.resolveEirFromAbiReturn(abiResponse);
+                eir.setContent(key);
+                return Observable.just(eir);
             } catch (Exception e) {
                 return Observable.error(e);
             }
         });
     }
 
-    private Bytes32 getEirIdAsBytes32(String alias) throws GeneralSecurityException, IOException {
-        return bytesToBytes32(Hex.decode(getEirId(alias)));
-    }
-
-    private String getEirId(String alias) throws GeneralSecurityException, IOException {
-        String pubKeyAsHex = Hex.toHexString(getPublicKeyByAlias(alias).getEncoded());
-        return cleanHexPrefix(Hash.sha3(pubKeyAsHex));
+    private Bytes32 getEirIdAsBytes32(PublicKey key) {
+        String pubKeyAsHex = Hex.toHexString(key.getEncoded());
+        return bytesToBytes32(Hex.decode(cleanHexPrefix(Hash.sha3(pubKeyAsHex))));
     }
 }
