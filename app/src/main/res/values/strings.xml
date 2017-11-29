@@ -21,6 +21,10 @@
     <string name="first_identifier">Identifier 1</string>
     <string name="add_identifier">Add identifier</string>
     <string name="submit_identity">Submit identity</string>
-
-
+    <string name="eir_content">Content</string>
+    <string name="eir_content_type">Content type</string>
+    <string name="eir_hash">Hash</string>
+    <string name="eir_signature">Signature</string>
+    <string name="eir_identifiers">Identifiers</string>
+    <string name="no_identity_yet">This identity is not on the block-chain, yet.</string>
 </resources>

@@ -9,16 +9,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import com.authcoinandroid.R;
+import com.authcoinandroid.exception.GetAliasException;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
+import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.UnspentOutput;
 import com.authcoinandroid.ui.activity.MainActivity;
+import com.authcoinandroid.ui.adapter.EirAliasAdapter;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -29,27 +32,31 @@ import java.util.Locale;
 
 public class IdentityFragment extends Fragment {
     private final static String LOG_TAG = "IdentityFragment";
+    private String mWalletAddress;
 
-    @BindView(R.id.tv_wallet_address)
-    TextView walletAddress;
+    @BindView(R.id.iv_wallet_copy)
+    ImageView walletAddressCopy;
 
     @BindView(R.id.tv_unspent_output)
     TextView unspentOutputTextView;
 
+    @BindView(R.id.lv_eirs)
+    ListView eirsListView;
+
     public IdentityFragment() {
     }
 
-    @OnClick({R.id.btn_delete_wallet})
-    void onDeleteWallet(View view) {
+    @OnLongClick({R.id.iv_wallet})
+    boolean onDeleteWallet(View view) {
         WalletService.getInstance().deleteWallet(this.getContext());
         ((MainActivity) getActivity()).applyFragment(WelcomeFragment.class, false, true);
+        return true;
     }
 
-    @OnClick({R.id.tv_wallet_address})
+    @OnClick({R.id.iv_wallet_copy})
     void onCopyWalletAddress(View view) {
         ClipboardManager clipboard = (ClipboardManager) this.getContext().getSystemService(Activity.CLIPBOARD_SERVICE);
-        String walletAddressLabel = getString(R.string.wallet_address);
-        clipboard.setPrimaryClip(ClipData.newPlainText(walletAddressLabel.substring(0, walletAddressLabel.length()-1), walletAddress.getText()));
+        clipboard.setPrimaryClip(ClipData.newPlainText("Wallet address", mWalletAddress));
         Toast.makeText(this.getContext(), getString(R.string.wallet_address_copied), Toast.LENGTH_LONG).show();
     }
 
@@ -67,16 +74,40 @@ public class IdentityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.identity_fragment, container, false);
         ButterKnife.bind(this, view);
-        displayWalletAddress();
+        attachWalletAddressToCopyImage();
         displayUnspentOutputAmount();
+        displayEirs();
         return view;
     }
 
-    private void displayWalletAddress() {
+    private void displayEirs() {
+        try {
+            List<String> eirAliases = IdentityService.getInstance().getAllAliases();
+            EirAliasAdapter adapter = new EirAliasAdapter(getContext(), eirAliases);
+            eirsListView.setAdapter(adapter);
+
+            eirsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String alias = eirAliases.get(position);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("alias", alias);
+
+                    if (getContext() instanceof MainActivity) {
+                        ((MainActivity) getContext()).applyFullFragmentWithBundle(EirFragment.class, bundle);
+                    }
+                }
+            });
+        } catch (GetAliasException e) {
+            Log.d(LOG_TAG, e.getMessage());
+        }
+    }
+
+    private void attachWalletAddressToCopyImage() {
         try {
             String walletAddress = WalletService.getInstance().getWalletAddress(this.getContext());
             Log.d(LOG_TAG, "Wallet address is: " + walletAddress);
-            this.walletAddress.setText(walletAddress);
+            mWalletAddress = walletAddress;
         } catch (UnreadableWalletException e) {
             Log.e(LOG_TAG, "Unable to load wallet address: " + e.getMessage());
             ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
@@ -104,7 +135,7 @@ public class IdentityFragment extends Fragment {
                         public void onNext(List<UnspentOutput> unspentOutputs) {
                             if (isAdded()) {
                                 unspentOutputTextView.setText(
-                                        String.format(Locale.getDefault(), "%f", unspentOutputs.get(0).getAmount())
+                                        String.format(Locale.getDefault(), "%f QTUM", unspentOutputs.get(0).getAmount())
                                 );
                             }
                         }

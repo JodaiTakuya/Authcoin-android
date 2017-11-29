@@ -92,6 +92,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void applyFullFragmentWithBundle(@NonNull Class fragmentClass, Bundle bundle) {
+        Fragment fragment;
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+            fragment.setArguments(bundle);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+            findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         // Hide keyboard and lose focus on EditText when clicking anywhere outside

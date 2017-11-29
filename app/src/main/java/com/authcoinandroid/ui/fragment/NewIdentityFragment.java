@@ -54,9 +54,14 @@ public class NewIdentityFragment extends Fragment {
         Log.d(LOG_TAG, "Added identity");
 
         if (validateAlias()) {
-            String[] identifiers = identifierFields.stream()
-                    .map(identifier -> identifier.getText().toString())
-                    .filter(value -> !value.isEmpty()).toArray(String[]::new);
+            List<String> list = new ArrayList<>();
+            for (EditText identifier : identifierFields) {
+                String value = identifier.getText().toString();
+                if (!value.isEmpty()) {
+                    list.add(value);
+                }
+            }
+            String[] identifiers = list.toArray(new String[0]);
             registerEir(identifiers, alias.getText().toString());
         }
     }
