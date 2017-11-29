@@ -3,19 +3,14 @@ package com.authcoinandroid.module;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Pair;
-
 import com.authcoinandroid.model.EntityIdentityRecord;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
 import static com.authcoinandroid.service.identity.EcEirBuilder.newEcEirBuilder;
-import static com.authcoinandroid.util.crypto.CryptoUtil.createEcKeyPair;
 
 /**
  * "KeyGenerationEstablishBinding" module
@@ -27,7 +22,8 @@ public class KeyGenerationAndEstablishBindingModule {
     private static KeyGenerationModule keyGenerator = new KeyGenerationModule();
     private static EstablishBindingModule bindingModule = new EstablishBindingModule();
 
-    public static Pair<KeyPair, EntityIdentityRecord> generateAndEstablishBinding(String[] identifiers, String alias) throws GeneralSecurityException, IOException {
+    public static Pair<KeyPair, EntityIdentityRecord> generateAndEstablishBinding(String[] identifiers, String alias)
+            throws GeneralSecurityException, IOException {
         KeyPair keyPair = keyGenerator.createNewKeyPair(alias);
         EntityIdentityRecord eir = bindingModule.establishBinding(identifiers, keyPair);
         return Pair.create(keyPair, eir);
@@ -64,18 +60,15 @@ public class KeyGenerationAndEstablishBindingModule {
     public static class EstablishBindingModule {
 
         public EntityIdentityRecord establishBinding(String[] identifiers, KeyPair keyPair) throws GeneralSecurityException, IOException {
-            EntityIdentityRecord eir = newEcEirBuilder()
+            return newEcEirBuilder()
                     .addIdentifiers(identifiers)
                     .addContent(keyPair.getPublic())
                     .setContentType()
                     .calculateHash()
                     .signHash(keyPair)
                     .getEir();
-            return eir;
         }
-
     }
-
 }
 
 

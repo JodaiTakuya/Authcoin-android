@@ -37,13 +37,8 @@ public abstract class EirBuilder {
         return this;
     }
 
-    public EirBuilder signHash(String alias) throws GeneralSecurityException, IOException {
-        entityIdentityRecord.setSignature(CryptoUtil.sign(entityIdentityRecord.getHash(), alias));
-        return this;
-    }
-
-    public EirBuilder signHash(KeyPair alias) throws GeneralSecurityException, IOException {
-        entityIdentityRecord.setSignature(CryptoUtil.sign(entityIdentityRecord.getHash(), alias));
+    public EirBuilder signHash(KeyPair keyPair) throws GeneralSecurityException, IOException {
+        entityIdentityRecord.setSignature(CryptoUtil.sign(entityIdentityRecord.getHash(), keyPair));
         return this;
     }
 

@@ -17,13 +17,11 @@ import rx.Observable;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.List;
 
-import static com.authcoinandroid.service.identity.EcEirBuilder.newEcEirBuilder;
+import static com.authcoinandroid.module.KeyGenerationAndEstablishBindingModule.generateAndEstablishBinding;
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
-import static com.authcoinandroid.util.crypto.CryptoUtil.createEcKeyPair;
 import static com.authcoinandroid.util.crypto.CryptoUtil.getPublicKeyByAlias;
 import static org.web3j.utils.Numeric.cleanHexPrefix;
 
@@ -43,16 +41,7 @@ public class IdentityService {
 
     public Observable<SendRawTransactionResponse> registerEirWithEcKey(DeterministicKey key, String[] identifiers, String alias) throws RegisterEirException {
         try {
-            KeyPair keyPair = createEcKeyPair(alias);
-
-            EntityIdentityRecord eir = newEcEirBuilder()
-                    .addIdentifiers(identifiers)
-                    .addContent(keyPair.getPublic())
-                    .setContentType()
-                    .calculateHash()
-                    .signHash(alias)
-                    .getEir();
-
+            EntityIdentityRecord eir = generateAndEstablishBinding(identifiers, alias).second;
             List<Type> params = RecordContractParamMapper.resolveEirContractParams(eir);
             return AuthcoinContractService.getInstance().registerEir(key, params);
         } catch (GeneralSecurityException | IOException e) {
