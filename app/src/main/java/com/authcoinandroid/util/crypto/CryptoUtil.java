@@ -26,6 +26,14 @@ public class CryptoUtil {
         return sig.sign();
     }
 
+    public static byte[] sign(byte[] data, KeyPair keyPair) throws GeneralSecurityException, IOException {
+        PrivateKey privateKey = keyPair.getPrivate();
+        Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
+        sig.initSign(privateKey);
+        sig.update(data);
+        return sig.sign();
+    }
+
     public static boolean verify(byte[] signature, byte[] data, String alias) throws GeneralSecurityException, IOException {
         KeyStore.PrivateKeyEntry entry = getEntry(alias);
         final Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(entry.getPrivateKey().getAlgorithm());

@@ -6,12 +6,13 @@ import com.authcoinandroid.util.crypto.CryptoUtil;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 
 import static com.authcoinandroid.util.crypto.CryptoUtil.hashSha256;
 
-abstract class EirBuilder {
+public abstract class EirBuilder {
 
     EntityIdentityRecord entityIdentityRecord;
 
@@ -19,16 +20,16 @@ abstract class EirBuilder {
         this.entityIdentityRecord = new EntityIdentityRecord();
     }
 
-    EirBuilder addIdentifiers(String[] identifiers) {
+    public EirBuilder addIdentifiers(String[] identifiers) {
         entityIdentityRecord.setIdentifiers(identifiers);
         return this;
     }
 
-    EntityIdentityRecord getEir() {
+    public EntityIdentityRecord getEir() {
         return this.entityIdentityRecord;
     }
 
-    EirBuilder calculateHash() throws NoSuchAlgorithmException {
+    public EirBuilder calculateHash() throws NoSuchAlgorithmException {
         String data = TextUtils.join(",", entityIdentityRecord.getIdentifiers())
                 + new String(entityIdentityRecord.getContent().getEncoded())
                 + entityIdentityRecord.getContentType();
@@ -36,15 +37,20 @@ abstract class EirBuilder {
         return this;
     }
 
-    EirBuilder signHash(String alias) throws GeneralSecurityException, IOException {
+    public EirBuilder signHash(String alias) throws GeneralSecurityException, IOException {
         entityIdentityRecord.setSignature(CryptoUtil.sign(entityIdentityRecord.getHash(), alias));
         return this;
     }
 
-    EirBuilder addContent(PublicKey key) {
+    public EirBuilder signHash(KeyPair alias) throws GeneralSecurityException, IOException {
+        entityIdentityRecord.setSignature(CryptoUtil.sign(entityIdentityRecord.getHash(), alias));
+        return this;
+    }
+
+    public EirBuilder addContent(PublicKey key) {
         entityIdentityRecord.setContent(key);
         return this;
     }
 
-    abstract EirBuilder setContentType();
+    public abstract EirBuilder setContentType();
 }
