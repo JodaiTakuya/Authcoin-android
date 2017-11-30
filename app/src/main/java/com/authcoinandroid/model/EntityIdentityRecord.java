@@ -8,6 +8,7 @@ public class EntityIdentityRecord {
     private String contentType;
     private byte[] hash;
     private byte[] signature;
+    private boolean isRevoked;
 
     public String[] getIdentifiers() {
         return identifiers;
@@ -47,5 +48,13 @@ public class EntityIdentityRecord {
 
     public void setSignature(byte[] signature) {
         this.signature = signature;
+    }
+
+    public boolean isRevoked() {
+        return isRevoked;
+    }
+
+    public void setRevoked(boolean revoked) {
+        isRevoked = revoked;
     }
 }

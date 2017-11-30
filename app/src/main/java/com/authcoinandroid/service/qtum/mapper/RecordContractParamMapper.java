@@ -52,6 +52,7 @@ public class RecordContractParamMapper {
         eir.setContentType(new String((byte[]) output.get(3).getValue(), StandardCharsets.UTF_8));
         eir.setHash((byte[]) output.get(6).getValue());
         eir.setSignature((byte[]) output.get(7).getValue());
+        eir.setRevoked(((Bool) output.get(4)).getValue());
         return eir;
     }
 
