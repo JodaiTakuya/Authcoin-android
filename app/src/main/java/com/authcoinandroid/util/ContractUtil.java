@@ -1,6 +1,12 @@
 package com.authcoinandroid.util;
 
+import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.crypto.Hash;
+
+import java.security.PublicKey;
+
+import static org.web3j.utils.Numeric.cleanHexPrefix;
 
 public class ContractUtil {
     public static Bytes32 stringToBytes32(String string) {
@@ -15,5 +21,9 @@ public class ContractUtil {
 
     public static String stripLeadingZeroes(String s) {
         return s.replaceAll("^0*", "");
+    }
+
+    public static String getEirIdAsString(PublicKey key) {
+        return cleanHexPrefix(Hash.sha3(Hex.toHexString(key.getEncoded())));
     }
 }

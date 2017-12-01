@@ -7,12 +7,12 @@ import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
+import com.authcoinandroid.util.ContractUtil;
 import com.authcoinandroid.util.crypto.CryptoUtil;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Bytes32;
-import org.web3j.crypto.Hash;
 import rx.Observable;
 
 import java.io.IOException;
@@ -25,7 +25,6 @@ import static com.authcoinandroid.service.identity.EcEirBuilder.newEcEirBuilder;
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
 import static com.authcoinandroid.util.crypto.CryptoUtil.createEcKeyPair;
 import static com.authcoinandroid.util.crypto.CryptoUtil.getPublicKeyByAlias;
-import static org.web3j.utils.Numeric.cleanHexPrefix;
 
 public class IdentityService {
 
@@ -89,7 +88,6 @@ public class IdentityService {
     }
 
     private Bytes32 getEirIdAsBytes32(PublicKey key) {
-        String pubKeyAsHex = Hex.toHexString(key.getEncoded());
-        return bytesToBytes32(Hex.decode(cleanHexPrefix(Hash.sha3(pubKeyAsHex))));
+        return bytesToBytes32(Hex.decode(ContractUtil.getEirIdAsString(key)));
     }
 }
