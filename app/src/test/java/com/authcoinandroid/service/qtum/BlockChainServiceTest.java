@@ -15,7 +15,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Observable;
+
 
 public class BlockChainServiceTest {
 
@@ -63,7 +64,7 @@ public class BlockChainServiceTest {
         System.out.println("Key: " + key.toAddress(QtumTestNetParams.get()).toBase58());
         final BlockChainService bcs = BlockChainService.getInstance();
         Observable<List<UnspentOutput>> observable = bcs.getUnspentOutput(Arrays.asList(key.toAddress(QtumTestNetParams.get()).toBase58()));
-        List<UnspentOutput> unspentOutputs = observable.toBlocking().first();
+        List<UnspentOutput> unspentOutputs = observable.blockingFirst();
         // replaceValues -> 700279dd
         Script script = TransactionUtil.createScript("700279dd", ABI_PARAMS, 250000, 40, "ae6dfc1cbaf19990fa6f6a975c1427d47b16edec");
 
@@ -71,7 +72,7 @@ public class BlockChainServiceTest {
         System.out.println("Transaction: " + tx);
         Observable<SendRawTransactionResponse> out = bcs.sendRawTransaction(new SendRawTransactionRequest(tx, 1));
 
-        SendRawTransactionResponse response = out.toBlocking().first();
+        SendRawTransactionResponse response = out.blockingFirst();
         Assert.assertNotNull(response.getTxid());
         System.out.println(response.getResult() + " :: " + response.getTxid());
     }

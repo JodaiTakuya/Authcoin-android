@@ -20,9 +20,11 @@ import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.UnspentOutput;
 import com.authcoinandroid.ui.activity.MainActivity;
 import org.bitcoinj.wallet.UnreadableWalletException;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+
 
 import java.util.List;
 import java.util.Locale;
@@ -84,9 +86,9 @@ public class IdentityFragment extends Fragment {
             AuthcoinContractService.getInstance().getUnspentOutputs(WalletService.getInstance().getReceiveKey(this.getContext()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<List<UnspentOutput>>() {
+                    .subscribe(new DisposableObserver<List<UnspentOutput>>() {
                         @Override
-                        public void onCompleted() {
+                        public void onComplete() {
                         }
 
                         @Override
@@ -100,9 +102,9 @@ public class IdentityFragment extends Fragment {
                         @Override
                         public void onNext(List<UnspentOutput> unspentOutputs) {
                             if (isAdded()) {
-                                unspentOutputTextView.setText(
-                                        String.format(Locale.getDefault(), "%f", unspentOutputs.get(0).getAmount())
-                                );
+                                    unspentOutputTextView.setText(
+                                            String.format(Locale.getDefault(), "%f", unspentOutputs.get(0).getAmount())
+                                    );
                             }
                         }
                     });

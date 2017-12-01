@@ -7,9 +7,10 @@ import org.bitcoinj.params.QtumTestNetParams;
 import org.bitcoinj.script.Script;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Bytes32;
-import rx.Observable;
 
 import java.util.List;
+
+import io.reactivex.Observable;
 
 import static android.text.TextUtils.isEmpty;
 import static com.authcoinandroid.service.contract.AuthcoinContractParams.AUTHCOIN_CONTRACT_ADDRESS;

@@ -4,10 +4,10 @@ import com.authcoinandroid.util.AuthCoinNetParams;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observable;
 
 public class BlockChainService implements BlockChainApi {
 
@@ -25,7 +25,7 @@ public class BlockChainService implements BlockChainApi {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(AuthCoinNetParams.getUrl())
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         blockChainApi = retrofit.create(BlockChainApi.class);
     }

@@ -13,13 +13,14 @@ import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.crypto.Hash;
-import rx.Observable;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.List;
+
+import io.reactivex.Observable;
 
 import static com.authcoinandroid.service.identity.EcEirBuilder.newEcEirBuilder;
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
