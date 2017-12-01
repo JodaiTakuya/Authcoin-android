@@ -6,13 +6,13 @@ public class EcEirBuilder extends EirBuilder {
     }
 
     @Override
-    EirBuilder setContentType() {
+    public EirBuilder setContentType() {
         entityIdentityRecord.setContentType("test");
 //        entityIdentityRecord.setContentType("ec-pub-key");
         return this;
     }
 
-    static EirBuilder newEcEirBuilder() {
+    public static EirBuilder newEcEirBuilder() {
         return new EcEirBuilder();
     }
 }
