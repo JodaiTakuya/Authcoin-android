@@ -1,17 +1,11 @@
 package com.authcoinandroid.util.crypto;
 
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
-
 import java.io.IOException;
 import java.security.*;
 import java.util.Collections;
 import java.util.List;
 
 public class CryptoUtil {
-    public static KeyPair createEcKeyPair(String alias) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchProviderException {
-        return generateKeyPair(alias, KeyProperties.KEY_ALGORITHM_EC);
-    }
 
     public static PublicKey getPublicKeyByAlias(String alias) throws GeneralSecurityException, IOException {
         return getEntry(alias).getCertificate().getPublicKey();
@@ -20,6 +14,14 @@ public class CryptoUtil {
     public static byte[] sign(byte[] data, String alias) throws GeneralSecurityException, IOException {
         KeyStore.PrivateKeyEntry entry = getEntry(alias);
         PrivateKey privateKey = entry.getPrivateKey();
+        Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
+        sig.initSign(privateKey);
+        sig.update(data);
+        return sig.sign();
+    }
+
+    public static byte[] sign(byte[] data, KeyPair keyPair) throws GeneralSecurityException, IOException {
+        PrivateKey privateKey = keyPair.getPrivate();
         Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
         sig.initSign(privateKey);
         sig.update(data);
@@ -72,14 +74,5 @@ public class CryptoUtil {
                 throw new NoSuchAlgorithmException();
         }
         return Signature.getInstance(signatureAlgorithm);
-    }
-
-    private static KeyPair generateKeyPair(String alias, String keyAlgorithm) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "AndroidKeyStore");
-        kpg.initialize(
-                new KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
-                        .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                        .build());
-        return kpg.generateKeyPair();
     }
 }
