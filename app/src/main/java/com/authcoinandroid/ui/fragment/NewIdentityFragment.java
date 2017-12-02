@@ -28,7 +28,7 @@ import java.util.List;
 
 public class NewIdentityFragment extends Fragment {
     private final static String LOG_TAG = "NewIdentityFragment";
-    private List<EditText> identifierFields = new ArrayList<>();
+    private List<EditText> mIdentifiers = new ArrayList<>();
 
     @BindView(R.id.et_alias)
     EditText alias;
@@ -45,17 +45,15 @@ public class NewIdentityFragment extends Fragment {
         TextInputLayout newTextInputLayout = (TextInputLayout) inflater.inflate(R.layout.material_field_text, null, false);
         LinearLayout identifiersLayout = (LinearLayout) getActivity().findViewById(R.id.identifiers_wrapper);
         newTextInputLayout.setHint(getResources().getString(R.string.identifier) + " " + String.valueOf(identifiersLayout.getChildCount()));
-        identifierFields.add(newTextInputLayout.getEditText());
+        mIdentifiers.add(newTextInputLayout.getEditText());
         identifiersLayout.addView(newTextInputLayout);
     }
 
     @OnClick({R.id.btn_add_identity})
     public void onAddIdentity(View view) {
-        Log.d(LOG_TAG, "Added identity");
-
         if (validateAlias()) {
             List<String> list = new ArrayList<>();
-            for (EditText identifier : identifierFields) {
+            for (EditText identifier : mIdentifiers) {
                 String value = identifier.getText().toString();
                 if (!value.isEmpty()) {
                     list.add(value);
@@ -84,7 +82,7 @@ public class NewIdentityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.new_identity_fragment, container, false);
         ButterKnife.bind(this, view);
-        identifierFields.add(firstIdentifier);
+        mIdentifiers.add(firstIdentifier);
         return view;
     }
 

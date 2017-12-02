@@ -1,66 +1,66 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 tools:context=".ui.fragment.IdentityFragment">
 
-    <RelativeLayout android:layout_width="match_parent"
-                  android:layout_height="56dp"
-                  android:layout_gravity="start"
-                  android:background="@color/colorPrimary"
-                  android:id="@+id/header">
+    <RelativeLayout android:id="@+id/header"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_gravity="start"
+                    android:background="@color/colorPrimary">
 
-        <ImageView android:layout_width="wrap_content"
-                   android:layout_height="match_parent"
-                   android:src="@drawable/ic_account_balance_wallet_24dp"
-                   android:layout_marginLeft="12dp"
-                   android:layout_alignParentLeft="true"
-                   android:paddingTop="10dp"
-                   android:paddingBottom="10dp"
-                   android:layout_gravity="center_vertical"
-                   android:id="@+id/iv_wallet"
-        />
-
-        <TextView
+        <ImageView
+            android:id="@+id/iv_wallet"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="18sp"
-            android:textColor="@color/colorLightGray"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:src="@drawable/ic_account_balance_wallet_24dp"/>
+
+        <TextView
+            android:id="@+id/tv_unspent_output"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/iv_wallet_copy"
+            android:layout_toRightOf="@id/iv_wallet"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:gravity="center_vertical"
-            android:layout_toRightOf="@id/iv_wallet"
-            android:layout_toLeftOf="@id/iv_wallet_copy"
-            android:id="@+id/tv_unspent_output"/>
+            android:textSize="18sp"
+            android:textColor="@color/colorLightGray"/>
 
-        <ImageView android:layout_width="wrap_content"
-                   android:layout_height="match_parent"
-                   android:src="@drawable/ic_content_copy_24dp"
-                   android:layout_marginRight="12dp"
-                   android:paddingTop="10dp"
-                   android:paddingBottom="10dp"
-                   android:layout_alignParentRight="true"
-                   android:id="@+id/iv_wallet_copy"/>
+        <ImageView
+            android:id="@+id/iv_wallet_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:src="@drawable/ic_content_copy_24dp"/>
 
     </RelativeLayout>
 
     <ListView
-        android:layout_height="match_parent"
+        android:id="@+id/lv_eirs"
         android:layout_width="match_parent"
-        android:layout_below="@id/header"
-        android:id="@+id/lv_eirs">
-    </ListView>
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"/>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_new_identity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_24dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         app:rippleColor="#ffffff"
-        android:id="@+id/btn_new_identity"/>
+        android:src="@drawable/ic_add_24dp"/>
 
 </RelativeLayout>
