@@ -32,16 +32,15 @@ import java.util.Locale;
 
 public class IdentityFragment extends Fragment {
     private final static String LOG_TAG = "IdentityFragment";
-    private String mWalletAddress;
 
     @BindView(R.id.iv_wallet_copy)
     ImageView walletAddressCopy;
 
     @BindView(R.id.tv_unspent_output)
-    TextView unspentOutputTextView;
+    TextView unspentOutput;
 
     @BindView(R.id.lv_eirs)
-    ListView eirsListView;
+    ListView eirList;
 
     public IdentityFragment() {
     }
@@ -56,8 +55,8 @@ public class IdentityFragment extends Fragment {
     @OnClick({R.id.iv_wallet_copy})
     void onCopyWalletAddress(View view) {
         ClipboardManager clipboard = (ClipboardManager) this.getContext().getSystemService(Activity.CLIPBOARD_SERVICE);
-        clipboard.setPrimaryClip(ClipData.newPlainText("Wallet address", mWalletAddress));
-        Toast.makeText(this.getContext(), getString(R.string.wallet_address_copied), Toast.LENGTH_LONG).show();
+        clipboard.setPrimaryClip(ClipData.newPlainText("Wallet address", walletAddressCopy.getContentDescription()));
+        ((MainActivity) getActivity()).displayNotification(getString(R.string.wallet_address_copied));
     }
 
     @OnClick({R.id.btn_new_identity})
@@ -76,17 +75,17 @@ public class IdentityFragment extends Fragment {
         ButterKnife.bind(this, view);
         attachWalletAddressToCopyImage();
         displayUnspentOutputAmount();
-        displayEirs();
+        populateEirList();
         return view;
     }
 
-    private void displayEirs() {
+    private void populateEirList() {
         try {
             List<String> eirAliases = IdentityService.getInstance().getAllAliases();
             EirAliasAdapter adapter = new EirAliasAdapter(getContext(), eirAliases);
-            eirsListView.setAdapter(adapter);
+            eirList.setAdapter(adapter);
 
-            eirsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            eirList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String alias = eirAliases.get(position);
@@ -107,7 +106,7 @@ public class IdentityFragment extends Fragment {
         try {
             String walletAddress = WalletService.getInstance().getWalletAddress(this.getContext());
             Log.d(LOG_TAG, "Wallet address is: " + walletAddress);
-            mWalletAddress = walletAddress;
+            walletAddressCopy.setContentDescription(walletAddress);
         } catch (UnreadableWalletException e) {
             Log.e(LOG_TAG, "Unable to load wallet address: " + e.getMessage());
             ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
@@ -127,14 +126,14 @@ public class IdentityFragment extends Fragment {
                         @Override
                         public void onError(Throwable e) {
                             if (isAdded()) {
-                                unspentOutputTextView.setText(getString(R.string.missing_value));
+                                unspentOutput.setText(getString(R.string.missing_value));
                             }
                         }
 
                         @Override
                         public void onNext(List<UnspentOutput> unspentOutputs) {
                             if (isAdded()) {
-                                unspentOutputTextView.setText(
+                                unspentOutput.setText(
                                         String.format(Locale.getDefault(), "%f QTUM", unspentOutputs.get(0).getAmount())
                                 );
                             }
