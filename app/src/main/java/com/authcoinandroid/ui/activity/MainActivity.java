@@ -1,5 +1,7 @@
 package com.authcoinandroid.ui.activity;
 
+import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,7 +11,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 import com.authcoinandroid.R;
 import com.authcoinandroid.service.identity.WalletService;
@@ -49,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
                         Class currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container).getClass();
                         if (!currentFragment.equals(selectedFragment)) {
-                            applyFragment(selectedFragment, false);
+                            applyFragment(selectedFragment, false, false);
                             return true;
                         } else {
                             return false;
@@ -58,29 +63,66 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         if (WalletService.getInstance().isWalletCreated(getApplicationContext())) {
-            applyFragment(IdentityFragment.class, false);
+            applyFragment(IdentityFragment.class, false, false);
         } else {
-            applyFragment(WelcomeFragment.class, false);
-            bottomNavigationView.setVisibility(View.INVISIBLE);
+            applyFragment(WelcomeFragment.class, false, true);
         }
     }
 
-    public void applyFragment(@NonNull Class fragmentClass, boolean addToBackStack) {
+    public void applyFragment(@NonNull Class fragmentClass, boolean addToBackStack, boolean hideNavigation) {
         Fragment fragment;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
 
             if (addToBackStack) {
-                transaction.addToBackStack(null).add(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+            }
+
+            if (hideNavigation) {
+                findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
             } else {
-                transaction.replace(R.id.fragment_container, fragment);
+                findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
             }
 
             transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void applyFullFragmentWithBundle(@NonNull Class fragmentClass, Bundle bundle) {
+        Fragment fragment;
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+            fragment.setArguments(bundle);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+            findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        // Hide keyboard and lose focus on EditText when clicking anywhere outside
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event);
     }
 
     public void displayError(String logTag, String message) {

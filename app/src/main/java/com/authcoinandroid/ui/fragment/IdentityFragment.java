@@ -32,15 +32,16 @@ import java.util.Locale;
 
 public class IdentityFragment extends Fragment {
     private final static String LOG_TAG = "IdentityFragment";
+    private String mWalletAddress;
 
     @BindView(R.id.iv_wallet_copy)
-    ImageView walletAddressCopyButton;
+    ImageView walletAddressCopy;
 
     @BindView(R.id.tv_unspent_output)
-    TextView unspentOutput;
+    TextView unspentOutputTextView;
 
     @BindView(R.id.lv_eirs)
-    ListView eirsList;
+    ListView eirsListView;
 
     public IdentityFragment() {
     }
@@ -55,7 +56,7 @@ public class IdentityFragment extends Fragment {
     @OnClick({R.id.iv_wallet_copy})
     void onCopyWalletAddress(View view) {
         ClipboardManager clipboard = (ClipboardManager) this.getContext().getSystemService(Activity.CLIPBOARD_SERVICE);
-        clipboard.setPrimaryClip(ClipData.newPlainText("Wallet address", walletAddressCopy.getContentDescription()));
+        clipboard.setPrimaryClip(ClipData.newPlainText("Wallet address", mWalletAddress));
         Toast.makeText(this.getContext(), getString(R.string.wallet_address_copied), Toast.LENGTH_LONG).show();
     }
 
@@ -106,7 +107,7 @@ public class IdentityFragment extends Fragment {
         try {
             String walletAddress = WalletService.getInstance().getWalletAddress(this.getContext());
             Log.d(LOG_TAG, "Wallet address is: " + walletAddress);
-            walletAddressCopy.setContentDescription(walletAddress);
+            mWalletAddress = walletAddress;
         } catch (UnreadableWalletException e) {
             Log.e(LOG_TAG, "Unable to load wallet address: " + e.getMessage());
             ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
