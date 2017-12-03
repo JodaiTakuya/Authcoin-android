@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.authcoinandroid"
         minSdkVersion 23
-        targetSdkVersion 25
+        targetSdkVersion 26
         multiDexEnabled true
         versionCode 1
         versionName "1.0"
@@ -28,6 +28,12 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 }
 
@@ -68,4 +74,6 @@ dependencies {
 
     // test
     testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.5.1"
+    testCompile "org.robolectric:shadows-multidex:3.5.1"
 }

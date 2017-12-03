@@ -9,28 +9,33 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.authcoinandroid.R;
-import com.authcoinandroid.exception.GetAliasException;
+import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.UnspentOutput;
 import com.authcoinandroid.ui.activity.MainActivity;
-import com.authcoinandroid.ui.adapter.EirAliasAdapter;
+import com.authcoinandroid.ui.adapter.EirAdapter;
+
 import org.bitcoinj.wallet.UnreadableWalletException;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-
-
-import java.util.List;
-import java.util.Locale;
 
 public class IdentityFragment extends Fragment {
     private final static String LOG_TAG = "IdentityFragment";
@@ -83,23 +88,25 @@ public class IdentityFragment extends Fragment {
 
     private void populateEirList() {
         try {
-            List<String> eirAliases = IdentityService.getInstance().getAllAliases();
-            EirAliasAdapter adapter = new EirAliasAdapter(getContext(), eirAliases);
+            IdentityService identityService = IdentityService.getInstance(getActivity().getApplication());
+
+            List<EntityIdentityRecord> eirs = identityService.getAll();
+            EirAdapter adapter = new EirAdapter(getContext(), eirs);
             eirList.setAdapter(adapter);
 
             eirList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String alias = eirAliases.get(position);
+                    EntityIdentityRecord eir = eirs.get(position);
                     Bundle bundle = new Bundle();
-                    bundle.putString("alias", alias);
+                    bundle.putByteArray("eir", eir.getId());
 
                     if (getContext() instanceof MainActivity) {
                         ((MainActivity) getContext()).applyFullFragmentWithBundle(EirFragment.class, bundle);
                     }
                 }
             });
-        } catch (GetAliasException e) {
+        } catch (Exception e) {
             Log.d(LOG_TAG, e.getMessage());
         }
     }
@@ -135,8 +142,12 @@ public class IdentityFragment extends Fragment {
                         @Override
                         public void onNext(List<UnspentOutput> unspentOutputs) {
                             if (isAdded()) {
+                                BigDecimal sum = BigDecimal.ZERO;
+                                for (UnspentOutput unspentOutput : unspentOutputs) {
+                                    sum = sum.add(unspentOutput.getAmount());
+                                }
                                 unspentOutput.setText(
-                                        String.format(Locale.getDefault(), "%f QTUM", unspentOutputs.get(0).getAmount())
+                                        String.format(Locale.getDefault(), "%f QTUM", sum)
                                 );
                             }
                         }

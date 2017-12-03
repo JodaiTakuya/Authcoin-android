@@ -1,7 +1,13 @@
 package com.authcoinandroid.util.crypto;
 
+import android.security.keystore.KeyProperties;
+
+import org.spongycastle.jce.spec.ECPublicKeySpec;
+
 import java.io.IOException;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,6 +15,17 @@ public class CryptoUtil {
 
     public static PublicKey getPublicKeyByAlias(String alias) throws GeneralSecurityException, IOException {
         return getEntry(alias).getCertificate().getPublicKey();
+    }
+
+    public static KeyPair getKeyPair(String alias) {
+        try {
+            KeyStore.PrivateKeyEntry entry = getEntry(alias);
+            return new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException(e);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public static byte[] sign(byte[] data, String alias) throws GeneralSecurityException, IOException {
@@ -53,7 +70,7 @@ public class CryptoUtil {
         return (KeyStore.PrivateKeyEntry) entry;
     }
 
-    private static KeyStore getKeyStore() throws GeneralSecurityException, IOException {
+    public static KeyStore getKeyStore() throws GeneralSecurityException, IOException {
         KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
         ks.load(null);
         return ks;
@@ -74,5 +91,15 @@ public class CryptoUtil {
                 throw new NoSuchAlgorithmException();
         }
         return Signature.getInstance(signatureAlgorithm);
+    }
+
+    public static PublicKey toPublicKey(byte[] content) {
+        try {
+            return KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_EC).generatePublic(new X509EncodedKeySpec(content));
+        } catch (InvalidKeySpecException e) {
+            throw new IllegalStateException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

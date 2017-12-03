@@ -12,6 +12,10 @@ import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
+
 import com.authcoinandroid.R;
 import com.authcoinandroid.exception.RegisterEirException;
 import com.authcoinandroid.service.identity.IdentityService;
@@ -19,9 +23,6 @@ import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.ui.activity.MainActivity;
 import org.bitcoinj.wallet.UnreadableWalletException;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,16 +95,16 @@ public class NewIdentityFragment extends Fragment {
 
     private void registerEir(String[] identifiers, String alias) {
         try {
-            IdentityService.getInstance()
-                    .registerEirWithEcKey(
+            IdentityService.getInstance(getActivity().getApplication())
+                    .registerEir(
                             WalletService.getInstance().getReceiveKey(this.getContext()),
                             identifiers,
                             alias)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<SendRawTransactionResponse>() {
+                    .subscribe(new DisposableObserver<SendRawTransactionResponse>() {
                         @Override
-                        public void onCompleted() {
+                        public void onComplete() {
                         }
 
                         @Override

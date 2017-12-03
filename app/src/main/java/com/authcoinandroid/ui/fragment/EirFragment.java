@@ -8,28 +8,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.authcoinandroid.R;
+import com.authcoinandroid.model.EntityIdentityRecord;
+import com.authcoinandroid.service.identity.EirRepository;
+import com.authcoinandroid.service.identity.IdentityService;
+import com.authcoinandroid.util.ButterKnifeUtil;
+
+import org.spongycastle.util.encoders.Base64;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
-import com.authcoinandroid.R;
-import com.authcoinandroid.exception.GetEirException;
-import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.service.identity.IdentityService;
-import com.authcoinandroid.util.ButterKnifeUtil;
-import com.authcoinandroid.util.ContractUtil;
-import org.spongycastle.util.encoders.Base64;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
-import java.util.Arrays;
-import java.util.List;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 public class EirFragment extends Fragment {
     private final static String LOG_TAG = "EirFragment";
-
-    private String mAlias;
-    private EntityIdentityRecord eir;
 
     @BindViews({
             R.id.tv_eir_identifiers_label,
@@ -58,6 +56,13 @@ public class EirFragment extends Fragment {
     @BindView(R.id.tv_eir_signature)
     TextView signature;
 
+    static final ButterKnife.Action<View> SET_INVISIBLE = new ButterKnife.Action<View>() {
+        @Override
+        public void apply(View view, int index) {
+            view.setVisibility(View.INVISIBLE);
+        }
+    };
+
     public EirFragment() {
     }
 
@@ -68,10 +73,12 @@ public class EirFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        IdentityService identityService = IdentityService.getInstance(getActivity().getApplication());
         View view = inflater.inflate(R.layout.eir_fragment, container, false);
         Bundle bundle = this.getArguments();
-        mAlias = bundle.getString("alias");
-        getEirAndApplyToViews();
+        byte[] eirId = bundle.getByteArray("eir");
+        displayEir(eirId);
+
         ButterKnife.bind(this, view);
         return view;
     }
@@ -82,14 +89,15 @@ public class EirFragment extends Fragment {
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
     }
 
-    private void getEirAndApplyToViews() {
+    private void displayEir(byte[] eirId) {
         try {
-            IdentityService.getInstance().getEir(mAlias)
+            EirRepository.getInstance(getActivity().getApplication()).find(eirId)
+
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<EntityIdentityRecord>() {
+                    .subscribe(new DisposableObserver<EntityIdentityRecord>() {
                         @Override
-                        public void onCompleted() {
+                        public void onComplete() {
                         }
 
                         @Override
@@ -99,21 +107,20 @@ public class EirFragment extends Fragment {
                         }
 
                         @Override
-                        public void onNext(EntityIdentityRecord responseEir) {
-                            eir = responseEir;
-                            mapEirToTextViews();
-                            Log.d(LOG_TAG, Arrays.toString(eir.getIdentifiers()));
+                        public void onNext(EntityIdentityRecord eir) {
+                            mapEirToTextViews(eir);
+                            Log.d(LOG_TAG, eir.toString());
                         }
                     });
-        } catch (GetEirException e) {
-            Log.e("EirAliasAdapter", e.getMessage());
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.getMessage());
         }
     }
 
-    private void mapEirToTextViews() {
-        alias.setText(mAlias);
+    private void mapEirToTextViews(EntityIdentityRecord eir) {
+        alias.setText(eir.getKeyStoreAlias());
         identifiers.setText(TextUtils.join(", ", eir.getIdentifiers()));
-        content.setText(ContractUtil.getEirIdAsString(eir.getContent()));
+        content.setText(Base64.toBase64String(eir.getContent()));
         contentType.setText(eir.getContentType());
         hash.setText(Base64.toBase64String(eir.getHash()));
         signature.setText(Base64.toBase64String(eir.getSignature()));

@@ -1,6 +1,8 @@
 package com.authcoinandroid.service.qtum.mapper;
 
+import com.authcoinandroid.model.BaseEirIdentifier;
 import com.authcoinandroid.model.EntityIdentityRecord;
+
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Bool;
@@ -20,13 +22,14 @@ import static com.authcoinandroid.util.ContractUtil.stringToBytes32;
 import static org.web3j.abi.Utils.convert;
 
 public class RecordContractParamMapper {
+
     public static List<Type> resolveEirContractParams(EntityIdentityRecord eir) {
         List<Type> params = new ArrayList<>();
         List<Bytes32> identifiers = new ArrayList<>();
-        for (String s : eir.getIdentifiers()) {
-            identifiers.add(stringToBytes32(s));
+        for (BaseEirIdentifier s : eir.getIdentifiers()) {
+            identifiers.add(stringToBytes32(s.getValue()));
         }
-        params.add(new DynamicBytes(eir.getContent().getEncoded()));
+        params.add(new DynamicBytes(eir.getKeyPair().getPublic().getEncoded()));
         params.add(stringToBytes32(eir.getContentType()));
         params.add(new DynamicArray<>(identifiers));
         params.add(bytesToBytes32(eir.getHash()));
@@ -47,13 +50,15 @@ public class RecordContractParamMapper {
                 }, new TypeReference<DynamicBytes>() { // signature
                 });
         List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
-        EntityIdentityRecord eir = new EntityIdentityRecord();
+        // TODO check if blockchain EIR and EIR in db match
+        /*EntityIdentityRecord eir = new EntityIdentityRecord();
         eir.setIdentifiers(getIdentifiers((List<Bytes32>) output.get(5).getValue()));
         eir.setContentType(new String((byte[]) output.get(3).getValue(), StandardCharsets.UTF_8));
         eir.setHash((byte[]) output.get(6).getValue());
         eir.setSignature((byte[]) output.get(7).getValue());
         eir.setRevoked(((Bool) output.get(4)).getValue());
-        return eir;
+        return eir;*/
+        return null;
     }
 
     private static String[] getIdentifiers(List<Bytes32> ids) {
