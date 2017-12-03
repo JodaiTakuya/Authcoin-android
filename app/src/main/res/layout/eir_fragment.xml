@@ -5,105 +5,105 @@
                 tools:context=".ui.fragment.EirFragment">
 
     <TextView
-        android:text="@string/no_identity_yet"
-        android:textSize="24sp"
+        android:id="@+id/tv_alias"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
         android:gravity="center_horizontal"
-        android:id="@+id/tv_alias"/>
+        android:textSize="24sp"
+        android:text="@string/no_identity_yet"/>
 
     <TextView
-        android:text="@string/eir_identifiers"
+        android:id="@+id/tv_eir_identifiers_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/tv_alias"
-        android:id="@+id/tv_eir_identifiers_label"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/eir_identifiers"/>
     <TextView
+        android:id="@+id/tv_eir_identifiers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_below="@id/tv_eir_identifiers_label"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_below="@id/tv_eir_identifiers_label"
-        android:id="@+id/tv_eir_identifiers"/>
+        android:layout_marginTop="6dp"/>
 
     <TextView
-        android:text="@string/eir_content"
+        android:id="@+id/tv_eir_content_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/tv_eir_identifiers_label"
-        android:id="@+id/tv_eir_content_label"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/eir_content"/>
     <TextView
+        android:id="@+id/tv_eir_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_below="@id/tv_eir_content_label"
-        android:id="@+id/tv_eir_content"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="6dp"/>
 
     <TextView
-        android:text="@string/eir_content_type"
+        android:id="@+id/tv_eir_content_type_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/tv_eir_content"
-        android:id="@+id/tv_eir_content_type_label"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/eir_content_type"/>
     <TextView
+        android:id="@+id/tv_eir_content_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_below="@id/tv_eir_content_type_label"
-        android:id="@+id/tv_eir_content_type"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="6dp"/>
 
     <TextView
-        android:text="@string/eir_hash"
+        android:id="@+id/tv_eir_hash_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/tv_eir_content_type"
-        android:id="@+id/tv_eir_hash_label"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/eir_hash"/>
     <TextView
+        android:id="@+id/tv_eir_hash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_below="@id/tv_eir_hash_label"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_below="@id/tv_eir_hash_label"
-        android:id="@+id/tv_eir_hash"/>
+        android:layout_marginTop="6dp"/>
 
     <TextView
-        android:text="@string/eir_signature"
+        android:id="@+id/tv_eir_signature_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/tv_eir_hash"
-        android:id="@+id/tv_eir_signature_label"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/eir_signature"/>
     <TextView
+        android:id="@+id/tv_eir_signature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_below="@id/tv_eir_signature_label"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_below="@id/tv_eir_signature_label"
-        android:id="@+id/tv_eir_signature"/>
+        android:layout_marginTop="6dp"/>
 
 </RelativeLayout>

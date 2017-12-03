@@ -5,11 +5,11 @@
                 tools:context=".ui.fragment.IdentityFragment">
 
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dp"
-            android:text="@string/trusted_parties"
-            android:textSize="30sp"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:textSize="30sp"
+        android:text="@string/trusted_parties"/>
 
 </RelativeLayout>

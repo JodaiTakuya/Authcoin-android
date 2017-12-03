@@ -15,6 +15,7 @@ import com.authcoinandroid.R;
 import com.authcoinandroid.exception.GetEirException;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.identity.IdentityService;
+import com.authcoinandroid.util.ButterKnifeUtil;
 import com.authcoinandroid.util.ContractUtil;
 import org.spongycastle.util.encoders.Base64;
 import rx.Subscriber;
@@ -27,7 +28,7 @@ import java.util.List;
 public class EirFragment extends Fragment {
     private final static String LOG_TAG = "EirFragment";
 
-    private String alias;
+    private String mAlias;
     private EntityIdentityRecord eir;
 
     @BindViews({
@@ -40,7 +41,7 @@ public class EirFragment extends Fragment {
     List<TextView> labelViews;
 
     @BindView(R.id.tv_alias)
-    TextView tv_alias;
+    TextView alias;
 
     @BindView(R.id.tv_eir_identifiers)
     TextView identifiers;
@@ -57,12 +58,6 @@ public class EirFragment extends Fragment {
     @BindView(R.id.tv_eir_signature)
     TextView signature;
 
-    static final ButterKnife.Action<View> SET_INVISIBLE = new ButterKnife.Action<View>() {
-        @Override public void apply(View view, int index) {
-            view.setVisibility(View.INVISIBLE);
-        }
-    };
-
     public EirFragment() {
     }
 
@@ -74,10 +69,9 @@ public class EirFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.eir_fragment, container, false);
-
         Bundle bundle = this.getArguments();
-        alias = bundle.getString("alias");
-        getEir();
+        mAlias = bundle.getString("alias");
+        getEirAndApplyToViews();
         ButterKnife.bind(this, view);
         return view;
     }
@@ -88,9 +82,9 @@ public class EirFragment extends Fragment {
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
     }
 
-    private void getEir() {
+    private void getEirAndApplyToViews() {
         try {
-            IdentityService.getInstance().getEir(alias)
+            IdentityService.getInstance().getEir(mAlias)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<EntityIdentityRecord>() {
@@ -101,7 +95,7 @@ public class EirFragment extends Fragment {
                         @Override
                         public void onError(Throwable e) {
                             Log.d(LOG_TAG, e.getMessage());
-                            ButterKnife.apply(labelViews, SET_INVISIBLE);
+                            ButterKnife.apply(labelViews, ButterKnifeUtil.SET_INVISIBLE);
                         }
 
                         @Override
@@ -117,7 +111,7 @@ public class EirFragment extends Fragment {
     }
 
     private void mapEirToTextViews() {
-        tv_alias.setText(alias);
+        alias.setText(mAlias);
         identifiers.setText(TextUtils.join(", ", eir.getIdentifiers()));
         content.setText(ContractUtil.getEirIdAsString(eir.getContent()));
         contentType.setText(eir.getContentType());

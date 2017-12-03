@@ -127,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void displayError(String logTag, String message) {
         Log.e(logTag, message);
+        displayNotification(message);
+    }
+
+    public void displayNotification(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 }

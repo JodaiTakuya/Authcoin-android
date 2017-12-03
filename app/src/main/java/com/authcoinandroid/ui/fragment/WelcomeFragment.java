@@ -1,6 +1,5 @@
 package com.authcoinandroid.ui.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -31,7 +29,7 @@ public class WelcomeFragment extends Fragment {
     ProgressBar progressBar;
 
     @BindView(R.id.btn_create_wallet)
-    Button buttonCreateWallet;
+    Button createWalletButton;
 
     public WelcomeFragment() {
     }
@@ -39,19 +37,16 @@ public class WelcomeFragment extends Fragment {
     @OnClick({R.id.btn_create_wallet})
     void onCreateWalletClick(View view) {
         if (validatePasswords()) {
-            String password = walletPassword.getText().toString();
-            final Context context = this.getContext();
             disableElements();
-            new WalletCreationTask(context, password, result -> {
+            String password = walletPassword.getText().toString();
+            new WalletCreationTask(getContext(), password, result -> {
                 if (result.getError() != null) {
                     enableElements();
-                    // TODO display errors
-                    Log.d(LOG_TAG, "Failed to create wallet");
+                    ((MainActivity) getActivity()).displayError(LOG_TAG, "Failed to create wallet");
                 } else {
-                    Log.d(LOG_TAG, "Created wallet");
-                    Log.d(LOG_TAG, "Wallet mnemonic code: " + result.getResult().getKeyChainSeed().getMnemonicCode());
-                    Toast.makeText(context, "Wallet created", Toast.LENGTH_LONG).show();
                     clearInputFields();
+                    Log.d(LOG_TAG, "Created wallet, mnemonic code: " + result.getResult().getKeyChainSeed().getMnemonicCode());
+                    ((MainActivity) getActivity()).displayNotification("Wallet created");
                     ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false, false);
                 }
             }).execute();
@@ -78,16 +73,16 @@ public class WelcomeFragment extends Fragment {
 
     private void disableElements() {
         progressBar.setVisibility(View.VISIBLE);
-        buttonCreateWallet.setEnabled(false);
-        buttonCreateWallet.setVisibility(View.INVISIBLE);
+        createWalletButton.setEnabled(false);
+        createWalletButton.setVisibility(View.INVISIBLE);
         walletPassword.setEnabled(false);
         walletPasswordConfirm.setEnabled(false);
     }
 
     private void enableElements() {
         progressBar.setVisibility(View.INVISIBLE);
-        buttonCreateWallet.setVisibility(View.VISIBLE);
-        buttonCreateWallet.setEnabled(true);
+        createWalletButton.setVisibility(View.VISIBLE);
+        createWalletButton.setEnabled(true);
         walletPassword.setEnabled(true);
         walletPasswordConfirm.setEnabled(true);
     }
