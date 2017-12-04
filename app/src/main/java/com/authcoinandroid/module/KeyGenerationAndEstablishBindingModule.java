@@ -7,6 +7,7 @@ import android.util.Pair;
 import com.authcoinandroid.model.EirIdentifier;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.identity.EirRepository;
+import com.authcoinandroid.service.keypair.KeyPairService;
 
 import org.spongycastle.jce.ECNamedCurveTable;
 
@@ -23,12 +24,14 @@ import java.security.KeyPairGenerator;
 public class KeyGenerationAndEstablishBindingModule {
 
     private static final String PROVIDER_ANDROID_KEY_STORE = "AndroidKeyStore";
-    private KeyGenerationModule keyGenerator = new KeyGenerationModule();
-    private EstablishBindingModule bindingModule = new EstablishBindingModule();
-    private EirRepository repository;
 
-    public KeyGenerationAndEstablishBindingModule(EirRepository repository) {
+    private final EstablishBindingModule bindingModule = new EstablishBindingModule();
+    private final KeyGenerationModule keyGenerator;
+    private final EirRepository repository;
+
+    public KeyGenerationAndEstablishBindingModule(EirRepository repository, KeyPairService keyPairService) {
         this.repository = repository;
+        this.keyGenerator = new KeyGenerationModule(keyPairService);
     }
 
     public Pair<KeyPair, EntityIdentityRecord> generateAndEstablishBinding(String[] identifiers, String alias)
@@ -48,13 +51,14 @@ public class KeyGenerationAndEstablishBindingModule {
      */
     public class KeyGenerationModule {
 
+        private final KeyPairService keyPairService;
+
+        public KeyGenerationModule(KeyPairService keyPairService) {
+            this.keyPairService = keyPairService;
+        }
+
         public KeyPair createNewKeyPair(String alias) throws GeneralSecurityException {
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, PROVIDER_ANDROID_KEY_STORE);
-            kpg.initialize(
-                    new KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
-                            .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-                            .build());
-            return kpg.generateKeyPair();
+            return keyPairService.create(alias);
         }
 
     }

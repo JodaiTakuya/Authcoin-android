@@ -2,16 +2,16 @@ package com.authcoinandroid.service.identity;
 
 import android.app.Application;
 
-import com.authcoinandroid.exception.GetAliasException;
 import com.authcoinandroid.exception.GetEirException;
 import com.authcoinandroid.exception.RegisterEirException;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.KeyGenerationAndEstablishBindingModule;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
+import com.authcoinandroid.service.keypair.AndroidKeyPairService;
+import com.authcoinandroid.service.keypair.KeyPairService;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
 import com.authcoinandroid.util.ContractUtil;
-import com.authcoinandroid.util.crypto.CryptoUtil;
 
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
@@ -31,17 +31,22 @@ import static com.authcoinandroid.util.crypto.CryptoUtil.getPublicKeyByAlias;
 public class IdentityService {
 
     private static IdentityService identityService;
+
     private final EirRepository repository;
+    private final KeyGenerationAndEstablishBindingModule module;
 
     public static IdentityService getInstance(Application application) {
         if (identityService == null) {
-            identityService = new IdentityService(EirRepository.getInstance(application));
+            EirRepository repository = EirRepository.getInstance(application);
+            identityService = new IdentityService(repository, new AndroidKeyPairService());
+
         }
         return identityService;
     }
 
-    private IdentityService(EirRepository repository) {
+    private IdentityService(EirRepository repository, KeyPairService keyPairService) {
         this.repository = repository;
+        this.module = new KeyGenerationAndEstablishBindingModule(repository, keyPairService);
     }
 
     /**
@@ -58,7 +63,6 @@ public class IdentityService {
      */
     public Observable<SendRawTransactionResponse> registerEir(DeterministicKey key, String[] identifiers, String alias) throws RegisterEirException {
         try {
-            KeyGenerationAndEstablishBindingModule module = new KeyGenerationAndEstablishBindingModule(repository);
             EntityIdentityRecord eir = module.generateAndEstablishBinding(identifiers, alias).second;
             List<Type> params = RecordContractParamMapper.resolveEirContractParams(eir);
             return AuthcoinContractService.getInstance().registerEir(key, params);
