@@ -7,6 +7,7 @@ import org.bitcoinj.params.QtumTestNetParams;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.Wallet;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -58,6 +59,7 @@ public class BlockChainServiceTest {
      * }
      */
     @Test
+    @Ignore
     public void testGetUnspentOutput() throws Exception {
         Wallet wallet = createWallet("mypassword", new File("mywallet"));
         final DeterministicKey key = wallet.freshReceiveKey();
