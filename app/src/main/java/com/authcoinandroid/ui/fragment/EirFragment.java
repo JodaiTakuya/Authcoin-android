@@ -13,6 +13,7 @@ import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.identity.EirRepository;
 import com.authcoinandroid.service.identity.IdentityService;
+import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.util.ButterKnifeUtil;
 
 import org.spongycastle.util.encoders.Base64;
@@ -91,7 +92,7 @@ public class EirFragment extends Fragment {
 
     private void displayEir(byte[] eirId) {
         try {
-            EirRepository.getInstance(getActivity().getApplication()).find(eirId)
+            ((AuthCoinApplication) getActivity().getApplication()).getEirRepository().find(eirId)
 
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

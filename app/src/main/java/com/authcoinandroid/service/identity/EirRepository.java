@@ -1,9 +1,6 @@
 package com.authcoinandroid.service.identity;
 
-import android.app.Application;
-
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.ui.AuthCoinApplication;
 
 import java.util.List;
 
@@ -18,19 +15,10 @@ import io.requery.reactivex.ReactiveEntityStore;
  */
 public class EirRepository {
 
-    private static EirRepository repository;
     private final ReactiveEntityStore<Persistable> dataStore;
 
-    private EirRepository(ReactiveEntityStore<Persistable> dataStore) {
+    public EirRepository(ReactiveEntityStore<Persistable> dataStore) {
         this.dataStore = dataStore;
-    }
-
-    public static EirRepository getInstance(Application app) {
-        if (repository == null) {
-            ReactiveEntityStore<Persistable> dataStore = ((AuthCoinApplication) app).getDataStore();
-            repository = new EirRepository(dataStore);
-        }
-        return repository;
     }
 
     /**
@@ -39,7 +27,7 @@ public class EirRepository {
     public Single<EntityIdentityRecord> save(EntityIdentityRecord eir) {
         byte[] id = eir.getId();
         EntityIdentityRecord result = dataStore.findByKey(EntityIdentityRecord.class, id).blockingGet();
-        if(result == null) {
+        if (result == null) {
             return dataStore.insert(eir);
         }
         return dataStore.update(eir);

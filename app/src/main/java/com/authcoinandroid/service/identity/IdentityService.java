@@ -11,6 +11,7 @@ import com.authcoinandroid.service.keypair.AndroidKeyPairService;
 import com.authcoinandroid.service.keypair.KeyPairService;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
+import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.util.ContractUtil;
 
 import org.bitcoinj.crypto.DeterministicKey;
@@ -37,7 +38,7 @@ public class IdentityService {
 
     public static IdentityService getInstance(Application application) {
         if (identityService == null) {
-            EirRepository repository = EirRepository.getInstance(application);
+            EirRepository repository = new EirRepository(((AuthCoinApplication)application).getDataStore());
             identityService = new IdentityService(repository, new AndroidKeyPairService());
 
         }
