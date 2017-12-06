@@ -2,12 +2,12 @@ package com.authcoinandroid.service.qtum;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import rx.Observable;
 
 /**
  * A low level API to communicate with QTUM blockchain
