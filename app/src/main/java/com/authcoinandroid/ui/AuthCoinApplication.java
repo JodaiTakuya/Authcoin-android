@@ -1,15 +1,11 @@
 package com.authcoinandroid.ui;
 
 import android.support.multidex.MultiDexApplication;
-
 import com.authcoinandroid.model.Models;
 import com.authcoinandroid.service.challenge.ChallengeRepository;
+import com.authcoinandroid.service.challenge.ChallengeServiceImpl;
+import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.EirRepository;
-
-import org.spongycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Security;
-
 import io.requery.Persistable;
 import io.requery.android.BuildConfig;
 import io.requery.android.sqlite.DatabaseSource;
@@ -18,6 +14,9 @@ import io.requery.reactivex.ReactiveSupport;
 import io.requery.sql.Configuration;
 import io.requery.sql.EntityDataStore;
 import io.requery.sql.TableCreationMode;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
+
+import java.security.Security;
 
 /**
  * Base class for maintaining global AuthCoin application state.
@@ -30,6 +29,7 @@ public class AuthCoinApplication extends MultiDexApplication {
     private ReactiveEntityStore<Persistable> dataStore;
     private EirRepository eirRepository;
     private ChallengeRepository challengeRepository;
+    private ChallengeServiceImpl challengeService;
 
     @Override
     public void onCreate() {
@@ -45,9 +45,12 @@ public class AuthCoinApplication extends MultiDexApplication {
         Configuration configuration = source.getConfiguration();
         this.dataStore = ReactiveSupport.toReactiveStore(new EntityDataStore<Persistable>(configuration));
 
-        // creat repositories
+        // create repositories
         this.eirRepository = new EirRepository(dataStore);
         this.challengeRepository = new ChallengeRepository(dataStore);
+
+        //create services
+        this.challengeService = new ChallengeServiceImpl(this.challengeRepository, new AuthcoinContractService());
     }
 
     /**
@@ -60,5 +63,9 @@ public class AuthCoinApplication extends MultiDexApplication {
 
     public EirRepository getEirRepository() {
         return eirRepository;
+    }
+
+    public ChallengeServiceImpl getChallengeService() {
+        return challengeService;
     }
 }

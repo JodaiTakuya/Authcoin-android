@@ -1,20 +1,18 @@
 package com.authcoinandroid.service.qtum.mapper;
 
 import com.authcoinandroid.model.BaseEirIdentifier;
+import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
-
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.Bool;
-import org.web3j.abi.datatypes.DynamicArray;
-import org.web3j.abi.datatypes.DynamicBytes;
-import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.*;
 import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint256;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
@@ -59,6 +57,33 @@ public class RecordContractParamMapper {
         eir.setRevoked(((Bool) output.get(4)).getValue());
         return eir;*/
         return null;
+    }
+
+    public static ChallengeRecord resolveCrFromAbiReturn(String abiReturn) {
+        // TODO parse all data about cr
+        List<TypeReference<?>> outputParameters = Arrays.asList(
+                new TypeReference<Bytes32>() {
+                });
+        List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
+        ChallengeRecord challengeRecord = new ChallengeRecord();
+        challengeRecord.setType(new String((byte[]) output.get(0).getValue()));
+        return challengeRecord;
+    }
+
+    public static List<Address> resolveAddressesFromAbiReturn(String abiReturn) {
+        List<TypeReference<?>> outputParameters = Collections.singletonList(
+                new TypeReference<DynamicArray<Address>>() {
+                });
+        List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
+        return (List<Address>) output.get(0).getValue();
+    }
+
+    public static List<Bytes32> resolveBytes32FromAbiReturn(String abiReturn) {
+        List<TypeReference<?>> outputParameters = Collections.singletonList(
+                new TypeReference<DynamicArray<Bytes32>>() {
+                });
+        List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
+        return (List<Bytes32>) output.get(0).getValue();
     }
 
     private static String[] getIdentifiers(List<Bytes32> ids) {
