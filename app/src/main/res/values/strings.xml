@@ -29,4 +29,9 @@
     <string name="no_identity_yet">This identity is not on the block-chain, yet.</string>
     <string name="pin_create">Create new PIN</string>
     <string name="pin_insert">Insert PIN</string>
+    <string name="new_challenge">Send a new challenge</string>
+    <string name="new_challenge_desc">Some description for sending a new challenge</string>
+    <string name="your_identity">Your identity</string>
+    <string name="challenge_target">Challenge target identity</string>
+    <string name="send_challenge">Send challenge</string>
 </resources>
