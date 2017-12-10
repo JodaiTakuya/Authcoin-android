@@ -8,24 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.authcoinandroid.R;
-import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.service.identity.EirRepository;
-import com.authcoinandroid.service.identity.IdentityService;
-import com.authcoinandroid.ui.AuthCoinApplication;
-import com.authcoinandroid.util.ButterKnifeUtil;
-
-import org.spongycastle.util.encoders.Base64;
-
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
+import com.authcoinandroid.R;
+import com.authcoinandroid.model.EntityIdentityRecord;
+import com.authcoinandroid.service.identity.IdentityService;
+import com.authcoinandroid.ui.AuthCoinApplication;
+import com.authcoinandroid.util.ButterKnifeUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import org.spongycastle.util.encoders.Base64;
+
+import java.util.List;
 
 public class EirFragment extends Fragment {
     private final static String LOG_TAG = "EirFragment";
@@ -56,13 +52,6 @@ public class EirFragment extends Fragment {
 
     @BindView(R.id.tv_eir_signature)
     TextView signature;
-
-    static final ButterKnife.Action<View> SET_INVISIBLE = new ButterKnife.Action<View>() {
-        @Override
-        public void apply(View view, int index) {
-            view.setVisibility(View.INVISIBLE);
-        }
-    };
 
     public EirFragment() {
     }

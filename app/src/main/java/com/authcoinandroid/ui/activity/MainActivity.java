@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-
 import com.authcoinandroid.R;
 import com.authcoinandroid.ui.fragment.ChallengeFragment;
 import com.authcoinandroid.ui.fragment.IdentityFragment;

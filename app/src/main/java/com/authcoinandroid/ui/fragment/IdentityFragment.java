@@ -13,7 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
@@ -23,21 +26,15 @@ import com.authcoinandroid.service.qtum.UnspentOutput;
 import com.authcoinandroid.ui.activity.MainActivity;
 import com.authcoinandroid.ui.activity.WelcomeActivity;
 import com.authcoinandroid.ui.adapter.EirAdapter;
-
 import com.authcoinandroid.util.AndroidUtil;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import org.bitcoinj.wallet.UnreadableWalletException;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 
 public class IdentityFragment extends Fragment {
     private final static String LOG_TAG = "IdentityFragment";
