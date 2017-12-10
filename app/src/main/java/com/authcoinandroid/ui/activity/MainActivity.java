@@ -11,16 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.authcoinandroid.R;
-import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.ui.fragment.ChallengeFragment;
 import com.authcoinandroid.ui.fragment.IdentityFragment;
 import com.authcoinandroid.ui.fragment.TrustFragment;
-import com.authcoinandroid.ui.fragment.WelcomeFragment;
 
 public class MainActivity extends AppCompatActivity {
     private final static String LOG_TAG = "MainActivity";
@@ -29,8 +27,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
+        // Hide activity content when focus is lost
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener
                 (item -> {
                     Class selectedFragment = null;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
 
+                    //Prevent spamming current open fragment
                     Class currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container).getClass();
                     if (!currentFragment.equals(selectedFragment)) {
                         applyFragment(selectedFragment, false, false);
@@ -57,11 +60,15 @@ public class MainActivity extends AppCompatActivity {
                         return false;
                     }
                 });
-        if (WalletService.getInstance().isWalletCreated(getApplicationContext())) {
-            applyFragment(IdentityFragment.class, false, false);
-        } else {
-            applyFragment(WelcomeFragment.class, false, true);
-        }
+
+        applyFragment(IdentityFragment.class, false, false);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Finish to provoke UnlockWithPinActivity
+        finish();
     }
 
     public void applyFragment(@NonNull Class fragmentClass, boolean addToBackStack, boolean hideNavigation) {
@@ -118,14 +125,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent(event);
-    }
-
-    public void displayError(String logTag, String message) {
-        Log.e(logTag, message);
-        displayNotification(message);
-    }
-
-    public void displayNotification(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 }

@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.authcoinandroid.util.AndroidUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -119,7 +120,7 @@ public class NewIdentityFragment extends Fragment {
                         }
                     });
         } catch (RegisterEirException | UnreadableWalletException e) {
-            ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
+            AndroidUtil.displayNotification(getContext(), e.getMessage());
         }
     }
 }

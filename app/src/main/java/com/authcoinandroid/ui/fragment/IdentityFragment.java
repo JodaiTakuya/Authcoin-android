@@ -3,13 +3,13 @@ package com.authcoinandroid.ui.fragment;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,8 +21,10 @@ import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.UnspentOutput;
 import com.authcoinandroid.ui.activity.MainActivity;
+import com.authcoinandroid.ui.activity.WelcomeActivity;
 import com.authcoinandroid.ui.adapter.EirAdapter;
 
+import com.authcoinandroid.util.AndroidUtil;
 import org.bitcoinj.wallet.UnreadableWalletException;
 
 import java.math.BigDecimal;
@@ -55,7 +57,8 @@ public class IdentityFragment extends Fragment {
     @OnLongClick({R.id.iv_wallet})
     boolean onDeleteWallet(View view) {
         WalletService.getInstance().deleteWallet(this.getContext());
-        ((MainActivity) getActivity()).applyFragment(WelcomeFragment.class, false, true);
+        Intent intent = new Intent(getActivity(), WelcomeActivity.class);
+        startActivity(intent);
         return true;
     }
 
@@ -63,7 +66,7 @@ public class IdentityFragment extends Fragment {
     void onCopyWalletAddress(View view) {
         ClipboardManager clipboard = (ClipboardManager) this.getContext().getSystemService(Activity.CLIPBOARD_SERVICE);
         clipboard.setPrimaryClip(ClipData.newPlainText("Wallet address", walletAddressCopy.getContentDescription()));
-        ((MainActivity) getActivity()).displayNotification(getString(R.string.wallet_address_copied));
+        AndroidUtil.displayNotification(getContext(), getString(R.string.wallet_address_copied));
     }
 
     @OnClick({R.id.btn_new_identity})
@@ -94,16 +97,13 @@ public class IdentityFragment extends Fragment {
             EirAdapter adapter = new EirAdapter(getContext(), eirs);
             eirList.setAdapter(adapter);
 
-            eirList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    EntityIdentityRecord eir = eirs.get(position);
-                    Bundle bundle = new Bundle();
-                    bundle.putByteArray("eir", eir.getId());
+            eirList.setOnItemClickListener((parent, view, position, id) -> {
+                EntityIdentityRecord eir = eirs.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putByteArray("eir", eir.getId());
 
-                    if (getContext() instanceof MainActivity) {
-                        ((MainActivity) getContext()).applyFullFragmentWithBundle(EirFragment.class, bundle);
-                    }
+                if (getContext() instanceof MainActivity) {
+                    ((MainActivity) getContext()).applyFullFragmentWithBundle(EirFragment.class, bundle);
                 }
             });
         } catch (Exception e) {
@@ -118,7 +118,7 @@ public class IdentityFragment extends Fragment {
             walletAddressCopy.setContentDescription(walletAddress);
         } catch (UnreadableWalletException e) {
             Log.e(LOG_TAG, "Unable to load wallet address: " + e.getMessage());
-            ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
+            AndroidUtil.displayNotification(getContext(), e.getMessage());
         }
     }
 
@@ -153,7 +153,7 @@ public class IdentityFragment extends Fragment {
                         }
                     });
         } catch (UnreadableWalletException e) {
-            ((MainActivity) getActivity()).displayError(LOG_TAG, e.getMessage());
+            AndroidUtil.displayNotification(getContext(), e.getMessage());
         }
     }
 }
