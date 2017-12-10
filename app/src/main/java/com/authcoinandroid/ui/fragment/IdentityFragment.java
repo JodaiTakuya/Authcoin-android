@@ -3,13 +3,13 @@ package com.authcoinandroid.ui.fragment;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,6 +21,7 @@ import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.UnspentOutput;
 import com.authcoinandroid.ui.activity.MainActivity;
+import com.authcoinandroid.ui.activity.WelcomeActivity;
 import com.authcoinandroid.ui.adapter.EirAdapter;
 
 import com.authcoinandroid.util.AndroidUtil;
@@ -56,7 +57,8 @@ public class IdentityFragment extends Fragment {
     @OnLongClick({R.id.iv_wallet})
     boolean onDeleteWallet(View view) {
         WalletService.getInstance().deleteWallet(this.getContext());
-        ((MainActivity) getActivity()).applyFragment(WelcomeFragment.class, false, true);
+        Intent intent = new Intent(getActivity(), WelcomeActivity.class);
+        startActivity(intent);
         return true;
     }
 

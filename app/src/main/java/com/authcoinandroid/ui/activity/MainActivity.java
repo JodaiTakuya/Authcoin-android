@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        // Finish MainActivity to provoke UnlockWithPinActivity
+        // Finish to provoke UnlockWithPinActivity
         finish();
     }
 
