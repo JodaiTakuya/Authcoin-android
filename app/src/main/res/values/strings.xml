@@ -27,4 +27,6 @@
     <string name="eir_signature">Signature</string>
     <string name="eir_identifiers">Identifiers</string>
     <string name="no_identity_yet">This identity is not on the block-chain, yet.</string>
+    <string name="pin_create">Create new PIN</string>
+    <string name="pin_insert">Insert PIN</string>
 </resources>

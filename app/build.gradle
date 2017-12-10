@@ -75,6 +75,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    // PIN
+    compile 'com.andrognito.pinlockview:pinlockview:2.1.0'
+
     // test
     testCompile 'junit:junit:4.12'
     testCompile "org.robolectric:robolectric:3.5.1"
