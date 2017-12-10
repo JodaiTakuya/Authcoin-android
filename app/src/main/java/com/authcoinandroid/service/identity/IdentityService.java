@@ -1,19 +1,14 @@
 package com.authcoinandroid.service.identity;
 
-import android.app.Application;
-
 import com.authcoinandroid.exception.GetEirException;
 import com.authcoinandroid.exception.RegisterEirException;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.KeyGenerationAndEstablishBindingModule;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
-import com.authcoinandroid.service.keypair.AndroidKeyPairService;
-import com.authcoinandroid.service.keypair.KeyPairService;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
-import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.util.ContractUtil;
-
+import io.reactivex.Observable;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.datatypes.Type;
@@ -24,41 +19,30 @@ import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.List;
 
-import io.reactivex.Observable;
-
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
 import static com.authcoinandroid.util.crypto.CryptoUtil.getPublicKeyByAlias;
 
 public class IdentityService {
 
-    private static IdentityService identityService;
-
     private final EirRepository repository;
     private final KeyGenerationAndEstablishBindingModule module;
+    private AuthcoinContractService authcoinContractService;
 
-    public static IdentityService getInstance(Application application) {
-        if (identityService == null) {
-            EirRepository repository = new EirRepository(((AuthCoinApplication)application).getDataStore());
-            identityService = new IdentityService(repository, new AndroidKeyPairService());
-
-        }
-        return identityService;
-    }
-
-    private IdentityService(EirRepository repository, KeyPairService keyPairService) {
+    public IdentityService(EirRepository repository, KeyGenerationAndEstablishBindingModule module, AuthcoinContractService authcoinContractService) {
         this.repository = repository;
-        this.module = new KeyGenerationAndEstablishBindingModule(repository, keyPairService);
+        this.module = module;
+        this.authcoinContractService = authcoinContractService;
     }
 
     /**
      * Registers a new eir. Does the following:
-     *  1. Generates a new KeyPair and saves it to Android KeyStore
-     *  2. Creates EIR object and saves it to the local database
-     *  3. Calls QTUM smart contract to store the EIR on blockchain
+     * 1. Generates a new KeyPair and saves it to Android KeyStore
+     * 2. Creates EIR object and saves it to the local database
+     * 3. Calls QTUM smart contract to store the EIR on blockchain
      *
-     * @param key - wallet key
+     * @param key         - wallet key
      * @param identifiers - EIR identifiers
-     * @param alias - alias used by Android Keystore
+     * @param alias       - alias used by Android Keystore
      * @return an observable
      * @throws RegisterEirException will be thrown if registration fails
      */
@@ -66,7 +50,7 @@ public class IdentityService {
         try {
             EntityIdentityRecord eir = module.generateAndEstablishBinding(identifiers, alias).second;
             List<Type> params = RecordContractParamMapper.resolveEirContractParams(eir);
-            return AuthcoinContractService.getInstance().registerEir(key, params);
+            return this.authcoinContractService.registerEir(key, params);
         } catch (GeneralSecurityException | IOException e) {
             throw new RegisterEirException("Failed to register EIR", e);
         }
@@ -75,11 +59,16 @@ public class IdentityService {
     public Observable<EntityIdentityRecord> getEir(String alias) throws GetEirException {
         try {
             PublicKey key = getPublicKeyByAlias(alias);
-            return AuthcoinContractService.getInstance().getEir(getEirIdAsBytes32(key))
-                    .switchMap(contractResponse -> mapAbiResponseToObservable(key, contractResponse.getItems().get(0).getOutput()));
+            return this.authcoinContractService.getEirAddress(getEirIdAsBytes32(key))
+                    .switchMap(contractResponse -> getEirByAddress(contractResponse.getItems().get(0).getOutput()));
         } catch (GeneralSecurityException | IOException e) {
             throw new GetEirException("Failed to get EIR", e);
         }
+    }
+
+    public Observable<EntityIdentityRecord> getEirByAddress(String address) {
+        return this.authcoinContractService.getEirByAddress(address)
+                .switchMap(contractResponse -> mapAbiResponseToObservable(contractResponse.getItems().get(0).getOutput()));
     }
 
     /**
@@ -89,7 +78,7 @@ public class IdentityService {
         return repository.findAll();
     }
 
-    private Observable<EntityIdentityRecord> mapAbiResponseToObservable(PublicKey key, String abiResponse) {
+    private Observable<EntityIdentityRecord> mapAbiResponseToObservable(String abiResponse) {
         return Observable.defer(() -> {
             try {
 

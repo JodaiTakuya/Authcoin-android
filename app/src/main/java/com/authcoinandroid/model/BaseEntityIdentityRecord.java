@@ -1,21 +1,13 @@
 package com.authcoinandroid.model;
 
 import com.authcoinandroid.util.crypto.CryptoUtil;
-
+import io.requery.*;
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.crypto.Hash;
 
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.List;
-
-import io.requery.CascadeAction;
-import io.requery.Entity;
-import io.requery.Generated;
-import io.requery.Key;
-import io.requery.OneToMany;
-import io.requery.PostLoad;
-import io.requery.Transient;
 
 import static org.web3j.utils.Numeric.cleanHexPrefix;
 
@@ -29,7 +21,7 @@ public class BaseEntityIdentityRecord {
     byte[] id;
 
     @OneToMany(cascade = {CascadeAction.DELETE, CascadeAction.SAVE})
-    List<BaseEirIdentifier> identifiers;
+    List<EirIdentifier> identifiers;
 
     @OneToMany
     List<ChallengeRecord> challenges;
@@ -79,7 +71,7 @@ public class BaseEntityIdentityRecord {
         this.signature = sign();
     }
 
-    public void setIdentifiers(List<BaseEirIdentifier> identifiers) {
+    public void setIdentifiers(List<EirIdentifier> identifiers) {
         this.identifiers = identifiers;
     }
 

@@ -2,10 +2,13 @@ package com.authcoinandroid.ui;
 
 import android.support.multidex.MultiDexApplication;
 import com.authcoinandroid.model.Models;
+import com.authcoinandroid.module.KeyGenerationAndEstablishBindingModule;
 import com.authcoinandroid.service.challenge.ChallengeRepository;
 import com.authcoinandroid.service.challenge.ChallengeServiceImpl;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.EirRepository;
+import com.authcoinandroid.service.identity.IdentityService;
+import com.authcoinandroid.service.keypair.AndroidKeyPairService;
 import io.requery.Persistable;
 import io.requery.android.BuildConfig;
 import io.requery.android.sqlite.DatabaseSource;
@@ -30,6 +33,9 @@ public class AuthCoinApplication extends MultiDexApplication {
     private EirRepository eirRepository;
     private ChallengeRepository challengeRepository;
     private ChallengeServiceImpl challengeService;
+    private AuthcoinContractService authcoinContractService;
+    private IdentityService identityService;
+    private KeyGenerationAndEstablishBindingModule keyGenerationAndEstablishBindingModule;
 
     @Override
     public void onCreate() {
@@ -49,8 +55,13 @@ public class AuthCoinApplication extends MultiDexApplication {
         this.eirRepository = new EirRepository(dataStore);
         this.challengeRepository = new ChallengeRepository(dataStore);
 
+        // create module
+        this.keyGenerationAndEstablishBindingModule = new KeyGenerationAndEstablishBindingModule(this.eirRepository, new AndroidKeyPairService());
+
         //create services
-        this.challengeService = new ChallengeServiceImpl(this.challengeRepository, new AuthcoinContractService());
+        this.authcoinContractService = new AuthcoinContractService();
+        this.identityService = new IdentityService(this.eirRepository, keyGenerationAndEstablishBindingModule, authcoinContractService);
+        this.challengeService = new ChallengeServiceImpl(challengeRepository, authcoinContractService);
     }
 
     /**
@@ -67,5 +78,9 @@ public class AuthCoinApplication extends MultiDexApplication {
 
     public ChallengeServiceImpl getChallengeService() {
         return challengeService;
+    }
+
+    public IdentityService getIdentityService() {
+        return identityService;
     }
 }

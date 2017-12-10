@@ -12,16 +12,15 @@ import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.authcoinandroid.R;
+import com.authcoinandroid.exception.RegisterEirException;
+import com.authcoinandroid.service.identity.WalletService;
+import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
+import com.authcoinandroid.ui.AuthCoinApplication;
+import com.authcoinandroid.ui.activity.MainActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-
-import com.authcoinandroid.R;
-import com.authcoinandroid.exception.RegisterEirException;
-import com.authcoinandroid.service.identity.IdentityService;
-import com.authcoinandroid.service.identity.WalletService;
-import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
-import com.authcoinandroid.ui.activity.MainActivity;
 import org.bitcoinj.wallet.UnreadableWalletException;
 
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class NewIdentityFragment extends Fragment {
 
     private void registerEir(String[] identifiers, String alias) {
         try {
-            IdentityService.getInstance(getActivity().getApplication())
+            ((AuthCoinApplication) getActivity().getApplication()).getIdentityService()
                     .registerEir(
                             WalletService.getInstance().getReceiveKey(this.getContext()),
                             identifiers,
