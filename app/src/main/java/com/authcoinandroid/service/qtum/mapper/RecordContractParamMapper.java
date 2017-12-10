@@ -63,13 +63,13 @@ public class RecordContractParamMapper {
         // TODO parse all data about cr
         List<TypeReference<?>> outputParameters = Arrays.asList(
                 new TypeReference<Bytes32>() { // id
-                }, new TypeReference<Bytes32>() { // vaeId
+               /* }, new TypeReference<Bytes32>() { // vaeId
                 }, new TypeReference<Bytes32>() { // type
                 }, new TypeReference<DynamicBytes>() { // challenge
                 }, new TypeReference<Address>() { // verifierEir
                 }, new TypeReference<Address>() { // targetEir
                 }, new TypeReference<Bytes32>() { // hash
-                }, new TypeReference<Bytes32>() { // signature
+                }, new TypeReference<Bytes32>() { // signature*/
                 }
         );
         List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
