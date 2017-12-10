@@ -1,11 +1,10 @@
-package com.authcoinandroid.ui.fragment;
+package com.authcoinandroid.ui.activity;
 
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -14,11 +13,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.task.WalletCreationTask;
-import com.authcoinandroid.ui.activity.MainActivity;
 import com.authcoinandroid.util.AndroidUtil;
 
-public class WelcomeFragment extends Fragment {
-    private final static String LOG_TAG = "WelcomeFragment";
+public class WelcomeActivity extends AppCompatActivity {
+    private final static String LOG_TAG = "WelcomeActivity";
 
     @BindView(R.id.et_wallet_password)
     EditText walletPassword;
@@ -32,23 +30,22 @@ public class WelcomeFragment extends Fragment {
     @BindView(R.id.btn_create_wallet)
     Button createWalletButton;
 
-    public WelcomeFragment() {
-    }
-
     @OnClick({R.id.btn_create_wallet})
     void onCreateWalletClick(View view) {
         if (validatePasswords()) {
             disableElements();
             String password = walletPassword.getText().toString();
-            new WalletCreationTask(getContext(), password, result -> {
+            new WalletCreationTask(getApplicationContext(), password, result -> {
                 if (result.getError() != null) {
                     enableElements();
-                    AndroidUtil.displayNotification(getContext(), "Failed to create wallet");
+                    AndroidUtil.displayNotification(getApplicationContext(), "Failed to create wallet");
                 } else {
-                    clearInputFields();
                     Log.d(LOG_TAG, "Created wallet, mnemonic code: " + result.getResult().getKeyChainSeed().getMnemonicCode());
-                    AndroidUtil.displayNotification(getContext(), "Wallet created");
-                    ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false, false);
+                    AndroidUtil.displayNotification(getApplicationContext(), "Wallet created");
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
             }).execute();
         }
@@ -65,11 +62,6 @@ public class WelcomeFragment extends Fragment {
         }
 
         return true;
-    }
-
-    private void clearInputFields() {
-        walletPassword.setText("");
-        walletPasswordConfirm.setText("");
     }
 
     private void disableElements() {
@@ -91,12 +83,7 @@ public class WelcomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.welcome_fragment, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        setContentView(R.layout.activity_welcome);
+        ButterKnife.bind(this);
     }
 }
