@@ -71,6 +71,10 @@ public class AuthcoinContractService {
         return blockChainService.getUnspentOutput(singletonList(key.toAddress(QtumTestNetParams.get()).toBase58()));
     }
 
+    public Observable<History> getTransaction(String transaction) {
+        return blockChainService.getTransaction(transaction);
+    }
+
     public Observable<ContractResponse> getVaeArrayByEirId(Bytes32 eirId) {
         return callAuthCoinContract(resolveContractRequest(GET_VAE_ARRAY_BY_EIR, singletonList(eirId)));
     }
