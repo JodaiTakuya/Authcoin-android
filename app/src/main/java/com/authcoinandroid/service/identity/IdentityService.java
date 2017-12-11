@@ -50,7 +50,12 @@ public class IdentityService {
         try {
             EntityIdentityRecord eir = module.generateAndEstablishBinding(identifiers, alias).second;
             List<Type> params = RecordContractParamMapper.resolveEirContractParams(eir);
-            return this.authcoinContractService.registerEir(key, params);
+            return this.authcoinContractService.registerEir(key, params)
+                    .switchMap(sendRawTransactionResponse -> {
+                        eir.setTransactionId(sendRawTransactionResponse.getTxid());
+                        repository.save(eir).blockingGet();
+                        return Observable.just(sendRawTransactionResponse);
+                    });
         } catch (GeneralSecurityException | IOException e) {
             throw new RegisterEirException("Failed to register EIR", e);
         }
