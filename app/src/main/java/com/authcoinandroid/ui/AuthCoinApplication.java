@@ -1,6 +1,7 @@
 package com.authcoinandroid.ui;
 
 import android.support.multidex.MultiDexApplication;
+import com.authcoinandroid.jobs.JobsScheduler;
 import com.authcoinandroid.model.Models;
 import com.authcoinandroid.module.KeyGenerationAndEstablishBindingModule;
 import com.authcoinandroid.service.challenge.ChallengeRepository;
@@ -62,6 +63,9 @@ public class AuthCoinApplication extends MultiDexApplication {
         this.authcoinContractService = new AuthcoinContractService();
         this.identityService = new IdentityService(this.eirRepository, keyGenerationAndEstablishBindingModule, authcoinContractService);
         this.challengeService = new ChallengeServiceImpl(challengeRepository, authcoinContractService);
+
+        // start periodic jobs
+        new JobsScheduler(this.getBaseContext()).init();
     }
 
     /**
