@@ -3,7 +3,11 @@ package com.authcoinandroid.util;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.params.QtumTestNetParams;
 
-public class AuthCoinNetParams {
+public final class AuthCoinNetParams {
+
+    private AuthCoinNetParams() {
+    }
+
     public static NetworkParameters getNetParams() {
         return QtumTestNetParams.get();
     }

@@ -1,8 +1,5 @@
 package com.authcoinandroid.module;
 
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
-
 import com.authcoinandroid.service.keypair.KeyPairException;
 import com.authcoinandroid.service.keypair.KeyPairService;
 
@@ -15,7 +12,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.Security;
-import java.security.spec.ECParameterSpec;
 import java.util.HashMap;
 import java.util.Map;
 

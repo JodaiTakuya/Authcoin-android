@@ -1,0 +1,54 @@
+package com.authcoinandroid.service.challenge;
+
+import com.authcoinandroid.model.ChallengeRecord;
+import com.authcoinandroid.util.Util;
+
+import io.reactivex.Maybe;
+import io.reactivex.Single;
+import io.requery.Persistable;
+import io.requery.reactivex.ReactiveEntityStore;
+import io.requery.reactivex.ReactiveResult;
+
+/**
+ * Challenge repository based on Requery ORM library.
+ */
+public class ChallengeRepository {
+
+    private final ReactiveEntityStore<Persistable> dataStore;
+
+    public ChallengeRepository(ReactiveEntityStore<Persistable> dataStore) {
+        Util.notNull(dataStore, "DataStore");
+        this.dataStore = dataStore;
+    }
+
+    public Single<ChallengeRecord> save(ChallengeRecord cr) {
+        byte[] id = cr.getId();
+        ChallengeRecord result = dataStore.findByKey(ChallengeRecord.class, id).blockingGet();
+        if (result == null) {
+            return dataStore.insert(cr);
+        }
+        return dataStore.update(cr);
+    }
+
+    /**
+     * Get all challenge record values
+     */
+    public ReactiveResult<ChallengeRecord> findAll() {
+        return dataStore.select(ChallengeRecord.class).orderBy(ChallengeRecord.ID.lower()).get();
+    }
+
+    /**
+     * Find challenge record by primary key
+     */
+    public Maybe<ChallengeRecord> find(byte[] id) {
+        return dataStore.findByKey(ChallengeRecord.class, id);
+    }
+
+    /**
+     * Find challenge record by VAE key
+     */
+    public ReactiveResult<ChallengeRecord> findByVaeId(byte[] vaeId) {
+        return dataStore.select(ChallengeRecord.class).where(ChallengeRecord.VAE_ID.eq(vaeId)).get();
+    }
+
+}

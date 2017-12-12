@@ -8,7 +8,11 @@ import java.security.PublicKey;
 
 import static org.web3j.utils.Numeric.cleanHexPrefix;
 
-public class ContractUtil {
+public final class ContractUtil {
+
+    private ContractUtil() {
+    }
+
     public static Bytes32 stringToBytes32(String string) {
         return bytesToBytes32(string.getBytes());
     }

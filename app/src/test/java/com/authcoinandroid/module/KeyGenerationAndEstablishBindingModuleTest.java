@@ -2,6 +2,7 @@ package com.authcoinandroid.module;
 
 import android.util.Pair;
 
+import com.authcoinandroid.AbstractTest;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.identity.EirRepository;
 import com.authcoinandroid.ui.AuthCoinApplication;
@@ -9,23 +10,15 @@ import com.authcoinandroid.ui.AuthCoinApplication;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import java.security.KeyPair;
-import java.security.Security;
 
-import static android.os.Build.VERSION_CODES.M;
-import static org.junit.Assert.*;
+public class KeyGenerationAndEstablishBindingModuleTest extends AbstractTest {
 
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = {M}, application = AuthCoinApplication.class)
-public class KeyGenerationAndEstablishBindingModuleTest {
     @Test
     public void testGenerateAndEstablishBinding() throws Exception {
-        EirRepository repository = EirRepository.getInstance(RuntimeEnvironment.application);
+        EirRepository repository = ((AuthCoinApplication)RuntimeEnvironment.application).getEirRepository();
         JdkKeyPairService keyPairService = new JdkKeyPairService();
         KeyGenerationAndEstablishBindingModule module = new KeyGenerationAndEstablishBindingModule(repository, keyPairService);
         Pair<KeyPair, EntityIdentityRecord> pair = module.generateAndEstablishBinding(new String[]{"test"}, "Test");

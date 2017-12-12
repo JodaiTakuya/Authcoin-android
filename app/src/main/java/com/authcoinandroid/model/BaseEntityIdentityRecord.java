@@ -31,6 +31,9 @@ public class BaseEntityIdentityRecord {
     @OneToMany(cascade = {CascadeAction.DELETE, CascadeAction.SAVE})
     List<BaseEirIdentifier> identifiers;
 
+    @OneToMany
+    List<ChallengeRecord> challenges;
+
     boolean revoked;
 
     String contentType;

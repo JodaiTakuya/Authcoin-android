@@ -1,7 +1,5 @@
 package com.authcoinandroid.module;
 
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
 import android.util.Pair;
 
 import com.authcoinandroid.model.EirIdentifier;
@@ -9,12 +7,9 @@ import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.identity.EirRepository;
 import com.authcoinandroid.service.keypair.KeyPairService;
 
-import org.spongycastle.jce.ECNamedCurveTable;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 
 /**
  * "KeyGenerationEstablishBinding" module
@@ -22,8 +17,6 @@ import java.security.KeyPairGenerator;
  * Differences: see {@link KeyGenerationModule} and {@link EstablishBindingModule} submodules.
  */
 public class KeyGenerationAndEstablishBindingModule {
-
-    private static final String PROVIDER_ANDROID_KEY_STORE = "AndroidKeyStore";
 
     private final EstablishBindingModule bindingModule = new EstablishBindingModule();
     private final KeyGenerationModule keyGenerator;
