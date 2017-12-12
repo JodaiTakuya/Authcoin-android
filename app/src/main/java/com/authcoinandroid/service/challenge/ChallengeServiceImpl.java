@@ -19,8 +19,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public boolean isProcessed(byte[] vaeId) {
-        // TODO query DB
-        return false;
+        return challengeRepository.findByVaeId(vaeId).toList().size() < 1;
     }
 
 
