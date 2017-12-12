@@ -19,12 +19,12 @@ public class BaseChallengeRecord {
     byte[] challenge;
 
     @ManyToOne
-    BaseEntityIdentityRecord verifier;
+    EntityIdentityRecord verifier;
 
     @ManyToOne
-    BaseEntityIdentityRecord target;
+    EntityIdentityRecord target;
 
-    public BaseChallengeRecord(byte[] id, byte[] vaeId, String type, byte[] challenge, BaseEntityIdentityRecord verifier, BaseEntityIdentityRecord target) {
+    public BaseChallengeRecord(byte[] id, byte[] vaeId, String type, byte[] challenge, EntityIdentityRecord verifier, EntityIdentityRecord target) {
         this.id = id;
         this.vaeId = vaeId;
         this.timestamp = System.currentTimeMillis();
