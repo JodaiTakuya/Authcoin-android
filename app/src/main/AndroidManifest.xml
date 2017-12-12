@@ -12,21 +12,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.StartupActivity">
+        <activity 
+            android:name=".ui.activity.StartupActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.CreatePinActivity"/>
-        <activity android:name=".ui.activity.UnlockWithPinActivity"/>
-        <activity android:name=".ui.activity.MainActivity">
+        <activity
+            android:name=".ui.activity.CreatePinActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".ui.activity.UnlockWithPinActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity 
+            android:name=".ui.activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.WelcomeActivity">
+        <activity
+            android:name=".ui.activity.WelcomeActivity"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
