@@ -5,9 +5,11 @@ import com.authcoinandroid.exception.RegisterEirException;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.KeyGenerationAndEstablishBindingModule;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
+import com.authcoinandroid.service.qtum.History;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
 import com.authcoinandroid.util.ContractUtil;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
@@ -19,6 +21,8 @@ import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.List;
 
+import static android.text.TextUtils.isEmpty;
+import static com.authcoinandroid.model.AssetBlockChainStatus.*;
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
 import static com.authcoinandroid.util.crypto.CryptoUtil.getPublicKeyByAlias;
 
@@ -50,7 +54,12 @@ public class IdentityService {
         try {
             EntityIdentityRecord eir = module.generateAndEstablishBinding(identifiers, alias).second;
             List<Type> params = RecordContractParamMapper.resolveEirContractParams(eir);
-            return this.authcoinContractService.registerEir(key, params);
+            return this.authcoinContractService.registerEir(key, params)
+                    .switchMap(sendRawTransactionResponse -> {
+                        eir.setTransactionId(sendRawTransactionResponse.getTxid());
+                        repository.save(eir).blockingGet();
+                        return Observable.just(sendRawTransactionResponse);
+                    });
         } catch (GeneralSecurityException | IOException e) {
             throw new RegisterEirException("Failed to register EIR", e);
         }
@@ -69,6 +78,26 @@ public class IdentityService {
     public Observable<EntityIdentityRecord> getEirByAddress(String address) {
         return this.authcoinContractService.getEirByAddress(address)
                 .switchMap(contractResponse -> mapAbiResponseToObservable(contractResponse.getItems().get(0).getOutput()));
+    }
+
+    public Completable updateEirStatusFromBc(EntityIdentityRecord eir) {
+        return Completable.fromAction(() -> {
+            if (eir.getStatus() == SUBMITTED && !isEmpty(eir.getTransactionId())) {
+                History history = this.authcoinContractService.getTransaction(eir.getTransactionId()).blockingSingle();
+                // if transaction is mined
+                if (history.getBlockTime() != null) {
+                    getEir(eir.getKeyStoreAlias()).doOnNext(e -> {
+                        // if we can get eir from bc means eir was successfully saved
+                        eir.setStatus(MINED);
+                        repository.save(eir).blockingGet();
+                    }).onErrorResumeNext(e -> {
+                        // if we can not get eir from bc means eir failed to save
+                        eir.setStatus(MINING_FAILED);
+                        repository.save(eir).blockingGet();
+                    }).blockingSingle();
+                }
+            }
+        });
     }
 
     /**

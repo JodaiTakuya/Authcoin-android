@@ -38,6 +38,8 @@ public class BaseEntityIdentityRecord {
     String keyStoreAlias;
     // EIR status on blockchain
     AssetBlockChainStatus status;
+    // Id of the transaction where eir was created
+    String transactionId;
 
     @Transient
     KeyPair keyPair;
@@ -137,5 +139,13 @@ public class BaseEntityIdentityRecord {
     // TODO sign
     byte[] sign() {
         return new byte[128];
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
     }
 }
