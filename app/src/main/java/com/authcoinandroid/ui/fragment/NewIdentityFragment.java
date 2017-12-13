@@ -18,10 +18,10 @@ import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
+import com.authcoinandroid.util.AndroidUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import com.authcoinandroid.util.AndroidUtil;
 import org.bitcoinj.wallet.UnreadableWalletException;
 
 import java.util.ArrayList;
@@ -29,12 +29,13 @@ import java.util.List;
 
 public class NewIdentityFragment extends Fragment {
     private final static String LOG_TAG = "NewIdentityFragment";
-    private List<EditText> mIdentifiers = new ArrayList<>();
 
     @BindView(R.id.et_alias)
     EditText alias;
     @BindView(R.id.et_identifier_1)
     EditText firstIdentifier;
+
+    private List<EditText> mIdentifiers = new ArrayList<>();
 
     public NewIdentityFragment() {
     }
@@ -108,6 +109,7 @@ public class NewIdentityFragment extends Fragment {
 
                         @Override
                         public void onError(Throwable e) {
+                            AndroidUtil.displayNotification(getContext(), e.getMessage());
                             Log.d(LOG_TAG, e.getMessage());
                         }
 

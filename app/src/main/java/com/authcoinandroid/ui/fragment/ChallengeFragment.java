@@ -8,7 +8,14 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
+import com.authcoinandroid.model.EntityIdentityRecord;
+import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
+import com.authcoinandroid.util.AndroidUtil;
+
+import java.util.List;
+
+import static com.authcoinandroid.model.AssetBlockChainStatus.MINED;
 
 public class ChallengeFragment extends Fragment {
     private final static String LOG_TAG = "ChallengeFragment";
@@ -18,6 +25,15 @@ public class ChallengeFragment extends Fragment {
 
     @OnClick({R.id.btn_new_challenge})
     void onOpenAddChallenge(View view) {
+        AuthCoinApplication application = (AuthCoinApplication) getActivity().getApplication();
+        List<EntityIdentityRecord> minedIdentities = application.getEirRepository().findByStatus(MINED);
+
+        // Disallow sending Challenges if user has no mined EIR-s
+        if (minedIdentities.isEmpty()) {
+            AndroidUtil.displayNotification(getContext(), getString(R.string.missing_identities_for_challenge));
+            return;
+        }
+
         ((MainActivity) getActivity()).applyFragment(NewChallengeFragment.class, true, true);
     }
 
