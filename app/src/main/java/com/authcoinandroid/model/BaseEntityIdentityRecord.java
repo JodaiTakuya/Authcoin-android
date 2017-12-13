@@ -11,7 +11,6 @@ import java.util.List;
 
 import io.requery.CascadeAction;
 import io.requery.Entity;
-import io.requery.Generated;
 import io.requery.Key;
 import io.requery.OneToMany;
 import io.requery.PostLoad;

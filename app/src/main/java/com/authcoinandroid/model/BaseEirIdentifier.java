@@ -1,6 +1,5 @@
 package com.authcoinandroid.model;
 
-import io.requery.CascadeAction;
 import io.requery.Entity;
 import io.requery.Generated;
 import io.requery.Key;
