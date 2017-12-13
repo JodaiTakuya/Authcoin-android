@@ -2,6 +2,7 @@ package com.authcoinandroid.service.qtum.mapper;
 
 import com.authcoinandroid.model.BaseEirIdentifier;
 import com.authcoinandroid.model.ChallengeRecord;
+import com.authcoinandroid.model.EirIdentifier;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
@@ -49,21 +50,28 @@ public class RecordContractParamMapper {
                 });
         List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
         // TODO check if blockchain EIR and EIR in db match
-        /*EntityIdentityRecord eir = new EntityIdentityRecord();
+        EntityIdentityRecord eir = new EntityIdentityRecord();
         eir.setIdentifiers(getIdentifiers((List<Bytes32>) output.get(5).getValue()));
         eir.setContentType(new String((byte[]) output.get(3).getValue(), StandardCharsets.UTF_8));
         eir.setHash((byte[]) output.get(6).getValue());
         eir.setSignature((byte[]) output.get(7).getValue());
         eir.setRevoked(((Bool) output.get(4)).getValue());
-        return eir;*/
-        return null;
+        return eir;
     }
 
     public static ChallengeRecord resolveCrFromAbiReturn(String abiReturn) {
         // TODO parse all data about cr
         List<TypeReference<?>> outputParameters = Arrays.asList(
-                new TypeReference<Bytes32>() {
-                });
+                new TypeReference<Bytes32>() { // id
+               /* }, new TypeReference<Bytes32>() { // vaeId
+                }, new TypeReference<Bytes32>() { // type
+                }, new TypeReference<DynamicBytes>() { // challenge
+                }, new TypeReference<Address>() { // verifierEir
+                }, new TypeReference<Address>() { // targetEir
+                }, new TypeReference<Bytes32>() { // hash
+                }, new TypeReference<Bytes32>() { // signature*/
+                }
+        );
         List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
         ChallengeRecord challengeRecord = new ChallengeRecord();
         challengeRecord.setType(new String((byte[]) output.get(0).getValue()));
@@ -86,11 +94,11 @@ public class RecordContractParamMapper {
         return (List<Bytes32>) output.get(0).getValue();
     }
 
-    private static String[] getIdentifiers(List<Bytes32> ids) {
-        List<String> identifiers = new ArrayList<>();
+    private static List<EirIdentifier> getIdentifiers(List<Bytes32> ids) {
+        List<EirIdentifier> identifiers = new ArrayList<>();
         for (Bytes32 identifier : ids) {
-            identifiers.add(new String(identifier.getValue(), StandardCharsets.UTF_8));
+            identifiers.add(new EirIdentifier(new String(identifier.getValue(), StandardCharsets.UTF_8)));
         }
-        return identifiers.toArray(new String[0]);
+        return identifiers;
     }
 }

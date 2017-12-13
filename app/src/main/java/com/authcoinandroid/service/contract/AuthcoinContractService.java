@@ -54,25 +54,25 @@ public class AuthcoinContractService {
         return callAuthCoinContract(resolveContractRequest(GET_EIR_COUNT, emptyList()));
     }
 
-    public Observable<ContractResponse> getEir(Bytes32 eirId) {
-        return callAuthCoinContract(resolveContractRequest(GET_EIR, singletonList(eirId)))
-                .switchMap(
-                        contractResponse -> {
-                            String eirAddress = stripLeadingZeroes(contractResponse.getItems().get(0).getOutput());
-                            if (isEmpty(eirAddress)) {
-                                return Observable.error(new GetEirException("No such EIR with provided eirId"));
-                            } else {
-                                return callContract(
-                                        stripLeadingZeroes(contractResponse.getItems().get(0).getOutput()),
-                                        resolveContractRequest(GET_EIR_DATA, emptyList())
-                                );
-                            }
-                        }
-                );
+    public Observable<ContractResponse> getEirAddress(Bytes32 eirId) {
+        return callAuthCoinContract(resolveContractRequest(GET_EIR, singletonList(eirId)));
+    }
+
+    public Observable<ContractResponse> getEirByAddress(String address) {
+        String eirAddress = stripLeadingZeroes(address);
+        if (isEmpty(eirAddress)) {
+            return Observable.error(new GetEirException("No such EIR with provided eirId"));
+        } else {
+            return callContract(eirAddress, resolveContractRequest(GET_EIR_DATA, emptyList()));
+        }
     }
 
     public Observable<List<UnspentOutput>> getUnspentOutputs(DeterministicKey key) {
         return blockChainService.getUnspentOutput(singletonList(key.toAddress(QtumTestNetParams.get()).toBase58()));
+    }
+
+    public Observable<History> getTransaction(String transaction) {
+        return blockChainService.getTransaction(transaction);
     }
 
     public Observable<ContractResponse> getVaeArrayByEirId(Bytes32 eirId) {

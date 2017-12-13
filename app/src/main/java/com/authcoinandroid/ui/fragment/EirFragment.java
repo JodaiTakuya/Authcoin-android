@@ -13,7 +13,6 @@ import butterknife.BindViews;
 import butterknife.ButterKnife;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.util.ButterKnifeUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -63,7 +62,6 @@ public class EirFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        IdentityService identityService = IdentityService.getInstance(getActivity().getApplication());
         View view = inflater.inflate(R.layout.eir_fragment, container, false);
         Bundle bundle = this.getArguments();
         byte[] eirId = bundle.getByteArray("eir");

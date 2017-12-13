@@ -23,13 +23,14 @@ import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.UnspentOutput;
+import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
 import com.authcoinandroid.ui.activity.WelcomeActivity;
 import com.authcoinandroid.ui.adapter.EirAdapter;
-import com.authcoinandroid.util.AndroidUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import com.authcoinandroid.util.AndroidUtil;
 import org.bitcoinj.wallet.UnreadableWalletException;
 
 import java.math.BigDecimal;
@@ -88,7 +89,7 @@ public class IdentityFragment extends Fragment {
 
     private void populateEirList() {
         try {
-            IdentityService identityService = IdentityService.getInstance(getActivity().getApplication());
+            IdentityService identityService = ((AuthCoinApplication) getActivity().getApplication()).getIdentityService();
 
             List<EntityIdentityRecord> eirs = identityService.getAll();
             EirAdapter adapter = new EirAdapter(getContext(), eirs);

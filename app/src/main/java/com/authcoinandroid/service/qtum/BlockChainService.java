@@ -1,13 +1,12 @@
 package com.authcoinandroid.service.qtum;
 
 import com.authcoinandroid.util.AuthCoinNetParams;
-
-import java.util.List;
-
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import java.util.List;
 
 public class BlockChainService implements BlockChainApi {
 
@@ -43,5 +42,10 @@ public class BlockChainService implements BlockChainApi {
     @Override
     public Observable<List<UnspentOutput>> getUnspentOutput(List<String> addresses) {
         return blockChainApi.getUnspentOutput(addresses);
+    }
+
+    @Override
+    public Observable<History> getTransaction(String transaction) {
+        return blockChainApi.getTransaction(transaction);
     }
 }
