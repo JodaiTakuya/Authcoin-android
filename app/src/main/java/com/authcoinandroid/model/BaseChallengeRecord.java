@@ -1,7 +1,6 @@
 package com.authcoinandroid.model;
 
 import io.requery.Entity;
-import io.requery.ForeignKey;
 import io.requery.Key;
 import io.requery.ManyToOne;
 import io.requery.OneToOne;
@@ -25,8 +24,7 @@ public class BaseChallengeRecord {
 
     @ManyToOne
     EntityIdentityRecord target;
-
-    @ForeignKey
+    
     @OneToOne(mappedBy = "challenge")
     ChallengeResponseRecord response;
 
@@ -41,5 +39,13 @@ public class BaseChallengeRecord {
     }
 
     public BaseChallengeRecord() {
+    }
+
+    public void setResponseRecord(ChallengeResponseRecord response) {
+        this.response = response;
+    }
+
+    public ChallengeResponseRecord getResponseRecord() {
+        return response;
     }
 }

@@ -23,10 +23,10 @@ public class BaseChallengeResponseRecord {
 
     byte[] signature;
 
-    @OneToOne(mappedBy = "response")
+    @ForeignKey
+    @OneToOne
     ChallengeRecord challenge;
 
-    @ForeignKey
     @OneToOne(mappedBy = "challengeResponse")
     SignatureRecord signatureRecord;
 
@@ -42,5 +42,13 @@ public class BaseChallengeResponseRecord {
     }
 
     public BaseChallengeResponseRecord() {
+    }
+
+    public SignatureRecord getSignatureRecord() {
+        return signatureRecord;
+    }
+
+    public void setSignatureRecord(SignatureRecord signatureRecord) {
+        this.signatureRecord = signatureRecord;
     }
 }
