@@ -1,11 +1,12 @@
-package com.authcoinandroid.service.qtum;
+package com.authcoinandroid.service.qtum.model;
 
+import com.authcoinandroid.service.qtum.TransactionInfo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
 
-public class Vin extends TransactionInfo {
+public class Vout extends TransactionInfo {
 
     @SerializedName("value")
     @Expose

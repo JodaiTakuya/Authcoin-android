@@ -1,5 +1,6 @@
 package com.authcoinandroid.service.qtum;
 
+import com.authcoinandroid.service.qtum.model.*;
 import com.authcoinandroid.util.AuthCoinNetParams;
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
@@ -45,7 +46,7 @@ public class BlockChainService implements BlockChainApi {
     }
 
     @Override
-    public Observable<History> getTransaction(String transaction) {
+    public Observable<Transaction> getTransaction(String transaction) {
         return blockChainApi.getTransaction(transaction);
     }
 }

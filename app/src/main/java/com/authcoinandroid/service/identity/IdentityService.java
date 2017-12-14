@@ -5,9 +5,9 @@ import com.authcoinandroid.exception.RegisterEirException;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.KeyGenerationAndEstablishBindingModule;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
-import com.authcoinandroid.service.qtum.History;
-import com.authcoinandroid.service.qtum.SendRawTransactionResponse;
 import com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper;
+import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
+import com.authcoinandroid.service.qtum.model.Transaction;
 import com.authcoinandroid.util.ContractUtil;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -85,9 +85,9 @@ public class IdentityService {
     public Completable updateEirStatusFromBc(EntityIdentityRecord eir) {
         return Completable.fromAction(() -> {
             if (eir.getStatus() == SUBMITTED && !isEmpty(eir.getTransactionId())) {
-                History history = this.authcoinContractService.getTransaction(eir.getTransactionId()).blockingSingle();
+                Transaction transaction = this.authcoinContractService.getTransaction(eir.getTransactionId()).blockingSingle();
                 // if transaction is mined
-                if (history.getBlockTime() != null) {
+                if (transaction.getBlockTime() != null) {
                     getEir(eir.getKeyStoreAlias()).doOnNext(e -> {
                         // if we can get eir from bc means eir was successfully saved
                         eir.setStatus(MINED);

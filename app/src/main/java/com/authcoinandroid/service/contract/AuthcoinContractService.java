@@ -1,7 +1,8 @@
 package com.authcoinandroid.service.contract;
 
 import com.authcoinandroid.exception.GetEirException;
-import com.authcoinandroid.service.qtum.*;
+import com.authcoinandroid.service.qtum.BlockChainService;
+import com.authcoinandroid.service.qtum.model.*;
 import io.reactivex.Observable;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.params.QtumTestNetParams;
@@ -67,7 +68,7 @@ public class AuthcoinContractService {
         return blockChainService.getUnspentOutput(singletonList(key.toAddress(QtumTestNetParams.get()).toBase58()));
     }
 
-    public Observable<History> getTransaction(String transaction) {
+    public Observable<Transaction> getTransaction(String transaction) {
         return blockChainService.getTransaction(transaction);
     }
 

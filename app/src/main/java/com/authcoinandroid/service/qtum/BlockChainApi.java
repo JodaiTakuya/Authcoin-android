@@ -1,5 +1,6 @@
 package com.authcoinandroid.service.qtum;
 
+import com.authcoinandroid.service.qtum.model.*;
 import io.reactivex.Observable;
 import retrofit2.http.*;
 
@@ -29,5 +30,5 @@ public interface BlockChainApi {
     Observable<List<UnspentOutput>> getUnspentOutput(@Query("addresses[]") List<String> addresses);
 
     @GET("/transactions/{tx_hash}")
-    Observable<History> getTransaction(@Path("tx_hash") String txHash);
+    Observable<Transaction> getTransaction(@Path("tx_hash") String txHash);
 }

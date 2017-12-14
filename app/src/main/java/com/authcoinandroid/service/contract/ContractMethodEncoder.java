@@ -1,7 +1,7 @@
 package com.authcoinandroid.service.contract;
 
-import com.authcoinandroid.service.qtum.ContractRequest;
-import com.authcoinandroid.service.qtum.UnspentOutput;
+import com.authcoinandroid.service.qtum.model.ContractRequest;
+import com.authcoinandroid.service.qtum.model.UnspentOutput;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.script.Script;
 import org.web3j.abi.datatypes.Function;
