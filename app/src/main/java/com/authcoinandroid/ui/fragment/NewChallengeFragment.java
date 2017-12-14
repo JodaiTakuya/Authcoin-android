@@ -6,15 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.ui.AuthCoinApplication;
-import com.authcoinandroid.ui.activity.MainActivity;
 
 import java.util.List;
 
@@ -22,15 +19,14 @@ import static com.authcoinandroid.model.AssetBlockChainStatus.MINED;
 
 public class NewChallengeFragment extends Fragment {
     private final static String LOG_TAG = "NewChallengeFragment";
-    @BindView(R.id.btn_send_challenge)
-    Button sendChallengeButton;
 
     public NewChallengeFragment() {
     }
 
     @OnClick({R.id.btn_send_challenge})
     void onSendChallenge(View view) {
-        ((MainActivity) getActivity()).applyFragment(NewChallengeFragment.class, true, true);
+        // TODO Add any missing fields required for Challenge registration
+        // TODO (AuthCoinApplication) getActivity().getApplication()).getChallengeService().registerChallenge(...)
     }
 
     @Override
