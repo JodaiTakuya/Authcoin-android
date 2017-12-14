@@ -1,8 +1,11 @@
 package com.authcoinandroid.service.challenge;
 
+import android.support.annotation.NonNull;
+
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
+import com.authcoinandroid.service.identity.IdentityService;
 import io.reactivex.Observable;
 import org.web3j.abi.datatypes.Address;
 
@@ -10,28 +13,70 @@ import java.util.List;
 
 import static com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper.*;
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
+import com.authcoinandroid.model.ChallengeResponseRecord;
+import com.authcoinandroid.model.SignatureRecord;
+
+import org.spongycastle.util.encoders.Hex;
+
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 
 public class ChallengeServiceImpl implements ChallengeService {
 
     private ChallengeRepository challengeRepository;
     private AuthcoinContractService authcoinContractService;
+    private IdentityService identityService;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, AuthcoinContractService authcoinContractService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, AuthcoinContractService authcoinContractService, IdentityService identityService) {
         this.challengeRepository = challengeRepository;
         this.authcoinContractService = authcoinContractService;
+        this.identityService = identityService;
     }
 
     @Override
-    public void registerChallenge(ChallengeRecord challenge) {
-        this.challengeRepository.save(challenge);
+    public Single<ChallengeRecord> registerChallenge(ChallengeRecord challenge) {
+        Single<ChallengeRecord> result = challengeRepository.save(challenge);
         // TODO send data to BC
+        return result;
     }
 
     @Override
     public boolean isProcessed(byte[] vaeId) {
-        // TODO query DB
-        return false;
+        return challengeRepository.findByVaeId(vaeId).toList().size() < 1;
+    }
+
+    @Override
+    public Single<ChallengeRecord> registerChallengeResponse(byte[] challengeId, ChallengeResponseRecord response) {
+        ChallengeRecord challenge = getChallengeRecord(challengeId);
+        if (challenge.getResponseRecord() != null) {
+            throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " already has response record");
+        }
+        challenge.setResponseRecord(response);
+        return challengeRepository.save(challenge);
+    }
+
+    @Override
+    public Single<ChallengeRecord> registerSignatureRecord(byte[] challengeId, SignatureRecord signature) {
+        ChallengeRecord challenge = getChallengeRecord(challengeId);
+        if (challenge.getResponseRecord() == null) {
+            throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " doesn't response record");
+        }
+        if (challenge.getResponseRecord().getSignatureRecord() != null) {
+            throw new IllegalStateException("ChallengeRecord with id " + Hex.toHexString(challengeId) + " already has signature record");
+        }
+        challenge.getResponseRecord().setSignatureRecord(signature);
+        return challengeRepository.save(challenge);
+    }
+
+    @NonNull
+    private ChallengeRecord getChallengeRecord(byte[] challengeId) {
+        Maybe<ChallengeRecord> m = challengeRepository.find(challengeId);
+        ChallengeRecord challenge = m.blockingGet();
+        if (challenge == null) {
+            throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " not found");
+        }
+        return challenge;
     }
 
     /**
@@ -63,12 +108,10 @@ public class ChallengeServiceImpl implements ChallengeService {
         return this.authcoinContractService.getChallengeIds(address)
                 // parse response
                 .flatMap(response -> Observable.fromIterable(resolveBytes32FromAbiReturn(response.getItems().get(0).getOutput())))
-                // get address of the challenge by id
-                .flatMap(challengeId -> this.authcoinContractService.getChallengeAddress(address, challengeId))
-                // get challenge record by address
-                .flatMap(response -> this.authcoinContractService.getChallengeRecord(response.getItems().get(0).getOutput()))
+                // get challenge data by challenge by id
+                .flatMap(challengeId -> this.authcoinContractService.getChallengeRecord(address, challengeId))
                 // resolve data about challenge records
-                .flatMap(response -> Observable.just(resolveCrFromAbiReturn(response.getItems().get(0).getOutput())))
+                .flatMap(response -> Observable.just(resolveCrFromAbiReturn(response.getItems().get(0).getOutput(), this.identityService)))
                 .toList()
                 .toObservable();
     }

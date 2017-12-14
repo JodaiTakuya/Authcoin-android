@@ -15,15 +15,11 @@ import java.util.List;
 import static android.text.TextUtils.isEmpty;
 import static com.authcoinandroid.service.contract.AuthcoinContractParams.AUTHCOIN_CONTRACT_ADDRESS;
 import static com.authcoinandroid.service.contract.ContractMethodEncoder.*;
-import static com.authcoinandroid.util.ContractUtil.stripLeadingZeroes;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.web3j.utils.Numeric.cleanHexPrefix;
 
 public class AuthcoinContractService {
-    private final static String LOG_TAG = "AuthcoinContractService";
-    private static final String GET_CHALLENGE_IDS = "getChallengeIds";
-    private static final String GET_CHALLENGE_ADDRESS = "getChallenge";
     private static AuthcoinContractService authcoinContractService;
     private final BlockChainService blockChainService;
 
@@ -31,8 +27,8 @@ public class AuthcoinContractService {
     private final static String REGISTER_EIR = "registerEir";
     private final static String GET_EIR = "getEir";
     private final static String GET_EIR_DATA = "getData";
-    // TODO change GET_CR_DATA to getData which returns all, currently for testing returns only type
-    private final static String GET_CR_DATA = "getChallengeType";
+    private static final String GET_CHALLENGE_IDS = "getChallengeIds";
+    private final static String GET_CR_DATA = "getChallengeRecordData";
     private final static String GET_VAE_ARRAY_BY_EIR = "getVaeArrayByEirId";
 
     public static AuthcoinContractService getInstance() {
@@ -58,8 +54,8 @@ public class AuthcoinContractService {
         return callAuthCoinContract(resolveContractRequest(GET_EIR, singletonList(eirId)));
     }
 
-    public Observable<ContractResponse> getEirByAddress(String address) {
-        String eirAddress = stripLeadingZeroes(address);
+    public Observable<ContractResponse> getEirByAddress(Address address) {
+        String eirAddress = cleanHexPrefix(address.toString());
         if (isEmpty(eirAddress)) {
             return Observable.error(new GetEirException("No such EIR with provided eirId"));
         } else {
@@ -83,12 +79,8 @@ public class AuthcoinContractService {
         return callContract(cleanHexPrefix(address.toString()), resolveContractRequest(GET_CHALLENGE_IDS, emptyList()));
     }
 
-    public Observable<ContractResponse> getChallengeAddress(Address address, Bytes32 challengeId) {
-        return callContract(cleanHexPrefix(address.toString()), resolveContractRequest(GET_CHALLENGE_ADDRESS, singletonList(challengeId)));
-    }
-
-    public Observable<ContractResponse> getChallengeRecord(String challengeRecordAddress) {
-        return callContract(stripLeadingZeroes(challengeRecordAddress), resolveContractRequest(GET_CR_DATA, emptyList()));
+    public Observable<ContractResponse> getChallengeRecord(Address address, Bytes32 challengeId) {
+        return callContract(cleanHexPrefix(address.toString()), resolveContractRequest(GET_CR_DATA, singletonList(challengeId)));
     }
 
     private Observable<SendRawTransactionResponse> sendRawTransaction(DeterministicKey key, Script script) {

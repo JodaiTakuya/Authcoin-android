@@ -43,7 +43,7 @@ public class AuthCoinApplication extends MultiDexApplication {
         super.onCreate();
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
         // override onUpgrade to handle migrating to a new version
-        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 4);
+        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 5);
         if (BuildConfig.DEBUG) {
             // use this in development mode to drop and recreate the tables on every upgrade
             source.setTableCreationMode(TableCreationMode.DROP_CREATE);
@@ -62,7 +62,7 @@ public class AuthCoinApplication extends MultiDexApplication {
         //create services
         this.authcoinContractService = new AuthcoinContractService();
         this.identityService = new IdentityService(this.eirRepository, keyGenerationAndEstablishBindingModule, authcoinContractService);
-        this.challengeService = new ChallengeServiceImpl(challengeRepository, authcoinContractService);
+        this.challengeService = new ChallengeServiceImpl(challengeRepository, authcoinContractService, identityService);
 
         // start periodic jobs
         new JobsScheduler(this.getBaseContext()).init();
