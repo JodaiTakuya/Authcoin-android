@@ -3,6 +3,7 @@ package com.authcoinandroid.model;
 import io.requery.Entity;
 import io.requery.Key;
 import io.requery.ManyToOne;
+import io.requery.OneToOne;
 
 @Entity
 public class BaseChallengeRecord {
@@ -19,15 +20,18 @@ public class BaseChallengeRecord {
     byte[] challenge;
 
     @ManyToOne
-    BaseEntityIdentityRecord verifier;
+    EntityIdentityRecord verifier;
 
     @ManyToOne
-    BaseEntityIdentityRecord target;
+    EntityIdentityRecord target;
+
+    @OneToOne(mappedBy = "challenge")
+    ChallengeResponseRecord response;
 
     private byte[] hash;
     private byte[] signature;
 
-    public BaseChallengeRecord(byte[] id, byte[] vaeId, String type, byte[] challenge, BaseEntityIdentityRecord verifier, BaseEntityIdentityRecord target) {
+    public BaseChallengeRecord(byte[] id, byte[] vaeId, String type, byte[] challenge, EntityIdentityRecord verifier, EntityIdentityRecord target) {
         this.id = id;
         this.vaeId = vaeId;
         this.timestamp = System.currentTimeMillis();
@@ -38,6 +42,14 @@ public class BaseChallengeRecord {
     }
 
     public BaseChallengeRecord() {
+    }
+
+    public void setResponseRecord(ChallengeResponseRecord response) {
+        this.response = response;
+    }
+
+    public ChallengeResponseRecord getResponseRecord() {
+        return response;
     }
 
     public void setHash(byte[] hash) {

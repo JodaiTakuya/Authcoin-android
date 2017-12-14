@@ -7,10 +7,12 @@ import com.authcoinandroid.service.challenge.ChallengeService;
 
 import junit.framework.Assert;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
 
 public class ValidationAndAuthenticationProcessingModuleTest extends AbstractTest {
 
@@ -30,6 +32,11 @@ public class ValidationAndAuthenticationProcessingModuleTest extends AbstractTes
         this.module = new ValidationAndAuthenticationProcessingModule(fvm, challengeService);
         this.verifier = createEir("Verifier");
         this.target = createEir("Target");
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
     }
 
     @Test
