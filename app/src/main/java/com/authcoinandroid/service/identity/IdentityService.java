@@ -13,6 +13,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.spongycastle.util.encoders.Hex;
+import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Bytes32;
 
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
 import static com.authcoinandroid.model.AssetBlockChainStatus.*;
+import static com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper.resolveAddressFromAbiReturn;
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
 import static com.authcoinandroid.util.crypto.CryptoUtil.getPublicKeyByAlias;
 
@@ -69,13 +71,13 @@ public class IdentityService {
         try {
             PublicKey key = getPublicKeyByAlias(alias);
             return this.authcoinContractService.getEirAddress(getEirIdAsBytes32(key))
-                    .switchMap(contractResponse -> getEirByAddress(contractResponse.getItems().get(0).getOutput()));
+                    .switchMap(contractResponse -> getEirByAddress(resolveAddressFromAbiReturn(contractResponse.getItems().get(0).getOutput())));
         } catch (GeneralSecurityException | IOException e) {
             throw new GetEirException("Failed to get EIR", e);
         }
     }
 
-    public Observable<EntityIdentityRecord> getEirByAddress(String address) {
+    public Observable<EntityIdentityRecord> getEirByAddress(Address address) {
         return this.authcoinContractService.getEirByAddress(address)
                 .switchMap(contractResponse -> mapAbiResponseToObservable(contractResponse.getItems().get(0).getOutput()));
     }

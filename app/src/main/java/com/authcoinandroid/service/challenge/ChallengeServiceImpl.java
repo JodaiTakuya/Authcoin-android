@@ -3,6 +3,7 @@ package com.authcoinandroid.service.challenge;
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
+import com.authcoinandroid.service.identity.IdentityService;
 import io.reactivex.Observable;
 import org.web3j.abi.datatypes.Address;
 
@@ -16,10 +17,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     private ChallengeRepository challengeRepository;
     private AuthcoinContractService authcoinContractService;
+    private IdentityService identityService;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, AuthcoinContractService authcoinContractService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, AuthcoinContractService authcoinContractService, IdentityService identityService) {
         this.challengeRepository = challengeRepository;
         this.authcoinContractService = authcoinContractService;
+        this.identityService = identityService;
     }
 
     @Override
@@ -63,12 +66,10 @@ public class ChallengeServiceImpl implements ChallengeService {
         return this.authcoinContractService.getChallengeIds(address)
                 // parse response
                 .flatMap(response -> Observable.fromIterable(resolveBytes32FromAbiReturn(response.getItems().get(0).getOutput())))
-                // get address of the challenge by id
-                .flatMap(challengeId -> this.authcoinContractService.getChallengeAddress(address, challengeId))
-                // get challenge record by address
-                .flatMap(response -> this.authcoinContractService.getChallengeRecord(response.getItems().get(0).getOutput()))
+                // get challenge data by challenge by id
+                .flatMap(challengeId -> this.authcoinContractService.getChallengeRecord(address, challengeId))
                 // resolve data about challenge records
-                .flatMap(response -> Observable.just(resolveCrFromAbiReturn(response.getItems().get(0).getOutput())))
+                .flatMap(response -> Observable.just(resolveCrFromAbiReturn(response.getItems().get(0).getOutput(), this.identityService)))
                 .toList()
                 .toObservable();
     }

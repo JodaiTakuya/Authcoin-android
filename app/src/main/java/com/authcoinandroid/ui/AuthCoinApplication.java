@@ -62,7 +62,7 @@ public class AuthCoinApplication extends MultiDexApplication {
         //create services
         this.authcoinContractService = new AuthcoinContractService();
         this.identityService = new IdentityService(this.eirRepository, keyGenerationAndEstablishBindingModule, authcoinContractService);
-        this.challengeService = new ChallengeServiceImpl(challengeRepository, authcoinContractService);
+        this.challengeService = new ChallengeServiceImpl(challengeRepository, authcoinContractService, identityService);
 
         // start periodic jobs
         new JobsScheduler(this.getBaseContext()).init();
