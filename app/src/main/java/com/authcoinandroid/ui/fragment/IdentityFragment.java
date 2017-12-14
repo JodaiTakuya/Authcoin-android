@@ -42,6 +42,7 @@ import java.util.Locale;
 
 public class IdentityFragment extends Fragment {
     private final static String LOG_TAG = "IdentityFragment";
+
     @BindView(R.id.iv_wallet_copy)
     ImageView walletAddressCopy;
     @BindView(R.id.tv_unspent_output)
@@ -50,6 +51,7 @@ public class IdentityFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.lv_eirs)
     ListView eirList;
+
     private List<EntityIdentityRecord> eirs;
 
     public IdentityFragment() {
@@ -87,31 +89,7 @@ public class IdentityFragment extends Fragment {
         attachWalletAddressToCopyImage();
         displayUnspentOutputAmount();
         populateEirList();
-
-        AuthCoinApplication application = (AuthCoinApplication) getActivity().getApplication();
-        IdentityService identityService = application.getIdentityService();
-
-        // TODO This could probably be optimized by not repopulating the whole list
-        swipeRefreshLayout.setOnRefreshListener(() -> Observable.fromIterable(eirs)
-                .flatMap(eir -> identityService.updateEirStatusFromBc(eir).toObservable())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<Object>() {
-                    @Override
-                    public void onComplete() {
-                        swipeRefreshLayout.setRefreshing(false);
-                        populateEirList();
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(LOG_TAG, e.getMessage());
-                    }
-                }));
+        attachRefreshListenerToEirList();
 
         return view;
     }
@@ -184,5 +162,35 @@ public class IdentityFragment extends Fragment {
         } catch (UnreadableWalletException e) {
             AndroidUtil.displayNotification(getContext(), e.getMessage());
         }
+    }
+
+    private void attachRefreshListenerToEirList() {
+        AuthCoinApplication application = (AuthCoinApplication) getActivity().getApplication();
+        IdentityService identityService = application.getIdentityService();
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+
+        // TODO Rotating animation stops until onComplete ... perhaps should try AsyncTask
+        swipeRefreshLayout.setOnRefreshListener(() -> Observable.fromIterable(eirs)
+                .flatMap(eir -> identityService.updateEirStatusFromBc(eir).toObservable())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<Object>() {
+                    @Override
+                    public void onComplete() {
+                        swipeRefreshLayout.setRefreshing(false);
+                        // TODO This could probably be optimized by not repopulating the whole list
+                        populateEirList();
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                    }
+                }));
     }
 }
