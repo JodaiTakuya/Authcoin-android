@@ -23,7 +23,7 @@ import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.identity.WalletService;
-import com.authcoinandroid.service.qtum.UnspentOutput;
+import com.authcoinandroid.service.qtum.model.UnspentOutput;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
 import com.authcoinandroid.ui.activity.WelcomeActivity;

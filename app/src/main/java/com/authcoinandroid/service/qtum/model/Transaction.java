@@ -1,4 +1,4 @@
-package com.authcoinandroid.service.qtum;
+package com.authcoinandroid.service.qtum.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 
-public class History {
+public class Transaction {
 
     @SerializedName("block_time")
     @Expose

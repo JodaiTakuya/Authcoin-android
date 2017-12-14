@@ -1,12 +1,10 @@
 package com.authcoinandroid.service.qtum;
 
 import android.support.annotation.NonNull;
-
+import com.authcoinandroid.service.qtum.model.UnspentOutput;
 import com.authcoinandroid.util.AuthCoinNetParams;
-
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.DeterministicKey;
-
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcoinj.script.ScriptChunk;

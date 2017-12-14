@@ -1,4 +1,4 @@
-package com.authcoinandroid.service.qtum;
+package com.authcoinandroid.service.qtum.model;
 
 public class SendRawTransactionRequest {
 
