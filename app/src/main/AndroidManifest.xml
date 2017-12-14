@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity 
+        <activity
             android:name=".ui.activity.StartupActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -29,7 +29,7 @@
             android:name=".ui.activity.UnlockWithPinActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity 
+        <activity
             android:name=".ui.activity.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -40,6 +40,8 @@
             android:name=".ui.activity.WelcomeActivity"
             android:screenOrientation="portrait">
         </activity>
+        <service android:name=".jobs.EirUpdater"
+                 android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

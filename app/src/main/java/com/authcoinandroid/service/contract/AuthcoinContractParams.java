@@ -3,7 +3,7 @@ package com.authcoinandroid.service.contract;
 import java.math.BigDecimal;
 
 class AuthcoinContractParams {
-    static final String AUTHCOIN_CONTRACT_ADDRESS = "15cecf8b43c092b2083e0894f6d5c21a17033e73";
+    static final String AUTHCOIN_CONTRACT_ADDRESS = "719fe766f2e07522ce486a2673bd725983575da4";
 
     static final int FUNCTION_GAS_LIMIT = 1000000;
     static final int GAS_LIMIT = 25000;

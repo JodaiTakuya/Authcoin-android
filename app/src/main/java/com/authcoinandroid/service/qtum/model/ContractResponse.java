@@ -1,4 +1,4 @@
-package com.authcoinandroid.service.qtum;
+package com.authcoinandroid.service.qtum.model;
 
 import com.google.gson.annotations.Expose;
 
