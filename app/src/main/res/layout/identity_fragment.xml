@@ -46,11 +46,16 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/lv_eirs"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_eirs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/header"/>
+        android:layout_below="@id/header">
+        <ListView
+            android:id="@+id/lv_eirs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_new_identity"
