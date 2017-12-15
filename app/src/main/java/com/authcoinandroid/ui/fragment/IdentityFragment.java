@@ -183,6 +183,7 @@ public class IdentityFragment extends Fragment {
                     @Override
                     public void onComplete() {
                         swipeRefreshLayout.setRefreshing(false);
+                        displayUnspentOutputAmount();
                         // TODO This could probably be optimized by not repopulating the whole list
                         populateEirList();
                     }
