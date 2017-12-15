@@ -32,7 +32,7 @@
             android:layout_marginRight="12dp"
             android:gravity="center_vertical"
             android:textSize="18sp"
-            android:textColor="@color/colorLightGray"/>
+            android:textColor="@color/colorWhite"/>
 
         <ImageView
             android:id="@+id/iv_wallet_copy"

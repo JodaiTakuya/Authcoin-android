@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.authcoinandroid.R;
@@ -40,6 +42,12 @@ public class ChallengeFragment extends Fragment {
         AuthCoinApplication application = (AuthCoinApplication) getActivity().getApplication();
         List<EntityIdentityRecord> minedIdentities = application.getEirRepository().findByStatus(MINED);
         newChallengeButton.setOnClickListener(addChallengeListener(!minedIdentities.isEmpty()));
+
+        // Uses the toString method of EntityIdentityRecord to display value in ArrayAdapter
+        Spinner currentEir = (Spinner) view.findViewById(R.id.s_eir);
+        ArrayAdapter<EntityIdentityRecord> dataAdapter = new ArrayAdapter<>(this.getActivity(), R.layout.spinner_item_light, minedIdentities);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        currentEir.setAdapter(dataAdapter);
 
         return view;
     }
