@@ -57,6 +57,23 @@ public class IdentityFragment extends Fragment {
     public IdentityFragment() {
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.identity_fragment, container, false);
+        ButterKnife.bind(this, view);
+        attachWalletAddressToCopyImage();
+        displayUnspentOutputAmount();
+        populateEirList();
+        attachRefreshListenerToEirList();
+
+        return view;
+    }
+
     @OnLongClick({R.id.iv_wallet})
     boolean onDeleteWallet(View view) {
         WalletService.getInstance().deleteWallet(this.getContext());
@@ -75,23 +92,6 @@ public class IdentityFragment extends Fragment {
     @OnClick({R.id.btn_new_identity})
     void onOpenAddIdentity(View view) {
         ((MainActivity) getActivity()).applyFragment(NewIdentityFragment.class, true, true);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.identity_fragment, container, false);
-        ButterKnife.bind(this, view);
-        attachWalletAddressToCopyImage();
-        displayUnspentOutputAmount();
-        populateEirList();
-        attachRefreshListenerToEirList();
-
-        return view;
     }
 
     private void populateEirList() {
@@ -169,9 +169,13 @@ public class IdentityFragment extends Fragment {
         IdentityService identityService = application.getIdentityService();
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener(identityService));
 
-        // TODO Rotating animation stops until onComplete ... perhaps should try AsyncTask
-        swipeRefreshLayout.setOnRefreshListener(() -> Observable.fromIterable(eirs)
+        displayUnspentOutputAmount();
+    }
+
+    private SwipeRefreshLayout.OnRefreshListener onRefreshListener(IdentityService identityService) {
+        return () -> Observable.fromIterable(eirs)
                 .flatMap(eir -> identityService.updateEirStatusFromBc(eir).toObservable())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -191,6 +195,6 @@ public class IdentityFragment extends Fragment {
                     public void onError(Throwable e) {
                         Log.e(LOG_TAG, e.getMessage());
                     }
-                }));
+                });
     }
 }
