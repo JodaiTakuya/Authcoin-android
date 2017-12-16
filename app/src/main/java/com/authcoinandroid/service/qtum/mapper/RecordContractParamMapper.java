@@ -5,11 +5,13 @@ import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EirIdentifier;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.identity.IdentityService;
+import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.*;
 import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.crypto.Hash;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
 import static com.authcoinandroid.util.ContractUtil.stringToBytes32;
 import static com.authcoinandroid.util.crypto.CryptoUtil.toPublicKey;
 import static org.web3j.abi.Utils.convert;
+import static org.web3j.utils.Numeric.cleanHexPrefix;
 
 public class RecordContractParamMapper {
 
@@ -52,14 +55,15 @@ public class RecordContractParamMapper {
                 });
         List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
         // TODO check if blockchain EIR and EIR in db match
-        // TODO: initialise EIR properly: id
         EntityIdentityRecord eir = new EntityIdentityRecord();
-        eir.setPublicKey(toPublicKey((byte[]) output.get(2).getValue()));
-        eir.setContentType(new String((byte[]) output.get(3).getValue(), StandardCharsets.UTF_8));
+        eir.setPublicKey(toPublicKey(removeNullBytes((byte[]) output.get(2).getValue())));
+        eir.setContent(removeNullBytes((byte[]) output.get(2).getValue()));
+        eir.setId(Hex.decode(cleanHexPrefix(Hash.sha3(Hex.toHexString(eir.getContent())))));
+        eir.setContentType(new String(removeNullBytes((byte[]) output.get(3).getValue()), StandardCharsets.UTF_8));
         eir.setRevoked(((Bool) output.get(4)).getValue());
         eir.setIdentifiers(getIdentifiers((List<Bytes32>) output.get(5).getValue()));
-        eir.setHash((byte[]) output.get(6).getValue());
-        eir.setSignature((byte[]) output.get(7).getValue());
+        eir.setHash(removeNullBytes((byte[]) output.get(6).getValue()));
+        eir.setSignature(removeNullBytes((byte[]) output.get(7).getValue()));
         return eir;
     }
 
@@ -78,13 +82,13 @@ public class RecordContractParamMapper {
         );
         List<Type> output = FunctionReturnDecoder.decode(abiReturn, convert(outputParameters));
         ChallengeRecord challengeRecord = new ChallengeRecord();
-        challengeRecord.setId((byte[]) output.get(0).getValue());
-        challengeRecord.setType(new String((byte[]) output.get(2).getValue()));
-        challengeRecord.setChallenge((byte[]) output.get(3).getValue());
+        challengeRecord.setId(removeNullBytes((byte[]) output.get(0).getValue()));
+        challengeRecord.setType(new String(removeNullBytes((byte[]) output.get(2).getValue())));
+        challengeRecord.setChallenge(removeNullBytes((byte[]) output.get(3).getValue()));
         challengeRecord.setVerifier(identityService.getEirByAddress((Address) output.get(4)).blockingFirst());
         challengeRecord.setTarget(identityService.getEirByAddress((Address) output.get(5)).blockingFirst());
-        challengeRecord.setHash((byte[]) output.get(6).getValue());
-        challengeRecord.setSignature((byte[]) output.get(7).getValue());
+        challengeRecord.setHash(removeNullBytes((byte[]) output.get(6).getValue()));
+        challengeRecord.setSignature(removeNullBytes((byte[]) output.get(7).getValue()));
         return challengeRecord;
     }
 
@@ -115,8 +119,16 @@ public class RecordContractParamMapper {
     private static List<EirIdentifier> getIdentifiers(List<Bytes32> ids) {
         List<EirIdentifier> identifiers = new ArrayList<>();
         for (Bytes32 identifier : ids) {
-            identifiers.add(new EirIdentifier(new String(identifier.getValue(), StandardCharsets.UTF_8)));
+            identifiers.add(new EirIdentifier(new String(removeNullBytes(identifier.getValue()), StandardCharsets.UTF_8)));
         }
         return identifiers;
+    }
+
+    private static byte[] removeNullBytes(byte[] bytes) {
+        int i = bytes.length - 1;
+        while (i >= 0 && bytes[i] == 0) {
+            --i;
+        }
+        return Arrays.copyOf(bytes, i + 1);
     }
 }
