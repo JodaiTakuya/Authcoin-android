@@ -1,25 +1,24 @@
 package com.authcoinandroid.service.challenge;
 
 import android.support.annotation.NonNull;
-
 import com.authcoinandroid.model.ChallengeRecord;
+import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
+import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.IdentityService;
+import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.datatypes.Address;
 
 import java.util.List;
 
 import static com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper.*;
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
-import com.authcoinandroid.model.ChallengeResponseRecord;
-import com.authcoinandroid.model.SignatureRecord;
-
-import org.spongycastle.util.encoders.Hex;
-
-import io.reactivex.Maybe;
-import io.reactivex.Single;
 
 
 public class ChallengeServiceImpl implements ChallengeService {
@@ -28,7 +27,9 @@ public class ChallengeServiceImpl implements ChallengeService {
     private AuthcoinContractService authcoinContractService;
     private IdentityService identityService;
 
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository, AuthcoinContractService authcoinContractService, IdentityService identityService) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository,
+                                AuthcoinContractService authcoinContractService,
+                                IdentityService identityService) {
         this.challengeRepository = challengeRepository;
         this.authcoinContractService = authcoinContractService;
         this.identityService = identityService;
@@ -36,9 +37,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Single<ChallengeRecord> registerChallenge(ChallengeRecord challenge) {
-        Single<ChallengeRecord> result = challengeRepository.save(challenge);
-        // TODO send data to BC
-        return result;
+        return challengeRepository.save(challenge);
+    }
+
+    @Override
+    public Observable<SendRawTransactionResponse> saveChallengeToBc(DeterministicKey key, ChallengeRecord challenge) {
+        return this.authcoinContractService.registerChallengeRecord(key, resolveChallengeRecordContractParams(challenge));
     }
 
     @Override
