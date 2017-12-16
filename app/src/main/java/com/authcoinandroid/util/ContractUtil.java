@@ -30,4 +30,8 @@ public final class ContractUtil {
     public static String getEirIdAsString(PublicKey key) {
         return cleanHexPrefix(Hash.sha3(Hex.toHexString(key.getEncoded())));
     }
+
+    public static String getEirIdAsString(byte[] id) {
+        return cleanHexPrefix(Hash.sha3(Hex.toHexString(id)));
+    }
 }
