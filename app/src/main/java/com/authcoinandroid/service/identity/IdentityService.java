@@ -26,6 +26,7 @@ import static android.text.TextUtils.isEmpty;
 import static com.authcoinandroid.model.AssetBlockChainStatus.*;
 import static com.authcoinandroid.service.qtum.mapper.RecordContractParamMapper.resolveAddressFromAbiReturn;
 import static com.authcoinandroid.util.ContractUtil.bytesToBytes32;
+import static com.authcoinandroid.util.ContractUtil.getEirIdAsString;
 import static com.authcoinandroid.util.crypto.CryptoUtil.getPublicKeyByAlias;
 
 public class IdentityService {
@@ -67,14 +68,18 @@ public class IdentityService {
         }
     }
 
-    public Observable<EntityIdentityRecord> getEir(String alias) throws GetEirException {
+    public Observable<EntityIdentityRecord> getEirByAlias(String alias) throws GetEirException {
         try {
             PublicKey key = getPublicKeyByAlias(alias);
-            return this.authcoinContractService.getEirAddress(getEirIdAsBytes32(key))
-                    .switchMap(contractResponse -> getEirByAddress(resolveAddressFromAbiReturn(contractResponse.getItems().get(0).getOutput())));
+            return this.getEirById(getEirIdAsString(key));
         } catch (GeneralSecurityException | IOException e) {
             throw new GetEirException("Failed to get EIR", e);
         }
+    }
+
+    public Observable<EntityIdentityRecord> getEirById(String eirId) {
+        return this.authcoinContractService.getEirAddress(getEirIdAsBytes32(eirId))
+                .switchMap(contractResponse -> getEirByAddress(resolveAddressFromAbiReturn(contractResponse.getItems().get(0).getOutput())));
     }
 
     public Observable<EntityIdentityRecord> getEirByAddress(Address address) {
@@ -88,7 +93,7 @@ public class IdentityService {
                 Transaction transaction = this.authcoinContractService.getTransaction(eir.getTransactionId()).blockingSingle();
                 // if transaction is mined
                 if (transaction.getBlockTime() != null) {
-                    getEir(eir.getKeyStoreAlias()).doOnNext(e -> {
+                    getEirByAlias(eir.getKeyStoreAlias()).doOnNext(e -> {
                         // if we can get eir from bc means eir was successfully saved
                         eir.setStatus(MINED);
                         repository.save(eir).blockingGet();
@@ -125,5 +130,9 @@ public class IdentityService {
 
     private Bytes32 getEirIdAsBytes32(PublicKey key) {
         return bytesToBytes32(Hex.decode(ContractUtil.getEirIdAsString(key)));
+    }
+
+    private Bytes32 getEirIdAsBytes32(String eirId) {
+        return bytesToBytes32(Hex.decode(eirId));
     }
 }
