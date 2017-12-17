@@ -15,7 +15,7 @@ public final class Challenges {
     private static Map<String, ChallengeFactory> factories = new HashMap<>();
 
     static {
-        factories.put("Sign Content", new SigningChallengeFactory());
+        factories.put(String.valueOf(ChallengeType.SIGN_CONTENT), new SigningChallengeFactory());
         // TODO add more challenges :)
     }
 

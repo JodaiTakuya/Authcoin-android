@@ -80,7 +80,6 @@ public class EirFragment extends Fragment {
     private void displayEir(byte[] eirId) {
         try {
             ((AuthCoinApplication) getActivity().getApplication()).getEirRepository().find(eirId)
-
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new DisposableObserver<EntityIdentityRecord>() {
