@@ -36,7 +36,10 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Single<ChallengeRecord> registerChallenge(ChallengeRecord challenge) {
+        System.out.println("register");
         Single<ChallengeRecord> result = challengeRepository.save(challenge);
+        System.out.println("result");
+        // System.out.println(result.blockingGet().getTimestamp());
         // TODO send data to BC
         return result;
     }
