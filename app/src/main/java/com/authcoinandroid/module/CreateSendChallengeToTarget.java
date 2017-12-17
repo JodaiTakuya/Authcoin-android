@@ -62,10 +62,8 @@ public class CreateSendChallengeToTarget {
         }
 
         public void send(ChallengeRecord record) {
-            challengeService.registerChallenge(record);
+            challengeService.registerChallenge(record).blockingGet();
         }
-
-
     }
 
 }

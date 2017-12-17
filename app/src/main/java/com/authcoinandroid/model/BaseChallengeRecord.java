@@ -24,9 +24,12 @@ public class BaseChallengeRecord {
 
     @ManyToOne
     EntityIdentityRecord target;
-    
+
     @OneToOne(mappedBy = "challenge")
     ChallengeResponseRecord response;
+
+    private byte[] hash;
+    private byte[] signature;
 
     public BaseChallengeRecord(byte[] id, byte[] vaeId, String type, byte[] challenge, EntityIdentityRecord verifier, EntityIdentityRecord target) {
         this.id = id;
@@ -36,6 +39,8 @@ public class BaseChallengeRecord {
         this.challenge = challenge;
         this.verifier = verifier;
         this.target = target;
+        this.hash = new byte[32];
+        this.signature = new byte[128];
     }
 
     public BaseChallengeRecord() {
@@ -47,5 +52,21 @@ public class BaseChallengeRecord {
 
     public ChallengeResponseRecord getResponseRecord() {
         return response;
+    }
+
+    public void setHash(byte[] hash) {
+        this.hash = hash;
+    }
+
+    public byte[] getHash() {
+        return hash;
+    }
+
+    public void setSignature(byte[] signature) {
+        this.signature = signature;
+    }
+
+    public byte[] getSignature() {
+        return signature;
     }
 }

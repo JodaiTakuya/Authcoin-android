@@ -1,7 +1,10 @@
 package com.authcoinandroid.service.qtum;
 
+import com.authcoinandroid.service.qtum.model.SendRawTransactionRequest;
+import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
+import com.authcoinandroid.service.qtum.model.UnspentOutput;
+import io.reactivex.Observable;
 import junit.framework.Assert;
-
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.params.QtumTestNetParams;
 import org.bitcoinj.script.Script;
@@ -10,13 +13,10 @@ import org.bitcoinj.wallet.Wallet;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-
-import io.reactivex.Observable;
 
 
 public class BlockChainServiceTest {

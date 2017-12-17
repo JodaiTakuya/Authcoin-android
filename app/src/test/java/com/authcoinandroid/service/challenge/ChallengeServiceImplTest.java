@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import io.reactivex.Single;
 
-@Ignore
 public class ChallengeServiceImplTest extends AbstractTest {
 
     private ChallengeServiceImpl challengeService;
@@ -23,7 +22,7 @@ public class ChallengeServiceImplTest extends AbstractTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.challengeService = new ChallengeServiceImpl(challengeRepository);
+        this.challengeService = new ChallengeServiceImpl(challengeRepository, null, null);
     }
 
     @Test

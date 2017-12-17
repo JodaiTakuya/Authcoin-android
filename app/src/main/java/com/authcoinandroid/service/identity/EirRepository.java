@@ -1,15 +1,17 @@
 package com.authcoinandroid.service.identity;
 
+import com.authcoinandroid.model.AssetBlockChainStatus;
 import com.authcoinandroid.model.EntityIdentityRecord;
-
-import java.util.List;
-
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.internal.operators.single.SingleCreate;
 import io.requery.Persistable;
 import io.requery.reactivex.ReactiveEntityStore;
+
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 /**
  * EIR database operations
@@ -50,4 +52,17 @@ public class EirRepository {
         return r.toObservable();
     }
 
+    public List<EntityIdentityRecord> findByStatus(AssetBlockChainStatus... status) {
+        return dataStore
+                .select(EntityIdentityRecord.class)
+                .where(EntityIdentityRecord.STATUS.in(asList(status)))
+                .orderBy(EntityIdentityRecord.ID.lower())
+                .get().toList();
+    }
+
+    public EntityIdentityRecord findByAlias(String alias) {
+        return dataStore
+                .select(EntityIdentityRecord.class)
+                .where(EntityIdentityRecord.KEY_STORE_ALIAS.equal(alias)).get().first();
+    }
 }

@@ -1,13 +1,10 @@
 package com.authcoinandroid.service.qtum;
 
-import java.util.List;
-
+import com.authcoinandroid.service.qtum.model.*;
 import io.reactivex.Observable;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+import retrofit2.http.*;
+
+import java.util.List;
 
 /**
  * A low level API to communicate with QTUM blockchain
@@ -32,4 +29,6 @@ public interface BlockChainApi {
     @GET("/outputs/unspent")
     Observable<List<UnspentOutput>> getUnspentOutput(@Query("addresses[]") List<String> addresses);
 
+    @GET("/transactions/{tx_hash}")
+    Observable<Transaction> getTransaction(@Path("tx_hash") String txHash);
 }
