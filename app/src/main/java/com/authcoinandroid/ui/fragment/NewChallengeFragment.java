@@ -13,18 +13,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
-import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.module.challenges.Challenge;
+import com.authcoinandroid.module.EcKeyFormalValidationModule;
+import com.authcoinandroid.module.FormalValidationModule;
+import com.authcoinandroid.module.ValidationAndAuthenticationProcessingModule;
 import com.authcoinandroid.module.challenges.Challenges;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.util.AndroidUtil;
-import com.authcoinandroid.util.Util;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.authcoinandroid.model.AssetBlockChainStatus.MINED;
@@ -45,13 +46,40 @@ public class NewChallengeFragment extends Fragment {
     @OnClick({R.id.btn_send_challenge})
     void onSendChallenge(View view) {
         EntityIdentityRecord verifier = (EntityIdentityRecord) verifierEir.getSelectedItem();
-        EntityIdentityRecord target = getEirById(String.valueOf(targetEirId.getText()));
-        Challenge challenge = Challenges.get(String.valueOf(challengeType.getSelectedItem()));
+        String targetId = String.valueOf(targetEirId.getText());
+        String challengeTypeValue = String.valueOf(challengeType.getSelectedItem());
 
-        ChallengeRecord challengeRecord = createChallengeRecord(challenge, verifier, target);
+        createAndSendChallenge(verifier, targetId, challengeTypeValue);
 
-        // TODO (AuthCoinApplication) getActivity().getApplication()).getChallengeService().registerChallenge(...)
+        // Log.d(LOG_TAG, Arrays.toString(target.getId()));
+        //
+    }
 
+    private void createAndSendChallenge(EntityIdentityRecord verifier, String targetId, String challengeTypeValue) {
+        ((AuthCoinApplication) getActivity().getApplication()).getIdentityService()
+                .getEirById(targetId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<EntityIdentityRecord>() {
+                    @Override
+                    public void onComplete() {
+                    }
+
+                    @Override
+                    public void onNext(EntityIdentityRecord target) {
+                        Log.d(LOG_TAG, "onnext eir");
+                        Log.d(LOG_TAG, Arrays.toString(target.getContent()));
+                        FormalValidationModule fvm = new EcKeyFormalValidationModule();
+                        ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
+                        module.createChallengeForTarget(target, verifier, challengeTypeValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        AndroidUtil.displayNotification(getContext(), e.getMessage());
+                        Log.d(LOG_TAG, e.getMessage());
+                    }
+                });
     }
 
     @Override
@@ -86,37 +114,7 @@ public class NewChallengeFragment extends Fragment {
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
     }
 
-    private ChallengeRecord createChallengeRecord(Challenge challenge, EntityIdentityRecord verifier, EntityIdentityRecord target) {
-        byte[] id = Util.generateId();
-        byte[] vaeId = Util.generateId();
-        return new ChallengeRecord(id, vaeId, challenge.getType(), challenge.getContent(), verifier, target);
-    }
+    private void getEirById(String eirId) {
 
-    private EntityIdentityRecord getEirById(String eirId) {
-        final EntityIdentityRecord[] result = new EntityIdentityRecord[1];
-
-        ((AuthCoinApplication) getActivity().getApplication()).getIdentityService()
-                .getEirById(eirId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<EntityIdentityRecord>() {
-                    @Override
-                    public void onComplete() {
-                        Log.d(LOG_TAG, "getEirById complete!");
-                    }
-
-                    @Override
-                    public void onNext(EntityIdentityRecord eir) {
-                        result[0] = eir;
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        AndroidUtil.displayNotification(getContext(), e.getMessage());
-                        Log.d(LOG_TAG, e.getMessage());
-                    }
-                });
-
-        return result[0];
     }
 }

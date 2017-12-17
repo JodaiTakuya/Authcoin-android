@@ -39,6 +39,8 @@ public class BaseChallengeRecord {
         this.challenge = challenge;
         this.verifier = verifier;
         this.target = target;
+        this.hash = new byte[32];
+        this.signature = new byte[128];
     }
 
     public BaseChallengeRecord() {

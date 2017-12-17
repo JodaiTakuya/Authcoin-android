@@ -58,4 +58,9 @@ public class EirRepository {
                 .get().toList();
     }
 
+    public EntityIdentityRecord findByAlias(String alias) {
+        return dataStore
+                .select(EntityIdentityRecord.class)
+                .where(EntityIdentityRecord.KEY_STORE_ALIAS.equal(alias)).get().first();
+    }
 }

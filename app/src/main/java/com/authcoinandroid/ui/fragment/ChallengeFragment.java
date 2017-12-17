@@ -92,10 +92,15 @@ public class ChallengeFragment extends Fragment {
     }
 
     private void populateChallengeList(EntityIdentityRecord currentEir) {
+        Log.d(LOG_TAG, "populate");
+
         try {
             getChallengeRecordsForEir(currentEir);
+            Log.d(LOG_TAG, "getChallengeRecords");
 
             if (challengeRecords != null) {
+                Log.d(LOG_TAG, "notNull");
+
                 ChallengeAdapter adapter = new ChallengeAdapter(getContext(), challengeRecords);
                 challengeList.setAdapter(adapter);
 
@@ -127,11 +132,14 @@ public class ChallengeFragment extends Fragment {
                     public void onComplete() {
                         challengeRecords = new ArrayList<>();
                         challengeRecords.addAll(newChallengeRecords);
+                        Log.d(LOG_TAG, "onComplete");
+
                     }
 
                     @Override
                     public void onNext(List<ChallengeRecord> nextChallengeRecords) {
                         newChallengeRecords.addAll(nextChallengeRecords);
+                        Log.d(LOG_TAG, "onNext");
                     }
 
                     @Override
