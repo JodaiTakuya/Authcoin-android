@@ -1,5 +1,6 @@
 package com.authcoinandroid.ui.fragment.authentication;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,8 +22,6 @@ import com.authcoinandroid.ui.AuthCoinApplication;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
-
 public class EirSelectorFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private Button startAuthentication;
@@ -30,6 +29,9 @@ public class EirSelectorFragment extends Fragment implements AdapterView.OnItemS
 
     private Spinner eirSpinner;
     private ArrayAdapter<EntityIdentityRecord> eirAdapter;
+
+    private TextView applicationName;
+    private TextView applicationUrl;
 
     private EntityIdentityRecord selectedEir;
 
@@ -40,7 +42,6 @@ public class EirSelectorFragment extends Fragment implements AdapterView.OnItemS
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         EirRepository eirRepository = ((AuthCoinApplication) getActivity().getApplication()).getEirRepository();
         List<EntityIdentityRecord> eirs = eirRepository.findAll();
 
@@ -74,13 +75,21 @@ public class EirSelectorFragment extends Fragment implements AdapterView.OnItemS
         eirAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         View view = inflater.inflate(R.layout.aa_fragment_select_eir, container, false);
 
+        Uri uri = getActivity().getIntent().getData();
+
         eirSpinner = (Spinner) view.findViewById(R.id.verifier_eir_selector);
         startAuthentication = (Button) view.findViewById(R.id.authenticate);
         startAuthentication.setOnClickListener(nextButtonListener);
 
         eirSpinner.setAdapter(eirAdapter);
         eirSpinner.setOnItemSelectedListener(this);
-        ButterKnife.bind(this, view);
+
+        applicationName = (TextView) view.findViewById(R.id.tv_application_name);
+        applicationUrl = (TextView) view.findViewById(R.id.tv_application_url);
+
+        applicationName.setText("" + uri.getQueryParameter("appName"));
+        applicationUrl.setText("" + uri.getQueryParameter("serverUrl"));
+
 
         return view;
     }

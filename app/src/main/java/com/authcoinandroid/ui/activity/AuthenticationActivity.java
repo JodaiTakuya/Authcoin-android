@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
-import android.widget.Button;
 
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
@@ -39,26 +38,24 @@ public class AuthenticationActivity extends AppCompatActivity {
     private Handler mainThreadHandler;
     private Handler vaThreadHandler;
 
-    private Button startAuthentication;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
-        startAuthentication = (Button) findViewById(R.id.authenticate);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         EirSelectorFragment eirSelectionFragment = new EirSelectorFragment();
         eirSelectionFragment.setNextButtonListener(v -> {
             EntityIdentityRecord selectedEir = eirSelectionFragment.getSelectedEir();
-            //TODO fix dummy target EIR
+            //TODO fix dummy target EIR.
 
             KeyGenerationAndEstablishBindingModule eirGen = new KeyGenerationAndEstablishBindingModule(((AuthCoinApplication) getApplication()).getEirRepository(), new AndroidKeyPairService());
             try {
                 Pair<KeyPair, EntityIdentityRecord> eir = eirGen.generateAndEstablishBinding(new String[]{"my-target"}, "target");
                 vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, eir.second));
             } catch (GeneralSecurityException e) {
+                //TODO error handling
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -93,7 +90,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                     case 2:
                         // evaluate target's challenge sent to verifier
                         EvaluateChallengeFragment evaluateChallengeFragment = new EvaluateChallengeFragment();
-                        evaluateChallengeFragment.setChallengeRecord(((EvaluateChallengeMessage)msg.obj).getChallenge());
+                        evaluateChallengeFragment.setChallengeRecord(((EvaluateChallengeMessage) msg.obj).getChallenge());
                         evaluateChallengeFragment.setApproveButtonListener(
                                 v -> {
                                     synchronized (VAProcessRunnable.lock) {
@@ -106,7 +103,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                         break;
                     case 3:
                         SignatureFragment signatureFragment = new SignatureFragment();
-                        signatureFragment.setChallengeResponse(((SignatureMessage)msg.obj).getChallengeResponse());
+                        signatureFragment.setChallengeResponse(((SignatureMessage) msg.obj).getChallengeResponse());
                         signatureFragment.setApproveSignatureListener(
                                 v -> {
                                     synchronized (VAProcessRunnable.lock) {

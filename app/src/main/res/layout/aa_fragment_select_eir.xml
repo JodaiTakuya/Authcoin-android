@@ -7,12 +7,84 @@
     android:focusableInTouchMode="true"
     tools:context=".ui.fragment.authentication.EirSelectorFragment">
 
-    <Spinner xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/verifier_eir_selector"
+    <TextView
+        android:paddingTop="@dimen/default_button_size"
+        android:id="@+id/tv_welcome_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/buttons"
-        android:animateLayoutChanges="true" />
+        android:gravity="center"
+        android:textSize="20pt"
+        android:text="Siia tuleks panna mingi hea tekst!!"/>
+
+
+    <!-- app name -->
+    <LinearLayout
+        android:paddingTop="@dimen/default_button_size"
+        android:layout_below="@+id/tv_welcome_text"
+        android:id="@+id/layout_appName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_application_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:text="Application Name:" />
+
+        <TextView
+            android:id="@+id/tv_application_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"
+            android:layout_below="@+id/tv_application_name_text"
+            android:text="Demo application" />
+    </LinearLayout>
+
+    <!-- App URL -->
+    <LinearLayout
+        android:id="@+id/layout_appUrl"
+        android:layout_below="@+id/layout_appName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_application_url_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_application_name"
+            android:layout_weight="0.25"
+            android:text="Application URL:" />
+
+        <TextView
+            android:id="@+id/tv_application_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"
+            android:layout_below="@+id/tv_application_url_text"
+            android:text="Demo URL" />
+    </LinearLayout>
+
+    <!-- EIR select-->
+    <LinearLayout
+        android:id="@+id/layout_eir"
+        android:layout_below="@+id/layout_appUrl"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_eir_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_application_name"
+            android:layout_weight="0.25"
+            android:text="Select identity:" />
+        <Spinner xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/verifier_eir_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_eir_name"
+            android:layout_weight="0.75"
+            android:animateLayoutChanges="true" />
+
+    </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -31,7 +103,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Authenticate" />
+            android:text="Select Identity" />
 
         <Button
             android:id="@+id/cancel"
