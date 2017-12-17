@@ -1,9 +1,6 @@
 package com.authcoinandroid.service.qtum.mapper;
 
-import com.authcoinandroid.model.BaseEirIdentifier;
-import com.authcoinandroid.model.ChallengeRecord;
-import com.authcoinandroid.model.EirIdentifier;
-import com.authcoinandroid.model.EntityIdentityRecord;
+import com.authcoinandroid.model.*;
 import com.authcoinandroid.service.identity.IdentityService;
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.abi.FunctionReturnDecoder;
@@ -51,6 +48,16 @@ public class RecordContractParamMapper {
         params.add(bytesToBytes32(challenge.getTarget().getId()));
         params.add(bytesToBytes32(challenge.getHash()));
         params.add(new DynamicBytes(challenge.getSignature()));
+        return params;
+    }
+
+    public static List<Type> resolveChallengeResponseRecordContractParams(ChallengeResponseRecord response) {
+        List<Type> params = new ArrayList<>();
+        params.add(bytesToBytes32(response.getVaeId()));
+        params.add(bytesToBytes32(response.getChallenge().getId()));
+        params.add(new DynamicBytes(response.getResponse()));
+        params.add(bytesToBytes32(response.getHash()));
+        params.add(new DynamicBytes(response.getSignature()));
         return params;
     }
 
