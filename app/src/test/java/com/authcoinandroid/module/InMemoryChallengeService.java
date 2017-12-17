@@ -1,18 +1,19 @@
 package com.authcoinandroid.module;
 
 import com.authcoinandroid.model.ChallengeRecord;
-import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
+import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.service.challenge.ChallengeService;
+import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import org.bitcoinj.crypto.DeterministicKey;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import io.reactivex.Single;
 
 public class InMemoryChallengeService implements ChallengeService {
 
@@ -30,6 +31,11 @@ public class InMemoryChallengeService implements ChallengeService {
     }
 
     @Override
+    public Observable<SendRawTransactionResponse> saveChallengeToBc(DeterministicKey key, ChallengeRecord challenge) {
+        return null;
+    }
+
+    @Override
     public boolean isProcessed(byte[] vaeId) {
         return vaeIdToChallenges.get(vaeId).size() > 1;
     }
@@ -42,6 +48,11 @@ public class InMemoryChallengeService implements ChallengeService {
     @Override
     public Single<ChallengeRecord> registerChallengeResponse(byte[] challengeId, ChallengeResponseRecord response) {
         throw new IllegalStateException("Not implemented");
+    }
+
+    @Override
+    public Observable<SendRawTransactionResponse> saveChallengeResponseToBc(DeterministicKey key, ChallengeResponseRecord response) {
+        return null;
     }
 
     @Override
