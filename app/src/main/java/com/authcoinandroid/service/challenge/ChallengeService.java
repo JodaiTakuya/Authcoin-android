@@ -4,6 +4,7 @@ import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.SignatureRecord;
 
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 public interface ChallengeService {
@@ -15,4 +16,6 @@ public interface ChallengeService {
     Single<ChallengeRecord> registerChallengeResponse(byte[] challengeId, ChallengeResponseRecord response);
 
     Single<ChallengeRecord> registerSignatureRecord(byte[] challengeId, SignatureRecord signature);
+
+    Maybe<ChallengeRecord> get(byte[] id);
 }

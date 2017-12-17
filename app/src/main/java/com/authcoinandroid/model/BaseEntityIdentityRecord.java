@@ -19,7 +19,7 @@ import io.requery.Transient;
 import static org.web3j.utils.Numeric.cleanHexPrefix;
 
 /**
- * This is requery class. Based on this class EntityIdentityRecord is generated.
+ * This is a requery class. Based on this class EntityIdentityRecord is generated.
  */
 @Entity
 public class BaseEntityIdentityRecord {

@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 public class InMemoryChallengeService implements ChallengeService {
@@ -39,6 +40,11 @@ public class InMemoryChallengeService implements ChallengeService {
 
     @Override
     public Single<ChallengeRecord> registerSignatureRecord(byte[] challengeId, SignatureRecord signature) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    @Override
+    public Maybe<ChallengeRecord> get(byte[] id) {
         throw new IllegalStateException("Not implemented");
     }
 }

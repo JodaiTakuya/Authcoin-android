@@ -1,5 +1,6 @@
 package com.authcoinandroid.model;
 
+import io.requery.Column;
 import io.requery.Entity;
 import io.requery.ForeignKey;
 import io.requery.Key;
@@ -13,7 +14,8 @@ public class BaseChallengeResponseRecord {
 
     byte[] vaeId;
 
-    int blockNumber;
+    @Column(nullable = true)
+    Integer blockNumber;
 
     long timestamp;
 
@@ -38,6 +40,18 @@ public class BaseChallengeResponseRecord {
         this.response = response;
         this.hash = hash;
         this.signature = signature;
+        this.challenge = challenge;
+    }
+
+    public BaseChallengeResponseRecord(byte[] id, byte[] response, ChallengeRecord challenge) {
+        this.id = id;
+        this.vaeId = challenge.getVaeId();
+        this.timestamp = System.currentTimeMillis();
+        this.response = response;
+        //TODO calculate hash
+        this.hash = new byte[32];
+        //TODO calculate signature
+        this.signature = new byte[128];
         this.challenge = challenge;
     }
 

@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".ui.fragment.authentication.SignatureFragment">
+
+    <TextView
+        android:id="@+id/tv_challenge_response"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Challenge Response" />
+
+    <EditText
+        android:id="@+id/et_lifespan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/tv_challenge_response"
+        android:layout_marginEnd="89dp"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        android:text="365" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        tools:context=".ui.activity.AuthenticationActivity">
+
+        <Button
+            android:id="@+id/sign_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sign Response" />
+
+        <Button
+            android:id="@+id/invalid_response"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Invalid Response" />
+
+    </LinearLayout>
+
+</RelativeLayout>

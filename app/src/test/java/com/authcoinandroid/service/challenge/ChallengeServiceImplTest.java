@@ -9,11 +9,12 @@ import com.authcoinandroid.util.Util;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import io.reactivex.Single;
 
-
+@Ignore
 public class ChallengeServiceImplTest extends AbstractTest {
 
     private ChallengeServiceImpl challengeService;

@@ -55,6 +55,11 @@ public class ChallengeServiceImpl implements ChallengeService {
         return challengeRepository.save(challenge);
     }
 
+    @Override
+    public Maybe<ChallengeRecord> get(byte[] id) {
+        return challengeRepository.find(id);
+    }
+
     @NonNull
     private ChallengeRecord getChallengeRecord(byte[] challengeId) {
         Maybe<ChallengeRecord> m = challengeRepository.find(challengeId);
