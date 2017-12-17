@@ -5,7 +5,6 @@ import com.authcoinandroid.module.challenges.Challenge;
 import com.authcoinandroid.module.challenges.Challenges;
 import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.util.Util;
-
 import org.spongycastle.util.encoders.Hex;
 
 /**
@@ -26,7 +25,7 @@ public class CreateSendChallengeToVerifier {
 
     public ChallengeRecord createAndSend(ChallengeRecord crForTarget, String challengeType) {
         ChallengeRecord cr = challengeCreator.createChallenge(crForTarget, challengeType);
-        challengeService.registerChallenge(cr);
+        challengeService.registerChallenge(cr).blockingGet();
         return cr;
     }
 

@@ -5,13 +5,10 @@ import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.util.Util;
-
+import io.reactivex.Single;
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import io.reactivex.Single;
 
 
 public class ChallengeServiceImplTest extends AbstractTest {
@@ -22,7 +19,7 @@ public class ChallengeServiceImplTest extends AbstractTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.challengeService = new ChallengeServiceImpl(challengeRepository);
+        this.challengeService = new ChallengeServiceImpl(challengeRepository, null, null);
     }
 
     @Test

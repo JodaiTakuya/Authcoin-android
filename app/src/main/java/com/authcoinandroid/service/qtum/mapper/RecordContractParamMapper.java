@@ -41,6 +41,19 @@ public class RecordContractParamMapper {
         return params;
     }
 
+    public static List<Type> resolveChallengeRecordContractParams(ChallengeRecord challenge) {
+        List<Type> params = new ArrayList<>();
+        params.add(bytesToBytes32(challenge.getId()));
+        params.add(bytesToBytes32(challenge.getVaeId()));
+        params.add(stringToBytes32(challenge.getType()));
+        params.add(new DynamicBytes(challenge.getChallenge()));
+        params.add(bytesToBytes32(challenge.getVerifier().getId()));
+        params.add(bytesToBytes32(challenge.getTarget().getId()));
+        params.add(bytesToBytes32(challenge.getHash()));
+        params.add(new DynamicBytes(challenge.getSignature()));
+        return params;
+    }
+
     public static EntityIdentityRecord resolveEirFromAbiReturn(String abiReturn) {
         // let god have mercy on my soul
         List<TypeReference<?>> outputParameters = Arrays.asList(
