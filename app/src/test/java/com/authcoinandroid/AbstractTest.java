@@ -47,7 +47,8 @@ public abstract class AbstractTest {
 
     @After
     public void tearDown() throws Exception {
-        this.dataStore.close();
+        if (dataStore != null)
+            this.dataStore.close();
     }
 
     protected EntityIdentityRecord createEir(String alias) {

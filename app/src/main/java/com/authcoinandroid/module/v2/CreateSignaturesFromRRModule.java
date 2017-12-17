@@ -7,6 +7,7 @@ import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.module.messaging.MessageHandler;
 import com.authcoinandroid.module.messaging.SignatureMessage;
 import com.authcoinandroid.module.messaging.SignatureResponseMessage;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
 import com.authcoinandroid.util.Util;
 
 // Differences:
@@ -17,7 +18,7 @@ public class CreateSignaturesFromRRModule {
     private final MessageHandler messageHandler;
     private final SendSignatureRecordModule sendSignatureRecordModule;
 
-    public CreateSignaturesFromRRModule(MessageHandler messageHandler, ChallengeTransporter transporter) {
+    public CreateSignaturesFromRRModule(MessageHandler messageHandler, AuthcoinTransport transporter) {
         this.messageHandler = messageHandler;
         this.sendSignatureRecordModule = new SendSignatureRecordModule(transporter);
     }

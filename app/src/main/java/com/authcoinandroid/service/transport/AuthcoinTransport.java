@@ -1,13 +1,15 @@
-package com.authcoinandroid.module.v2;
+package com.authcoinandroid.service.transport;
 
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.SignatureRecord;
 
+import java.util.UUID;
+
 /**
  * Interface for different challenge related transport mechanisms.
  */
-public interface ChallengeTransporter {
+public interface AuthcoinTransport {
 
     /**
      * Sends CR to target and expects it to return verifier's CR.
@@ -15,7 +17,7 @@ public interface ChallengeTransporter {
      * @param record target CR.
      * @return verifier's CR
      */
-    ChallengeRecord send(ChallengeRecord record);
+    ChallengeRecord send(UUID registrationId, ChallengeRecord record);
 
     /**
      * Sends RR to target and expects it to return target's RR.
@@ -23,7 +25,7 @@ public interface ChallengeTransporter {
      * @param verifierResponse verifier CR.
      * @return target's CR
      */
-    ChallengeResponseRecord send(ChallengeResponseRecord verifierResponse);
+    ChallengeResponseRecord send(UUID registrationId, ChallengeResponseRecord verifierResponse);
 
     /**
      * Sends SR to target and expects it to return target's SR.
@@ -31,5 +33,5 @@ public interface ChallengeTransporter {
      * @param sr verifier SR.
      * @return target's SR
      */
-    SignatureRecord send(SignatureRecord sr);
+    SignatureRecord send(UUID registrationId, SignatureRecord sr);
 }

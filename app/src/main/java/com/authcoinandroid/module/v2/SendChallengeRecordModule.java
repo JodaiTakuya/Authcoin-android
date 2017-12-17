@@ -1,6 +1,7 @@
 package com.authcoinandroid.module.v2;
 
 import com.authcoinandroid.model.ChallengeResponseRecord;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
 
 /**
  * Differences:
@@ -8,13 +9,14 @@ import com.authcoinandroid.model.ChallengeResponseRecord;
  */
 public class SendChallengeRecordModule {
 
-    private ChallengeTransporter transporter;
+    private AuthcoinTransport transporter;
 
-    public SendChallengeRecordModule(ChallengeTransporter transporter) {
+    public SendChallengeRecordModule(AuthcoinTransport transporter) {
         this.transporter = transporter;
     }
 
     public ChallengeResponseRecord send(ChallengeResponseRecord verifierResponse) {
-        return transporter.send(verifierResponse);
+        // TODO id
+        return transporter.send(null, verifierResponse);
     }
 }

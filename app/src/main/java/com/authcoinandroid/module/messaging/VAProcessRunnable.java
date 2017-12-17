@@ -9,13 +9,14 @@ import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.module.EcKeyFormalValidationModule;
-import com.authcoinandroid.module.v2.ChallengeTransporter;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
 import com.authcoinandroid.module.v2.Triplet;
 import com.authcoinandroid.module.v2.ValidationAndAuthenticationProcessingModule;
 import com.authcoinandroid.util.Util;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.UUID;
 
 /**
  * Starts a V&A processing module in another thread.
@@ -48,15 +49,15 @@ public class VAProcessRunnable implements Runnable {
         ValidationAndAuthenticationProcessingModule t = new ValidationAndAuthenticationProcessingModule(
                 messageHandler,
                 new EcKeyFormalValidationModule(),
-                new ChallengeTransporter() {
+                new AuthcoinTransport() {
                     @Override
-                    public ChallengeRecord send(ChallengeRecord r) {
+                    public ChallengeRecord send(UUID id, ChallengeRecord r) {
                         //TODO remove
                         return new ChallengeRecord(Util.generateId(), r.getVaeId(), r.getType(), new byte[32], r.getTarget(), r.getVerifier());
                     }
 
                     @Override
-                    public ChallengeResponseRecord send(ChallengeResponseRecord rr) {
+                    public ChallengeResponseRecord send(UUID id,ChallengeResponseRecord rr) {
 
                         return new ChallengeResponseRecord(
                                 Util.generateId(),
@@ -71,7 +72,7 @@ public class VAProcessRunnable implements Runnable {
                     }
 
                     @Override
-                    public SignatureRecord send(SignatureRecord sr) {
+                    public SignatureRecord send(UUID id,SignatureRecord sr) {
                         return new SignatureRecord(
                                 Util.generateId(),
                                 sr.getVaeId(),

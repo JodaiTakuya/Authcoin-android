@@ -1,7 +1,7 @@
 package com.authcoinandroid.module.v2;
 
-import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.SignatureRecord;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
 
 /**
  * Differences:
@@ -9,13 +9,14 @@ import com.authcoinandroid.model.SignatureRecord;
  */
 public class SendSignatureRecordModule {
 
-    private ChallengeTransporter transporter;
+    private AuthcoinTransport transporter;
 
-    public SendSignatureRecordModule(ChallengeTransporter transporter) {
+    public SendSignatureRecordModule(AuthcoinTransport transporter) {
         this.transporter = transporter;
     }
 
     public SignatureRecord send(SignatureRecord sr) {
-        return transporter.send(sr);
+        //TODO
+        return transporter.send(null, sr);
     }
 }

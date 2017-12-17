@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 
 public class SigningChallenge implements Challenge {
 
-    public static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     @Override
     public String getType() {

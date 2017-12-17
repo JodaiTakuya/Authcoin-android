@@ -8,6 +8,7 @@ import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.module.FormalValidationModule;
 import com.authcoinandroid.module.messaging.MessageHandler;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
 import com.authcoinandroid.util.Util;
 
 import java.util.Arrays;
@@ -30,10 +31,10 @@ public class ValidationAndAuthenticationProcessingModule extends AbstractModule 
     public ValidationAndAuthenticationProcessingModule(
             MessageHandler messageHandler,
             FormalValidationModule formalValidationModule,
-            ChallengeTransporter transporter) {
+            AuthcoinTransport transporter) {
         super(messageHandler);
         notNull(formalValidationModule, "Formal validation module");
-        notNull(transporter, "ChallengeTransporter");
+        notNull(transporter, "AuthcoinTransport");
         this.formalValidationModule = formalValidationModule;
         this.vaModule = new ValidationAndAuthenticationModule(messageHandler, transporter);
     }

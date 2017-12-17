@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,6 +89,8 @@ public class EirSelectorFragment extends Fragment implements AdapterView.OnItemS
         applicationName.setText("" + uri.getQueryParameter("appName"));
         applicationUrl.setText("" + uri.getQueryParameter("serverUrl"));
 
+        String serverSessionId = uri.getQueryParameter("sessionId");
+        String serverEir = uri.getQueryParameter("serverEir");
 
         return view;
     }
@@ -101,8 +102,6 @@ public class EirSelectorFragment extends Fragment implements AdapterView.OnItemS
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         this.selectedEir = eirAdapter.getItem(position);
-
-        Log.i("TODO", "EIR selected");
     }
 
     public EntityIdentityRecord getSelectedEir() {

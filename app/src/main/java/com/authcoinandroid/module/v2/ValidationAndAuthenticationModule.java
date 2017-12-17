@@ -7,6 +7,7 @@ import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.module.messaging.MessageHandler;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
 
 // differences:
 // 1. CreateSendChallengeToVerifier is skipped (a verifier challenge is sent as a response to 'sendChallengeToTarget')
@@ -19,7 +20,7 @@ class ValidationAndAuthenticationModule {
 
     public ValidationAndAuthenticationModule(
             MessageHandler messageHandler,
-            ChallengeTransporter transporter) {
+            AuthcoinTransport transporter) {
         this.createAndSendChallengeModule = new CreateSendChallengeToTargetModule(messageHandler, transporter);
         this.createSendResponsesModule = new CreateSendResponsesModule(transporter, messageHandler);
         this.createSignatureModule = new CreateSignaturesModule(messageHandler, transporter);

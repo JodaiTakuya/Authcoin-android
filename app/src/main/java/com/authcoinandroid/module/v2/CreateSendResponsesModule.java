@@ -5,6 +5,7 @@ import android.util.Pair;
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.module.messaging.MessageHandler;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
 
 /**
  * Differences:
@@ -16,7 +17,7 @@ public class CreateSendResponsesModule {
     private CreateResponseModule createResponseModule;
     private SendChallengeRecordModule sendChallengeRecordModule;
 
-    public CreateSendResponsesModule(ChallengeTransporter transporter, MessageHandler messageHandler) {
+    public CreateSendResponsesModule(AuthcoinTransport transporter, MessageHandler messageHandler) {
         this.createResponseModule = new CreateResponseModule(messageHandler);
         this.sendChallengeRecordModule = new SendChallengeRecordModule(transporter);
     }

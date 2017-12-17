@@ -9,7 +9,7 @@ import com.authcoinandroid.module.challenges.Challenges;
 import com.authcoinandroid.module.messaging.ChallengeTypeMessageResponse;
 import com.authcoinandroid.module.messaging.MessageHandler;
 import com.authcoinandroid.module.messaging.RequestChallengeTypeMessage;
-import com.authcoinandroid.service.challenge.ChallengeService;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
 import com.authcoinandroid.util.Util;
 
 /**
@@ -23,7 +23,7 @@ class CreateSendChallengeToTargetModule {
     private CreateChallengeForTarget challengeCreator;
     private SendChallengeToTarget challengeSender;
 
-    public CreateSendChallengeToTargetModule(MessageHandler messageHandler, ChallengeTransporter transporter) {
+    public CreateSendChallengeToTargetModule(MessageHandler messageHandler, AuthcoinTransport transporter) {
         this.challengeCreator =  new CreateChallengeForTarget(messageHandler);
         this.challengeSender = new SendChallengeToTarget(transporter);
     }
@@ -72,14 +72,15 @@ class CreateSendChallengeToTargetModule {
      */
     class SendChallengeToTarget {
 
-        private final ChallengeTransporter transporter;
+        private final AuthcoinTransport transporter;
 
-        public SendChallengeToTarget(ChallengeTransporter transporter) {
+        public SendChallengeToTarget(AuthcoinTransport transporter) {
             this.transporter = transporter;
         }
 
         public ChallengeRecord send(ChallengeRecord record) {
-            return transporter.send(record);
+            //TODO
+            return transporter.send(null, record);
         }
 
     }
