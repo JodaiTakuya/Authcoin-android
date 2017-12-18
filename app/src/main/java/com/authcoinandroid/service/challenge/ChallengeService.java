@@ -26,4 +26,6 @@ public interface ChallengeService {
     Observable<SendRawTransactionResponse> saveChallengeResponseToBc(DeterministicKey key, ChallengeResponseRecord response);
 
     Single<ChallengeRecord> registerSignatureRecord(byte[] challengeId, SignatureRecord signature);
+
+    Observable<SendRawTransactionResponse> saveSignatureRecordToBc(DeterministicKey key, SignatureRecord signatureRecord);
 }

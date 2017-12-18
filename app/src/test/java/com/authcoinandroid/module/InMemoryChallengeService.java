@@ -59,4 +59,9 @@ public class InMemoryChallengeService implements ChallengeService {
     public Single<ChallengeRecord> registerSignatureRecord(byte[] challengeId, SignatureRecord signature) {
         throw new IllegalStateException("Not implemented");
     }
+
+    @Override
+    public Observable<SendRawTransactionResponse> saveSignatureRecordToBc(DeterministicKey key, SignatureRecord signatureRecord) {
+        return null;
+    }
 }

@@ -78,6 +78,11 @@ public class ChallengeServiceImpl implements ChallengeService {
         return challengeRepository.save(challenge);
     }
 
+    @Override
+    public Observable<SendRawTransactionResponse> saveSignatureRecordToBc(DeterministicKey key, SignatureRecord signatureRecord) {
+        return this.authcoinContractService.registerSignatureRecord(key, resolveSignatureRecordContractParams(signatureRecord));
+    }
+
     @NonNull
     private ChallengeRecord getChallengeRecord(byte[] challengeId) {
         Maybe<ChallengeRecord> m = challengeRepository.find(challengeId);

@@ -28,6 +28,7 @@ public class AuthcoinContractService {
     private final static String REGISTER_EIR = "registerEir";
     private final static String REGISTER_CR = "registerChallengeRecord";
     private final static String REGISTER_RR = "registerChallengeResponse";
+    private final static String REGISTER_SR = "registerChallengeSignature";
     private final static String GET_EIR = "getEir";
     private final static String GET_EIR_DATA = "getData";
     private static final String GET_CHALLENGE_IDS = "getChallengeIds";
@@ -55,6 +56,10 @@ public class AuthcoinContractService {
 
     public Observable<SendRawTransactionResponse> registerChallengeResponseRecord(DeterministicKey key, List<Type> methodParameters) {
         return sendRawTransaction(key, resolveAuthCoinScript(REGISTER_RR, methodParameters));
+    }
+
+    public Observable<SendRawTransactionResponse> registerSignatureRecord(DeterministicKey key, List<Type> methodParameters) {
+        return sendRawTransaction(key, resolveAuthCoinScript(REGISTER_SR, methodParameters));
     }
 
     public Observable<ContractResponse> getEirCount() {
