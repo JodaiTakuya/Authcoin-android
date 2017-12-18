@@ -1,26 +1,12 @@
 package com.authcoinandroid.service.transport;
 
 import android.util.Base64;
-
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.util.Util;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.UUID;
-
+import com.google.gson.*;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -30,6 +16,10 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.UUID;
 
 public class HttpRestAuthcoinTransport implements AuthcoinTransport {
 
@@ -107,7 +97,28 @@ public class HttpRestAuthcoinTransport implements AuthcoinTransport {
 
     @Override
     public SignatureRecord send(UUID registrationId, SignatureRecord sr) {
-        return null;
+        try {
+            Call<InternalRestChallengeSignatureRecord> responseCall = api.send(
+                    registrationId,
+                    new InternalRestChallengeSignatureRecord(sr)
+            );
+            Response<InternalRestChallengeSignatureRecord> response = responseCall.execute();
+            InternalRestChallengeSignatureRecord body = response.body();
+            SignatureRecord signatureRecord = new SignatureRecord(
+                    Util.generateId(),
+                    body.getVaeId(),
+                    0, // TODO i suppose
+                    body.getLifespan(),
+                    body.isRevoked(),
+                    body.isSuccessful(),
+                    null,
+                    null,
+                    challengeService.get(body.getChallengeId()).blockingGet().getResponseRecord()
+            );
+            return signatureRecord;
+        } catch (IOException e) {
+            throw new TransportException(e);
+        }
     }
 
     private interface RestApi {
