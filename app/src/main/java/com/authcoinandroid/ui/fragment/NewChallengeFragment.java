@@ -13,16 +13,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
+import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.EcKeyFormalValidationModule;
 import com.authcoinandroid.module.FormalValidationModule;
 import com.authcoinandroid.module.ValidationAndAuthenticationProcessingModule;
 import com.authcoinandroid.module.challenges.Challenges;
+import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.util.AndroidUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import org.bitcoinj.wallet.UnreadableWalletException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +100,12 @@ public class NewChallengeFragment extends Fragment {
                     public void onNext(EntityIdentityRecord target) {
                         FormalValidationModule fvm = new EcKeyFormalValidationModule();
                         ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
-                        module.createChallengeForTarget(verifier, verifier, challengeTypeValue);
+                        ChallengeRecord challengeRecord = module.createChallengeForTarget(verifier, verifier, challengeTypeValue);
+                        try {
+                            ((AuthCoinApplication) getActivity().getApplication()).getChallengeService().saveChallengeToBc(WalletService.getInstance().getReceiveKey(getContext()), challengeRecord);
+                        } catch (UnreadableWalletException e) {
+                            AndroidUtil.displayNotification(getContext(), e.getMessage());
+                        }
                     }
 
                     @Override
