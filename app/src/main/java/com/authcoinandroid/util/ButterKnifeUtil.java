@@ -1,7 +1,6 @@
 package com.authcoinandroid.util;
 
 import android.view.View;
-
 import butterknife.ButterKnife;
 
 public final class ButterKnifeUtil {
