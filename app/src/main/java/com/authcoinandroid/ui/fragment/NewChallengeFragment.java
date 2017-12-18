@@ -102,7 +102,7 @@ public class NewChallengeFragment extends Fragment {
                     public void onNext(EntityIdentityRecord target) {
                         FormalValidationModule fvm = new EcKeyFormalValidationModule();
                         ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
-                        ChallengeRecord challengeRecord = module.createChallengeForTarget(verifier, verifier, challengeTypeValue);
+                        ChallengeRecord challengeRecord = module.createChallengeForTarget(target, verifier, challengeTypeValue);
 
                         try {
                             ((AuthCoinApplication) getActivity().getApplication())
