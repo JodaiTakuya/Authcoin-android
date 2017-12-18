@@ -56,6 +56,7 @@ public class BaseChallengeResponseRecord {
     }
 
     public BaseChallengeResponseRecord() {
+        // Don't use this constructor. It is required by requery.
     }
 
     public SignatureRecord getSignatureRecord() {

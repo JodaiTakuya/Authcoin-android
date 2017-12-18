@@ -54,5 +54,6 @@ public class BaseSignatureRecord {
 
 
     public BaseSignatureRecord() {
+        // Don't use this constructor. It is required by requery.
     }
 }

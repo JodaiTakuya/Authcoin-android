@@ -25,6 +25,7 @@ public class BaseEirIdentifier {
     }
 
     public BaseEirIdentifier() {
+        // Don't use this constructor. It is required by requery.
     }
 
     public long getId() {

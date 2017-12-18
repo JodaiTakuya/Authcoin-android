@@ -44,6 +44,7 @@ public class BaseChallengeRecord {
     }
 
     public BaseChallengeRecord() {
+        // Don't use this constructor. It is required by requery.
     }
 
     public void setResponseRecord(ChallengeResponseRecord response) {
