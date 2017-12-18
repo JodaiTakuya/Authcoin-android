@@ -1,7 +1,6 @@
 package com.authcoinandroid.module.v2;
 
 import android.util.Pair;
-
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.challenges.Challenge;
@@ -24,7 +23,7 @@ class CreateSendChallengeToTargetModule {
     private SendChallengeToTarget challengeSender;
 
     public CreateSendChallengeToTargetModule(MessageHandler messageHandler, AuthcoinTransport transporter) {
-        this.challengeCreator =  new CreateChallengeForTarget(messageHandler);
+        this.challengeCreator = new CreateChallengeForTarget(messageHandler);
         this.challengeSender = new SendChallengeToTarget(transporter);
     }
 
@@ -79,8 +78,7 @@ class CreateSendChallengeToTargetModule {
         }
 
         public ChallengeRecord send(ChallengeRecord record) {
-            //TODO
-            return transporter.send(null, record);
+            return transporter.send(transporter.getServerInfo().getId(), record);
         }
 
     }

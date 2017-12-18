@@ -3,20 +3,17 @@ package com.authcoinandroid.module.messaging;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
-
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.module.EcKeyFormalValidationModule;
-import com.authcoinandroid.service.transport.AuthcoinTransport;
 import com.authcoinandroid.module.v2.Triplet;
 import com.authcoinandroid.module.v2.ValidationAndAuthenticationProcessingModule;
-import com.authcoinandroid.util.Util;
+import com.authcoinandroid.service.transport.HttpRestAuthcoinTransport;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.UUID;
 
 /**
  * Starts a V&A processing module in another thread.
@@ -31,15 +28,18 @@ public class VAProcessRunnable implements Runnable {
     private final EntityIdentityRecord target;
 
     private MessageHandler messageHandler;
+    private HttpRestAuthcoinTransport transporter;
 
     public VAProcessRunnable(
             Handler mainHandler,
             EntityIdentityRecord verifier,
-            EntityIdentityRecord target
+            EntityIdentityRecord target,
+            HttpRestAuthcoinTransport transporter
     ) {
         this.messageHandler = new MessageHandler(mainHandler);
         this.verifier = verifier;
         this.target = target;
+        this.transporter = transporter;
     }
 
     @Override
@@ -49,44 +49,7 @@ public class VAProcessRunnable implements Runnable {
         ValidationAndAuthenticationProcessingModule t = new ValidationAndAuthenticationProcessingModule(
                 messageHandler,
                 new EcKeyFormalValidationModule(),
-                new AuthcoinTransport() {
-                    @Override
-                    public ChallengeRecord send(UUID id, ChallengeRecord r) {
-                        //TODO remove
-                        return new ChallengeRecord(Util.generateId(), r.getVaeId(), r.getType(), new byte[32], r.getTarget(), r.getVerifier());
-                    }
-
-                    @Override
-                    public ChallengeResponseRecord send(UUID id,ChallengeResponseRecord rr) {
-
-                        return new ChallengeResponseRecord(
-                                Util.generateId(),
-                                rr.getVaeId(),
-                                10,
-                                new byte[32],
-                                new byte[32],
-                                new byte[128],
-                                // TODO invalid challenge.
-                                rr.getChallenge()
-                        );
-                    }
-
-                    @Override
-                    public SignatureRecord send(UUID id,SignatureRecord sr) {
-                        return new SignatureRecord(
-                                Util.generateId(),
-                                sr.getVaeId(),
-                                sr.getBlockNumber(),
-                                sr.getExpirationBlock(),
-                                false,
-                                true,
-                                new byte[32],
-                                new byte[32],
-                                // TODO invalid challenge
-                                sr.getChallengeResponse()
-                        );
-                    }
-                }
+                transporter
         );
         Triplet<Pair<ChallengeRecord, ChallengeRecord>, Pair<ChallengeResponseRecord, ChallengeResponseRecord>, Pair<SignatureRecord, SignatureRecord>> resp = t.process(target, verifier);
         messageHandler.send(new UserAuthenticatedMessage(resp.getFirst(), resp.getSecond()), 10);

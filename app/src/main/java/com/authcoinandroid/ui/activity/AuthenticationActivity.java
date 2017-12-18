@@ -1,35 +1,21 @@
 package com.authcoinandroid.ui.activity;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
+import android.os.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.module.messaging.ChallengeTypeMessageResponse;
-import com.authcoinandroid.module.messaging.EvaluateChallengeMessage;
-import com.authcoinandroid.module.messaging.EvaluateChallengeResponseMessage;
-import com.authcoinandroid.module.messaging.SignatureMessage;
-import com.authcoinandroid.module.messaging.SignatureResponseMessage;
-import com.authcoinandroid.module.messaging.UserAuthenticatedMessage;
-import com.authcoinandroid.module.messaging.VAProcessRunnable;
-import com.authcoinandroid.service.keypair.AndroidKeyPairService;
-import com.authcoinandroid.ui.fragment.authentication.AuthenticationSuccessfulFragment;
-import com.authcoinandroid.ui.fragment.authentication.ChallengeTypeSelectorFragment;
-import com.authcoinandroid.ui.fragment.authentication.EirSelectorFragment;
-import com.authcoinandroid.ui.fragment.authentication.EvaluateChallengeFragment;
-import com.authcoinandroid.ui.fragment.authentication.SignatureFragment;
-
-import java.security.PublicKey;
+import com.authcoinandroid.module.messaging.*;
+import com.authcoinandroid.service.transport.HttpRestAuthcoinTransport;
+import com.authcoinandroid.service.transport.ServerInfo;
+import com.authcoinandroid.ui.AuthCoinApplication;
+import com.authcoinandroid.ui.fragment.authentication.*;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
+    private static final String LOG_TAG = "AuthActivity";
     private Handler mainThreadHandler;
     private Handler vaThreadHandler;
 
@@ -39,16 +25,26 @@ public class AuthenticationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_authentication);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
+        String demoServer = "http://authcoin-demo-server.cfapps.io";
+        HttpRestAuthcoinTransport transport =
+                new HttpRestAuthcoinTransport(demoServer, ((AuthCoinApplication) getApplication()).getChallengeService());
         EirSelectorFragment eirSelectionFragment = new EirSelectorFragment();
         eirSelectionFragment.setNextButtonListener(v -> {
             EntityIdentityRecord selectedEir = eirSelectionFragment.getSelectedEir();
-            //TODO fix dummy target EIR
 
-            PublicKey pubKey = new AndroidKeyPairService().create("target").getPublic();
-            vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, new EntityIdentityRecord(pubKey)));
+            new Handler().post(() -> {
+                // TODO this is a """fix""" for networkonmainthread (it was late and i wanted to get other stuff working, sorry)
+                // TODO it is very bad and should be removed
+                StrictMode.ThreadPolicy policy =
+                        new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
 
+                ServerInfo serverInfo = transport.start();
+                EntityIdentityRecord target = ((AuthCoinApplication) getApplication()).getIdentityService().getEirById(serverInfo.getServerEir()).blockingSingle();
+                vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, target, transport));
+            });
         });
+
         transaction.replace(R.id.container, eirSelectionFragment).commit();
 
         HandlerThread handlerThread = new HandlerThread("VA");

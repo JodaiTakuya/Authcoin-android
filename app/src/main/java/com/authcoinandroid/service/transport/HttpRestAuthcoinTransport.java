@@ -25,6 +25,7 @@ public class HttpRestAuthcoinTransport implements AuthcoinTransport {
 
     private final RestApi api;
     private final ChallengeService challengeService;
+    private ServerInfo serverInfo;
 
     public HttpRestAuthcoinTransport(String baseUrl, ChallengeService challengeService) {
         this.challengeService = challengeService;
@@ -42,7 +43,8 @@ public class HttpRestAuthcoinTransport implements AuthcoinTransport {
         try {
             Call<ServerInfo> call = api.start();
             Response<ServerInfo> response = call.execute();
-            return response.body();
+            serverInfo = response.body();
+            return serverInfo;
         } catch (IOException e) {
             throw new TransportException(e);
         }
@@ -119,6 +121,10 @@ public class HttpRestAuthcoinTransport implements AuthcoinTransport {
         } catch (IOException e) {
             throw new TransportException(e);
         }
+    }
+
+    public ServerInfo getServerInfo() {
+        return serverInfo;
     }
 
     private interface RestApi {
