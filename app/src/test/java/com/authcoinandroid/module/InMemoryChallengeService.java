@@ -71,11 +71,15 @@ public class InMemoryChallengeService implements ChallengeService {
     public Maybe<ChallengeRecord> get(byte[] id) {
         for (List<ChallengeRecord> challenges : vaeIdToChallenges.values()) {
             for (ChallengeRecord c : challenges) {
-                if(Arrays.equals(c.getId(), id)) {
+                if (Arrays.equals(c.getId(), id)) {
                     return Maybe.just(c);
                 }
             }
         }
         return Maybe.empty();
+    }
+
+    public Observable<SendRawTransactionResponse> saveSignatureRecordToBc(DeterministicKey key, SignatureRecord signatureRecord) {
+        return null;
     }
 }
