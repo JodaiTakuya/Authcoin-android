@@ -53,5 +53,5 @@ public final class Challenges {
         }
         return executor;
     }
-    
+
 }

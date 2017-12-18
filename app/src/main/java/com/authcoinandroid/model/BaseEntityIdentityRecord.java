@@ -43,15 +43,16 @@ public class BaseEntityIdentityRecord {
 
     @Transient
     KeyPair keyPair;
+
     @Transient
     PublicKey publicKey;
 
     /*
-    * Creates a new entity identity record.
+    * Constructor for creating a new entity identity record for this device
     */
-    public BaseEntityIdentityRecord(String contentType, String keyStoreAlias, KeyPair keyPair) {
+    public BaseEntityIdentityRecord(String keyStoreAlias, KeyPair keyPair) {
         this.revoked = false;
-        this.contentType = contentType;
+        this.contentType = "test"; // TODO
         this.keyStoreAlias = keyStoreAlias;
         this.status = AssetBlockChainStatus.SUBMITTED;
         this.keyPair = keyPair;
@@ -62,13 +63,31 @@ public class BaseEntityIdentityRecord {
         this.signature = new byte[128]; // TODO calculate correct signature
     }
 
+    /*
+    * Constructor for creating a new entity identity record without key pair (EIR doesn't belong to
+    * current device.
+    */
+    public BaseEntityIdentityRecord(PublicKey publicKey) {
+        this.revoked = false;
+        this.contentType = "test"; // TODO
+        this.status = AssetBlockChainStatus.SUBMITTED;
+        this.publicKey = publicKey;
+        this.content = publicKey.getEncoded();
+        this.id = calcId();
+        this.hash = new byte[32]; // TODO calculate correct hash
+        this.signature = new byte[128]; // TODO calculate correct signature
+    }
+
     public BaseEntityIdentityRecord() {
+        // Don't use this constructor. It is required by requery.
     }
 
     @PostLoad
     public void init() {
         this.publicKey = CryptoUtil.toPublicKey(content);
-        this.keyPair = CryptoUtil.getKeyPair(keyStoreAlias);
+        if (keyStoreAlias != null) {
+            this.keyPair = CryptoUtil.getKeyPair(keyStoreAlias);
+        }
         this.hash = calculateHash();
         this.signature = sign();
     }

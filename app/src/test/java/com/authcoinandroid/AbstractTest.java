@@ -23,10 +23,8 @@ import org.robolectric.annotation.Config;
 import io.requery.Persistable;
 import io.requery.reactivex.ReactiveEntityStore;
 
-import static android.os.Build.VERSION_CODES.M;
-
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = {M}, application = AuthCoinApplication.class)
+@Config(sdk = {26}, application = AuthCoinApplication.class)
 public abstract class AbstractTest {
 
     protected KeyPairService keyPairService = new JdkKeyPairService();
@@ -41,7 +39,7 @@ public abstract class AbstractTest {
         this.dataStore = ((AuthCoinApplication) RuntimeEnvironment.application).getDataStore();
         this.eirRepository = new EirRepository(dataStore);
         this.verifier = eirRepository.save(createEir("Verifier")).blockingGet();
-        this.target = eirRepository.save(createEir("Target")).blockingGet();
+        this.target = eirRepository.save(createTargetEir()).blockingGet();
         this.challengeRepository = new ChallengeRepository(dataStore);
     }
 
@@ -52,7 +50,11 @@ public abstract class AbstractTest {
     }
 
     protected EntityIdentityRecord createEir(String alias) {
-        return new EntityIdentityRecord("test", alias, keyPairService.create(alias));
+        return new EntityIdentityRecord(alias, keyPairService.create(alias));
+    }
+
+    protected EntityIdentityRecord createTargetEir() {
+        return new EntityIdentityRecord(keyPairService.create("target").getPublic());
     }
 
     @NonNull

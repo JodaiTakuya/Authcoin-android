@@ -1,6 +1,5 @@
 package com.authcoinandroid.ui.activity;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -10,14 +9,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.Pair;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.module.KeyGenerationAndEstablishBindingModule;
 import com.authcoinandroid.module.messaging.ChallengeTypeMessageResponse;
 import com.authcoinandroid.module.messaging.EvaluateChallengeMessage;
 import com.authcoinandroid.module.messaging.EvaluateChallengeResponseMessage;
@@ -26,17 +20,13 @@ import com.authcoinandroid.module.messaging.SignatureResponseMessage;
 import com.authcoinandroid.module.messaging.UserAuthenticatedMessage;
 import com.authcoinandroid.module.messaging.VAProcessRunnable;
 import com.authcoinandroid.service.keypair.AndroidKeyPairService;
-import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.fragment.authentication.AuthenticationSuccessfulFragment;
 import com.authcoinandroid.ui.fragment.authentication.ChallengeTypeSelectorFragment;
 import com.authcoinandroid.ui.fragment.authentication.EirSelectorFragment;
 import com.authcoinandroid.ui.fragment.authentication.EvaluateChallengeFragment;
 import com.authcoinandroid.ui.fragment.authentication.SignatureFragment;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.util.List;
+import java.security.PublicKey;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
@@ -55,15 +45,9 @@ public class AuthenticationActivity extends AppCompatActivity {
             EntityIdentityRecord selectedEir = eirSelectionFragment.getSelectedEir();
             //TODO fix dummy target EIR
 
-            KeyGenerationAndEstablishBindingModule eirGen = new KeyGenerationAndEstablishBindingModule(((AuthCoinApplication) getApplication()).getEirRepository(), new AndroidKeyPairService());
-            try {
-                Pair<KeyPair, EntityIdentityRecord> eir = eirGen.generateAndEstablishBinding(new String[]{"my-target"}, "target");
-                vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, eir.second));
-            } catch (GeneralSecurityException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            PublicKey pubKey = new AndroidKeyPairService().create("target").getPublic();
+            vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, new EntityIdentityRecord(pubKey)));
+
         });
         transaction.replace(R.id.container, eirSelectionFragment).commit();
 
@@ -94,7 +78,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                     case 2:
                         // evaluate target's challenge sent to verifier
                         EvaluateChallengeFragment evaluateChallengeFragment = new EvaluateChallengeFragment();
-                        evaluateChallengeFragment.setChallengeRecord(((EvaluateChallengeMessage)msg.obj).getChallenge());
+                        evaluateChallengeFragment.setChallengeRecord(((EvaluateChallengeMessage) msg.obj).getChallenge());
                         evaluateChallengeFragment.setApproveButtonListener(
                                 v -> {
                                     synchronized (VAProcessRunnable.lock) {
@@ -107,7 +91,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                         break;
                     case 3:
                         SignatureFragment signatureFragment = new SignatureFragment();
-                        signatureFragment.setChallengeResponse(((SignatureMessage)msg.obj).getChallengeResponse());
+                        signatureFragment.setChallengeResponse(((SignatureMessage) msg.obj).getChallengeResponse());
                         signatureFragment.setApproveSignatureListener(
                                 v -> {
                                     synchronized (VAProcessRunnable.lock) {

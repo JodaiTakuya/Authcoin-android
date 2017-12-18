@@ -43,7 +43,7 @@ public class AuthCoinApplication extends MultiDexApplication {
         super.onCreate();
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
         // override onUpgrade to handle migrating to a new version
-        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 5);
+        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 6);
         if (BuildConfig.DEBUG) {
             // use this in development mode to drop and recreate the tables on every upgrade
             source.setTableCreationMode(TableCreationMode.DROP_CREATE);

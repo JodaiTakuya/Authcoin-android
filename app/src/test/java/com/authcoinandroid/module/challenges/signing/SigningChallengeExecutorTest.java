@@ -21,7 +21,7 @@ public class SigningChallengeExecutorTest extends AbstractTest {
 
     @Test
     public void testExecute() throws Exception {
-        EntityIdentityRecord eir = createEir("Test");
+        EntityIdentityRecord eir = createTargetEir();
         Challenge challenge = Challenges.get("Sign Content");
         byte[] result = executor.execute(challenge.getContent(), eir);
         assertNotNull(result);

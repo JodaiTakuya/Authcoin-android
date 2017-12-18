@@ -2,14 +2,14 @@ package com.authcoinandroid.service.identity;
 
 import com.authcoinandroid.model.AssetBlockChainStatus;
 import com.authcoinandroid.model.EntityIdentityRecord;
+
+import java.util.List;
+
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.internal.operators.single.SingleCreate;
 import io.requery.Persistable;
 import io.requery.reactivex.ReactiveEntityStore;
-
-import java.util.List;
 
 import static java.util.Arrays.asList;
 
@@ -28,20 +28,19 @@ public class EirRepository {
      * Inserts or updates EIR based on EIR ID.
      */
     public Single<EntityIdentityRecord> save(EntityIdentityRecord eir) {
-        /*byte[] id = eir.getId();
+        byte[] id = eir.getId();
         EntityIdentityRecord result = dataStore.findByKey(EntityIdentityRecord.class, id).blockingGet();
         if (result == null) {
             return dataStore.insert(eir);
         }
-        return dataStore.update(eir);*/
-        return Single.just(eir);
+        return dataStore.update(eir);
     }
 
     /**
      * Get all EIR values
      */
     public List<EntityIdentityRecord> findAll() {
-        return dataStore.select(EntityIdentityRecord.class).orderBy(EntityIdentityRecord.ID.lower()).get().toList();
+        return dataStore.select(EntityIdentityRecord.class).where(EntityIdentityRecord.KEY_STORE_ALIAS.notNull()).orderBy(EntityIdentityRecord.ID.lower()).get().toList();
     }
 
     /**

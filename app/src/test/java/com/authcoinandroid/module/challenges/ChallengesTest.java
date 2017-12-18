@@ -1,14 +1,17 @@
 package com.authcoinandroid.module.challenges;
 
-import org.junit.Ignore;
+import com.authcoinandroid.AbstractTest;
+
 import org.junit.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-@Ignore
-public class ChallengesTest {
+
+public class ChallengesTest extends AbstractTest {
 
     private static final String CHALLENGE_NAME_DUMMY = "dummy";
     private static final String CHALLENGE_NAME_SIGN_CONTENT = "Sign Content";

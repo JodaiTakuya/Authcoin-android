@@ -14,7 +14,7 @@ import java.util.List;
 
 import io.reactivex.Single;
 
-@Ignore
+
 public class ChallengeRepositoryTest extends AbstractTest {
 
     @Test
