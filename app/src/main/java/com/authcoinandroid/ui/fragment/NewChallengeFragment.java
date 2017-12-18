@@ -25,7 +25,6 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.authcoinandroid.model.AssetBlockChainStatus.MINED;
@@ -41,45 +40,6 @@ public class NewChallengeFragment extends Fragment {
     Spinner challengeType;
 
     public NewChallengeFragment() {
-    }
-
-    @OnClick({R.id.btn_send_challenge})
-    void onSendChallenge(View view) {
-        EntityIdentityRecord verifier = (EntityIdentityRecord) verifierEir.getSelectedItem();
-        String targetId = String.valueOf(targetEirId.getText());
-        String challengeTypeValue = String.valueOf(challengeType.getSelectedItem());
-
-        createAndSendChallenge(verifier, targetId, challengeTypeValue);
-
-        // Log.d(LOG_TAG, Arrays.toString(target.getId()));
-        //
-    }
-
-    private void createAndSendChallenge(EntityIdentityRecord verifier, String targetId, String challengeTypeValue) {
-        ((AuthCoinApplication) getActivity().getApplication()).getIdentityService()
-                .getEirById(targetId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<EntityIdentityRecord>() {
-                    @Override
-                    public void onComplete() {
-                    }
-
-                    @Override
-                    public void onNext(EntityIdentityRecord target) {
-                        Log.d(LOG_TAG, "onnext eir");
-                        Log.d(LOG_TAG, Arrays.toString(target.getContent()));
-                        FormalValidationModule fvm = new EcKeyFormalValidationModule();
-                        ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
-                        module.createChallengeForTarget(target, verifier, challengeTypeValue);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        AndroidUtil.displayNotification(getContext(), e.getMessage());
-                        Log.d(LOG_TAG, e.getMessage());
-                    }
-                });
     }
 
     @Override
@@ -114,7 +74,37 @@ public class NewChallengeFragment extends Fragment {
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
     }
 
-    private void getEirById(String eirId) {
+    @OnClick({R.id.btn_send_challenge})
+    void onSendChallenge(View view) {
+        EntityIdentityRecord verifier = (EntityIdentityRecord) verifierEir.getSelectedItem();
+        String targetId = String.valueOf(targetEirId.getText());
+        String challengeTypeValue = String.valueOf(challengeType.getSelectedItem());
 
+        createAndSendChallenge(verifier, targetId, challengeTypeValue);
+    }
+
+    private void createAndSendChallenge(EntityIdentityRecord verifier, String targetId, String challengeTypeValue) {
+        ((AuthCoinApplication) getActivity().getApplication()).getIdentityService()
+                .getEirById(targetId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<EntityIdentityRecord>() {
+                    @Override
+                    public void onComplete() {
+                    }
+
+                    @Override
+                    public void onNext(EntityIdentityRecord target) {
+                        FormalValidationModule fvm = new EcKeyFormalValidationModule();
+                        ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
+                        module.createChallengeForTarget(verifier, verifier, challengeTypeValue);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        AndroidUtil.displayNotification(getContext(), e.getMessage());
+                        Log.d(LOG_TAG, e.getMessage());
+                    }
+                });
     }
 }
