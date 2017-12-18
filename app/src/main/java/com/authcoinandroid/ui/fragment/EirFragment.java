@@ -52,13 +52,6 @@ public class EirFragment extends Fragment {
     @BindView(R.id.tv_eir_signature)
     TextView signature;
 
-    static final ButterKnife.Action<View> SET_INVISIBLE = new ButterKnife.Action<View>() {
-        @Override
-        public void apply(View view, int index) {
-            view.setVisibility(View.INVISIBLE);
-        }
-    };
-
     public EirFragment() {
     }
 
@@ -87,7 +80,6 @@ public class EirFragment extends Fragment {
     private void displayEir(byte[] eirId) {
         try {
             ((AuthCoinApplication) getActivity().getApplication()).getEirRepository().find(eirId)
-
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new DisposableObserver<EntityIdentityRecord>() {

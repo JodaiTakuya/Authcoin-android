@@ -109,6 +109,7 @@ public class NewIdentityFragment extends Fragment {
 
                         @Override
                         public void onError(Throwable e) {
+                            AndroidUtil.displayNotification(getContext(), e.getMessage());
                             Log.d(LOG_TAG, e.getMessage());
                         }
 

@@ -167,4 +167,9 @@ public class BaseEntityIdentityRecord {
     public String getTransactionId() {
         return transactionId;
     }
+
+    @Override
+    public String toString() {
+        return getKeyStoreAlias();
+    }
 }

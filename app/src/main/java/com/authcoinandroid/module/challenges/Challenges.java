@@ -19,7 +19,7 @@ public final class Challenges {
 
 
     static {
-        factories.put("Sign Content",
+        factories.put(String.valueOf(ChallengeType.SIGN_CONTENT),
                 Pair.create(new SigningChallengeFactory(), new SigningChallengeExecutor()));
     }
 

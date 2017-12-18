@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 
@@ -22,15 +21,15 @@ public class EirAdapter extends ArrayAdapter<EntityIdentityRecord> {
     public View getView(int position, View convertView, ViewGroup parent) {
         EntityIdentityRecord eir = getItem(position);
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_eir, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.custom_list_item, parent, false);
         }
-        TextView eirAliasTextView = (TextView) convertView.findViewById(R.id.eir_alias);
-        eirAliasTextView.setTag(position);
-        eirAliasTextView.setText(eir.getKeyStoreAlias());
+        TextView eirAlias = (TextView) convertView.findViewById(R.id.tv_title);
+        eirAlias.setTag(position);
+        eirAlias.setText(eir.getKeyStoreAlias());
 
-        TextView statusTextView = (TextView) convertView.findViewById(R.id.eir_status);
-        statusTextView.setTag(position);
-        statusTextView.setText(eir.getStatus().toString());
+        TextView eirStatus = (TextView) convertView.findViewById(R.id.tv_subtitle);
+        eirStatus.setTag(position);
+        eirStatus.setText(eir.getStatus().toString());
         return convertView;
     }
 }
