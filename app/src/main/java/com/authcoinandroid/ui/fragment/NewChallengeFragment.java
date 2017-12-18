@@ -20,7 +20,9 @@ import com.authcoinandroid.module.FormalValidationModule;
 import com.authcoinandroid.module.ValidationAndAuthenticationProcessingModule;
 import com.authcoinandroid.module.challenges.Challenges;
 import com.authcoinandroid.service.identity.WalletService;
+import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
 import com.authcoinandroid.ui.AuthCoinApplication;
+import com.authcoinandroid.ui.activity.MainActivity;
 import com.authcoinandroid.util.AndroidUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
@@ -101,8 +103,31 @@ public class NewChallengeFragment extends Fragment {
                         FormalValidationModule fvm = new EcKeyFormalValidationModule();
                         ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
                         ChallengeRecord challengeRecord = module.createChallengeForTarget(verifier, verifier, challengeTypeValue);
+
                         try {
-                            ((AuthCoinApplication) getActivity().getApplication()).getChallengeService().saveChallengeToBc(WalletService.getInstance().getReceiveKey(getContext()), challengeRecord);
+                            ((AuthCoinApplication) getActivity().getApplication())
+                                    .getChallengeService()
+                                    .saveChallengeToBc(WalletService.getInstance().getReceiveKey(getContext()), challengeRecord)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new DisposableObserver<SendRawTransactionResponse>() {
+                                        @Override
+                                        public void onNext(SendRawTransactionResponse response) {
+                                            Log.d(LOG_TAG, response.getTxid() + " - " + response.getResult());
+                                            ((MainActivity) getActivity()).applyFragment(ChallengeFragment.class, false, false);
+                                        }
+
+                                        @Override
+                                        public void onError(Throwable e) {
+                                            AndroidUtil.displayNotification(getContext(), e.getMessage());
+                                            Log.d(LOG_TAG, e.getMessage());
+                                        }
+
+                                        @Override
+                                        public void onComplete() {
+
+                                        }
+                                    });
                         } catch (UnreadableWalletException e) {
                             AndroidUtil.displayNotification(getContext(), e.getMessage());
                         }
