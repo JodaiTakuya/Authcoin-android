@@ -39,8 +39,6 @@ public class ChallengeFragment extends Fragment {
     @BindView(R.id.lv_challenges)
     ListView challengeList;
 
-    private List<ChallengeRecord> challengeRecords;
-
     public ChallengeFragment() {
     }
 
@@ -82,7 +80,8 @@ public class ChallengeFragment extends Fragment {
         return new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                populateChallengeList((EntityIdentityRecord) parent.getItemAtPosition(position));
+                EntityIdentityRecord currentEir = (EntityIdentityRecord) parent.getItemAtPosition(position);
+                getChallengeRecordsAndPopulateChallengeList(currentEir);
             }
 
             @Override
@@ -91,37 +90,8 @@ public class ChallengeFragment extends Fragment {
         };
     }
 
-    private void populateChallengeList(EntityIdentityRecord currentEir) {
-        Log.d(LOG_TAG, "populate");
-
-        try {
-            getChallengeRecordsForEir(currentEir);
-            Log.d(LOG_TAG, "getChallengeRecords");
-
-            if (challengeRecords != null) {
-                Log.d(LOG_TAG, "notNull");
-
-                ChallengeAdapter adapter = new ChallengeAdapter(getContext(), challengeRecords);
-                challengeList.setAdapter(adapter);
-
-                challengeList.setOnItemClickListener((parent, view, position, id) -> {
-                    ChallengeRecord challengeRecord = challengeRecords.get(position);
-                    Bundle bundle = new Bundle();
-                    bundle.putByteArray("challengeRecord", challengeRecord.getId());
-
-                    if (getContext() instanceof MainActivity) {
-                        // TODO Open a new Fragment (perhaps separate one required for sent/received challenges?)
-                        // ((MainActivity) getContext()).applyFullFragmentWithBundle(/* CrFragment */, bundle);
-                    }
-                });
-            }
-        } catch (Exception e) {
-            Log.d(LOG_TAG, e.getMessage());
-        }
-    }
-
-    private void getChallengeRecordsForEir(EntityIdentityRecord eir) {
-        List<ChallengeRecord> newChallengeRecords = new ArrayList<>();
+    private void getChallengeRecordsAndPopulateChallengeList(EntityIdentityRecord eir) {
+        List<ChallengeRecord> challengeRecords = new ArrayList<>();
 
         ((AuthCoinApplication) getActivity().getApplication()).getChallengeService()
                 .getChallengeRecordsForEir(eir)
@@ -130,16 +100,24 @@ public class ChallengeFragment extends Fragment {
                 .subscribe(new DisposableObserver<List<ChallengeRecord>>() {
                     @Override
                     public void onComplete() {
-                        challengeRecords = new ArrayList<>();
-                        challengeRecords.addAll(newChallengeRecords);
-                        Log.d(LOG_TAG, "onComplete");
+                        ChallengeAdapter adapter = new ChallengeAdapter(getContext(), challengeRecords);
+                        challengeList.setAdapter(adapter);
 
+                        challengeList.setOnItemClickListener((parent, view, position, id) -> {
+                            ChallengeRecord challengeRecord = challengeRecords.get(position);
+                            Bundle bundle = new Bundle();
+                            bundle.putByteArray("challengeRecord", challengeRecord.getId());
+
+                            if (getContext() instanceof MainActivity) {
+                                // TODO Open a new Fragment (perhaps separate ones for sent/received challenges?)
+                                // ((MainActivity) getContext()).applyFullFragmentWithBundle(/* CrFragment */, bundle);
+                            }
+                        });
                     }
 
                     @Override
                     public void onNext(List<ChallengeRecord> nextChallengeRecords) {
-                        newChallengeRecords.addAll(nextChallengeRecords);
-                        Log.d(LOG_TAG, "onNext");
+                        challengeRecords.addAll(nextChallengeRecords);
                     }
 
                     @Override
