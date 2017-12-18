@@ -61,6 +61,17 @@ public class RecordContractParamMapper {
         return params;
     }
 
+    public static List<Type> resolveSignatureRecordContractParams(SignatureRecord signatureRecord) {
+        List<Type> params = new ArrayList<>();
+        params.add(bytesToBytes32(signatureRecord.getVaeId()));
+        params.add(bytesToBytes32(signatureRecord.getChallengeResponse().getChallenge().getId()));
+        params.add(new Uint256(signatureRecord.getExpirationBlock()));
+        params.add(new Bool(signatureRecord.isSuccessful()));
+        params.add(bytesToBytes32(signatureRecord.getHash()));
+        params.add(new DynamicBytes(signatureRecord.getSignature()));
+        return params;
+    }
+
     public static EntityIdentityRecord resolveEirFromAbiReturn(String abiReturn) {
         // let god have mercy on my soul
         List<TypeReference<?>> outputParameters = Arrays.asList(
