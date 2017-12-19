@@ -15,6 +15,9 @@ import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.challenges.Challenges;
 import org.spongycastle.util.encoders.Hex;
 
+import static android.support.v4.content.ContextCompat.getColor;
+
+
 public class SignatureFragment extends Fragment {
 
     private View.OnClickListener signCallback;
@@ -36,16 +39,19 @@ public class SignatureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.aa_fragment_signature, container, false);
 
-        challengeResponseView = (TextView) view.findViewById(R.id.tv_challenge_response);
-
-        validSignature = (TextView) view.findViewById(R.id.tv_valid_siganture);
         lifespan = (EditText) view.findViewById(R.id.et_lifespan);
 
         ChallengeRecord challengeRecord = challengeResponse.getChallenge();
         EntityIdentityRecord targetEir = challengeRecord.getTarget();
         boolean isValid = Challenges.getVerifier(challengeRecord.getType()).verify(targetEir, challengeRecord.getChallenge(), challengeResponse.getResponse());
 
-        validSignature.setText("" + isValid);
+        validSignature = (TextView) view.findViewById(R.id.tv_valid_signature);
+        validSignature.setText(isValid ? R.string.valid : R.string.invalid);
+        validSignature.setTextColor(isValid
+                ? getColor(getContext(), R.color.textColorSuccess)
+                : getColor(getContext(), R.color.textColorError));
+
+        challengeResponseView = (TextView) view.findViewById(R.id.tv_challenge_response);
         challengeResponseView.setText(Hex.toHexString(challengeResponse.getResponse()));
 
         signButton = (Button) view.findViewById(R.id.sign_button);
@@ -55,8 +61,7 @@ public class SignatureFragment extends Fragment {
     }
 
     public int getLifespan() {
-        // TODO read lifespan value
-        return Integer.valueOf(365);
+        return Integer.parseInt(lifespan.getText().toString());
     }
 
     public void setApproveSignatureListener(View.OnClickListener signCallback) {
