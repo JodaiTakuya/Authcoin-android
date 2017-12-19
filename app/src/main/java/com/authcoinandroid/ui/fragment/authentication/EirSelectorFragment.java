@@ -6,8 +6,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import butterknife.BindView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.identity.EirRepository;
@@ -15,18 +17,14 @@ import com.authcoinandroid.ui.AuthCoinApplication;
 
 import java.util.List;
 
-public class EirSelectorFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class EirSelectorFragment extends Fragment {
 
     private Button startAuthentication;
     private ArrayAdapter<EntityIdentityRecord> eirAdapter;
     private Spinner eirSpinner;
     private View.OnClickListener nextButtonListener;
-    private EntityIdentityRecord selectedEir;
     private TextView applicationName;
     private TextView applicationUrl;
-
-    @BindView(R.id.tv_app_name)
-    TextView appName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,13 +37,11 @@ public class EirSelectorFragment extends Fragment implements AdapterView.OnItemS
 
         EirRepository eirRepository = ((AuthCoinApplication) getActivity().getApplication()).getEirRepository();
         List<EntityIdentityRecord> eirs = eirRepository.findAll();
-        selectedEir = eirs.get(0);
 
-        eirAdapter = new ArrayAdapter<>(this.getContext(),  android.R.layout.simple_spinner_item, eirs);
+        eirAdapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_item, eirs);
         eirAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         eirSpinner = (Spinner) view.findViewById(R.id.s_identity);
         eirSpinner.setAdapter(eirAdapter);
-        eirSpinner.setOnItemSelectedListener(this);
 
         startAuthentication = (Button) view.findViewById(R.id.authenticate);
         startAuthentication.setOnClickListener(nextButtonListener);
@@ -66,18 +62,8 @@ public class EirSelectorFragment extends Fragment implements AdapterView.OnItemS
         this.nextButtonListener = o;
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        this.selectedEir = eirAdapter.getItem(position);
-    }
-
     public EntityIdentityRecord getSelectedEir() {
-        return selectedEir;
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
+        return (EntityIdentityRecord) eirSpinner.getSelectedItem();
     }
 
 }
