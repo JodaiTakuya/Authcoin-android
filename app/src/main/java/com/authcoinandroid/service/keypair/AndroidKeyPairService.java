@@ -7,11 +7,14 @@ import com.authcoinandroid.util.crypto.CryptoUtil;
 
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * Android based {@link KeyPairService}
@@ -29,13 +32,17 @@ public class AndroidKeyPairService implements KeyPairService {
                             alias,
                             KeyProperties.PURPOSE_SIGN)
                             .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
-                            .setDigests(KeyProperties.DIGEST_SHA256,
-                                    KeyProperties.DIGEST_SHA384,
-                                    KeyProperties.DIGEST_SHA512)
+                            .setDigests(KeyProperties.DIGEST_SHA256)
                             .setUserAuthenticationRequired(false)
                             //.setUserAuthenticationValidityDurationSeconds(5 * 60)
                             .build());
-            return kpg.generateKeyPair();
+            KeyPair keyPair = kpg.generateKeyPair();
+            PublicKey publicKey = keyPair.getPublic();
+            PublicKey unrestrictedPublicKey =
+                    KeyFactory.getInstance(publicKey.getAlgorithm()).generatePublic(
+                            new X509EncodedKeySpec(publicKey.getEncoded()));
+
+            return new KeyPair(unrestrictedPublicKey, keyPair.getPrivate());
         } catch (GeneralSecurityException e) {
             throw new KeyPairException("KeyPair generation failed", e);
         }

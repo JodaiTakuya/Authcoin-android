@@ -18,7 +18,6 @@ public class SigningChallengeExecutor implements ChallengeExecutor {
     @Override
     public byte[] execute(byte[] challenge, EntityIdentityRecord eir) {
         try {
-            Provider[] providers = Security.getProviders();
             Signature signature = Signature.getInstance("SHA256withECDSA");
             PrivateKey aPrivate = eir.getKeyPair().getPrivate();
             signature.initSign(aPrivate);

@@ -2,14 +2,21 @@ package com.authcoinandroid.util.crypto;
 
 import android.security.keystore.KeyProperties;
 
-import org.spongycastle.jce.spec.ECPublicKeySpec;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.IOException;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Collections;
-import java.util.List;
 
 public class CryptoUtil {
 
@@ -22,7 +29,10 @@ public class CryptoUtil {
             KeyStore keyStore = getKeyStore();
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, null);
             PublicKey publicKey = keyStore.getCertificate(alias).getPublicKey();
-            return new KeyPair(publicKey, privateKey);
+            PublicKey unrestrictedPublicKey =
+                    KeyFactory.getInstance(publicKey.getAlgorithm()).generatePublic(
+                            new X509EncodedKeySpec(publicKey.getEncoded()));
+            return new KeyPair(unrestrictedPublicKey, privateKey);
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException(e);
         } catch (IOException e) {
@@ -64,10 +74,8 @@ public class CryptoUtil {
 
     public static PublicKey toPublicKey(byte[] content) {
         try {
-            return KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_EC).generatePublic(new X509EncodedKeySpec(content));
-        } catch (InvalidKeySpecException e) {
-            throw new IllegalStateException(e);
-        } catch (NoSuchAlgorithmException e) {
+            return KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_EC, BouncyCastleProvider.PROVIDER_NAME).generatePublic(new X509EncodedKeySpec(content));
+        } catch (GeneralSecurityException e) {
             throw new IllegalStateException(e);
         }
     }

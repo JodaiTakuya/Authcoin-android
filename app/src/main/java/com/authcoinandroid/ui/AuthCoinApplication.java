@@ -20,6 +20,7 @@ import io.requery.sql.EntityDataStore;
 import io.requery.sql.TableCreationMode;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
+import java.security.Provider;
 import java.security.Security;
 
 /**
@@ -41,7 +42,8 @@ public class AuthCoinApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        //Security.insertProviderAt(new BouncyCastleProvider(), 1);
+        Provider[] providers = Security.getProviders();
+        Security.insertProviderAt(new BouncyCastleProvider(), providers.length);
         // override onUpgrade to handle migrating to a new version
         DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 6);
         if (BuildConfig.DEBUG) {
