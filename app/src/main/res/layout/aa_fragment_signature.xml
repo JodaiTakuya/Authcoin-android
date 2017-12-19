@@ -8,40 +8,96 @@
                 tools:context=".ui.fragment.authentication.SignatureFragment">
 
     <TextView
+        android:id="@+id/tv_app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tv_app_url"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
+        android:textSize="24sp"
+        android:textColor="@color/colorPrimary"
+        android:text="Application name"/>
+
+    <TextView
+        android:id="@+id/tv_app_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tv_description"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center_horizontal"
+        android:textColor="@color/textColorSecondary"
+        android:text="Application URL"/>
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tv_challenge_response"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="48dp"
+        android:gravity="center_horizontal"
+        android:textSize="16sp"
+        android:text="@string/has_responded_with"/>
+
+    <TextView
         android:id="@+id/tv_challenge_response"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/tv_valid_signature"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="Challenge Response"/>
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:gravity="center_horizontal"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="Challenge response"/>
+
+    <TextView
+        android:id="@+id/tv_valid_signature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:text="isValid"/>
+
+    <TextView
+        android:id="@+id/tv_enter_days"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_valid_signature"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center_horizontal"
+        android:labelFor="@id/et_lifespan"
+        android:textSize="16sp"
+        android:text="Enter the amount of days you wish to trust this application:"/>
 
     <EditText
         android:id="@+id/et_lifespan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_challenge_response"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="89dp"
-        android:layout_marginTop="30dp"
+        android:layout_below="@+id/tv_enter_days"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
         android:inputType="numberSigned"
-        android:ems="10"
+        android:ems="4"
         android:text="365"/>
-
-    <TextView
-        android:id="@+id/tv_challenge_valid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/et_lifespan"
-        android:text="Is challenge signature valid:" />
-
-    <TextView
-        android:id="@+id/tv_valid_siganture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_challenge_valid"
-        android:layout_centerHorizontal="true"
-        android:text="true" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:tools="http://schemas.android.com/tools"

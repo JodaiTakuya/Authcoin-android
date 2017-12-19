@@ -42,4 +42,7 @@
     <string name="invalid_response">Invalid response</string>
     <string name="sign_response">Sign response</string>
     <string name="fulfill">Fulfill</string>
+    <string name="has_responded_with">has responded with:</string>
+    <string name="invalid">INVALID</string>
+    <string name="valid">VALID</string>
 </resources>
