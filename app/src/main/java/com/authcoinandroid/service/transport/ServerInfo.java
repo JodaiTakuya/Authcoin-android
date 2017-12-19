@@ -3,7 +3,7 @@ package com.authcoinandroid.service.transport;
 import java.util.UUID;
 
 
-class ServerInfo {
+public class ServerInfo {
     private String serverEir;
     private int nonce;
     private UUID id;
@@ -23,5 +23,15 @@ class ServerInfo {
 
     public String getAppName() {
         return appName;
+    }
+
+    @Override
+    public String toString() {
+        return "ServerInfo{" +
+                "serverEir='" + serverEir + '\'' +
+                ", nonce=" + nonce +
+                ", id=" + id +
+                ", appName='" + appName + '\'' +
+                '}';
     }
 }

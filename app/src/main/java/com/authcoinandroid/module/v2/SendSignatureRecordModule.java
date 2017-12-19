@@ -16,7 +16,6 @@ public class SendSignatureRecordModule {
     }
 
     public SignatureRecord send(SignatureRecord sr) {
-        //TODO
-        return transporter.send(null, sr);
+        return transporter.send(transporter.getServerInfo().getId(), sr);
     }
 }

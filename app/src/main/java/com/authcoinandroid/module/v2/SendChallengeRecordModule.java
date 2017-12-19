@@ -16,7 +16,6 @@ public class SendChallengeRecordModule {
     }
 
     public ChallengeResponseRecord send(ChallengeResponseRecord verifierResponse) {
-        // TODO id
-        return transporter.send(null, verifierResponse);
+        return transporter.send(transporter.getServerInfo().getId(), verifierResponse);
     }
 }
