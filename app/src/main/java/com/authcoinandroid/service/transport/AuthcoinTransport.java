@@ -34,4 +34,6 @@ public interface AuthcoinTransport {
      * @return target's SR
      */
     SignatureRecord send(UUID registrationId, SignatureRecord sr);
+
+    ServerInfo getServerInfo();
 }

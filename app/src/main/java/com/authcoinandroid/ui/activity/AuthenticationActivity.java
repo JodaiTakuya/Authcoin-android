@@ -8,10 +8,11 @@ import android.util.Log;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.messaging.*;
-import com.authcoinandroid.service.keypair.AndroidKeyPairService;
+import com.authcoinandroid.service.challenge.ChallengeServiceImpl;
+import com.authcoinandroid.service.transport.HttpRestAuthcoinTransport;
+import com.authcoinandroid.service.transport.ServerInfo;
+import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.fragment.authentication.*;
-
-import java.security.PublicKey;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
@@ -24,16 +25,22 @@ public class AuthenticationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_authentication);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
+        String demoServer = "http://authcoin-demo-server.cfapps.io";
+        ChallengeServiceImpl challengeService = ((AuthCoinApplication) getApplication()).getChallengeService();
+        HttpRestAuthcoinTransport transport =
+                new HttpRestAuthcoinTransport(demoServer, challengeService);
         EirSelectorFragment eirSelectionFragment = new EirSelectorFragment();
         eirSelectionFragment.setNextButtonListener(v -> {
             EntityIdentityRecord selectedEir = eirSelectionFragment.getSelectedEir();
-            //TODO fix dummy target EIR
 
-            PublicKey pubKey = new AndroidKeyPairService().create("target").getPublic();
-            vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, new EntityIdentityRecord(pubKey)));
-
+            new Thread(() -> {
+                ServerInfo serverInfo = transport.start();
+                EntityIdentityRecord target = ((AuthCoinApplication) getApplication()).getIdentityService().getEirById(serverInfo.getServerEir()).blockingSingle();
+                ((AuthCoinApplication) getApplication()).getEirRepository().save(target).blockingGet();
+                vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, target, transport, challengeService));
+            }).start();
         });
+
         transaction.replace(R.id.container, eirSelectionFragment).commit();
 
         HandlerThread handlerThread = new HandlerThread("VA");

@@ -1,13 +1,13 @@
 package com.authcoinandroid.module.v2;
 
 import android.util.Pair;
-
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.module.FormalValidationModule;
 import com.authcoinandroid.module.messaging.MessageHandler;
+import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.service.transport.AuthcoinTransport;
 import com.authcoinandroid.util.Util;
 
@@ -27,12 +27,15 @@ public class ValidationAndAuthenticationProcessingModule extends AbstractModule 
     private FormalValidationModule formalValidationModule;
 
     private ValidationAndAuthenticationModule vaModule;
+    private ChallengeService challengeService;
 
     public ValidationAndAuthenticationProcessingModule(
             MessageHandler messageHandler,
             FormalValidationModule formalValidationModule,
-            AuthcoinTransport transporter) {
+            AuthcoinTransport transporter,
+            ChallengeService challengeService) {
         super(messageHandler);
+        this.challengeService = challengeService;
         notNull(formalValidationModule, "Formal validation module");
         notNull(transporter, "AuthcoinTransport");
         this.formalValidationModule = formalValidationModule;
@@ -64,7 +67,7 @@ public class ValidationAndAuthenticationProcessingModule extends AbstractModule 
         }
 
         // 3. VA module
-        return vaModule.process(vae);
+        return vaModule.process(vae, challengeService);
     }
 
 }
