@@ -32,17 +32,11 @@ public class AuthenticationActivity extends AppCompatActivity {
         eirSelectionFragment.setNextButtonListener(v -> {
             EntityIdentityRecord selectedEir = eirSelectionFragment.getSelectedEir();
 
-            new Handler().post(() -> {
-                // TODO this is a """fix""" for networkonmainthread (it was late and i wanted to get other stuff working, sorry)
-                // TODO it is very bad and should be removed
-                StrictMode.ThreadPolicy policy =
-                        new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                StrictMode.setThreadPolicy(policy);
-
+            new Thread(() -> {
                 ServerInfo serverInfo = transport.start();
                 EntityIdentityRecord target = ((AuthCoinApplication) getApplication()).getIdentityService().getEirById(serverInfo.getServerEir()).blockingSingle();
                 vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, target, transport));
-            });
+            }).start();
         });
 
         transaction.replace(R.id.container, eirSelectionFragment).commit();
