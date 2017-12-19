@@ -14,7 +14,6 @@ import java.security.Signature;
 
 public class SigningChallengeExecutor implements ChallengeExecutor {
 
-
     @Override
     public byte[] execute(byte[] challenge, EntityIdentityRecord eir) {
         try {
