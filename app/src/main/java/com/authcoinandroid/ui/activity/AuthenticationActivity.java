@@ -8,6 +8,7 @@ import android.util.Log;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.messaging.*;
+import com.authcoinandroid.service.challenge.ChallengeServiceImpl;
 import com.authcoinandroid.service.transport.HttpRestAuthcoinTransport;
 import com.authcoinandroid.service.transport.ServerInfo;
 import com.authcoinandroid.ui.AuthCoinApplication;
@@ -26,8 +27,9 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         String demoServer = "http://authcoin-demo-server.cfapps.io";
+        ChallengeServiceImpl challengeService = ((AuthCoinApplication) getApplication()).getChallengeService();
         HttpRestAuthcoinTransport transport =
-                new HttpRestAuthcoinTransport(demoServer, ((AuthCoinApplication) getApplication()).getChallengeService());
+                new HttpRestAuthcoinTransport(demoServer, challengeService);
         EirSelectorFragment eirSelectionFragment = new EirSelectorFragment();
         eirSelectionFragment.setNextButtonListener(v -> {
             EntityIdentityRecord selectedEir = eirSelectionFragment.getSelectedEir();
@@ -35,7 +37,8 @@ public class AuthenticationActivity extends AppCompatActivity {
             new Thread(() -> {
                 ServerInfo serverInfo = transport.start();
                 EntityIdentityRecord target = ((AuthCoinApplication) getApplication()).getIdentityService().getEirById(serverInfo.getServerEir()).blockingSingle();
-                vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, target, transport));
+                ((AuthCoinApplication) getApplication()).getEirRepository().save(target).blockingGet();
+                vaThreadHandler.post(new VAProcessRunnable(mainThreadHandler, selectedEir, target, transport, challengeService));
             }).start();
         });
 
