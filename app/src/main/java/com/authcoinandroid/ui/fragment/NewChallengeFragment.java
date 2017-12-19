@@ -27,7 +27,6 @@ import com.authcoinandroid.util.AndroidUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import org.bitcoinj.wallet.UnreadableWalletException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,10 +100,12 @@ public class NewChallengeFragment extends Fragment {
                     @Override
                     public void onNext(EntityIdentityRecord target) {
                         FormalValidationModule fvm = new EcKeyFormalValidationModule();
-                        ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
-                        ChallengeRecord challengeRecord = module.createChallengeForTarget(target, verifier, challengeTypeValue);
+                        ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(
+                                fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
 
                         try {
+                            ChallengeRecord challengeRecord = module.createChallengeForTarget(target, verifier, challengeTypeValue);
+
                             ((AuthCoinApplication) getActivity().getApplication())
                                     .getChallengeService()
                                     .saveChallengeToBc(WalletService.getInstance().getReceiveKey(getContext()), challengeRecord)
@@ -128,7 +129,7 @@ public class NewChallengeFragment extends Fragment {
 
                                         }
                                     });
-                        } catch (UnreadableWalletException e) {
+                        } catch (Exception e) {
                             AndroidUtil.displayNotification(getContext(), e.getMessage());
                         }
                     }

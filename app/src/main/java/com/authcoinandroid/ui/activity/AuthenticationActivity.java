@@ -1,30 +1,15 @@
 package com.authcoinandroid.ui.activity;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
+import android.os.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.module.messaging.ChallengeTypeMessageResponse;
-import com.authcoinandroid.module.messaging.EvaluateChallengeMessage;
-import com.authcoinandroid.module.messaging.EvaluateChallengeResponseMessage;
-import com.authcoinandroid.module.messaging.SignatureMessage;
-import com.authcoinandroid.module.messaging.SignatureResponseMessage;
-import com.authcoinandroid.module.messaging.UserAuthenticatedMessage;
-import com.authcoinandroid.module.messaging.VAProcessRunnable;
+import com.authcoinandroid.module.messaging.*;
 import com.authcoinandroid.service.keypair.AndroidKeyPairService;
-import com.authcoinandroid.ui.fragment.authentication.AuthenticationSuccessfulFragment;
-import com.authcoinandroid.ui.fragment.authentication.ChallengeTypeSelectorFragment;
-import com.authcoinandroid.ui.fragment.authentication.EirSelectorFragment;
-import com.authcoinandroid.ui.fragment.authentication.EvaluateChallengeFragment;
-import com.authcoinandroid.ui.fragment.authentication.SignatureFragment;
+import com.authcoinandroid.ui.fragment.authentication.*;
 
 import java.security.PublicKey;
 

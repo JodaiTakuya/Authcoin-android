@@ -8,15 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.module.challenges.Challenges;
-
 import org.spongycastle.util.encoders.Hex;
-
 
 public class SignatureFragment extends Fragment {
 
@@ -48,7 +45,7 @@ public class SignatureFragment extends Fragment {
         EntityIdentityRecord targetEir = challengeRecord.getTarget();
         boolean isValid = Challenges.getVerifier(challengeRecord.getType()).verify(targetEir, challengeRecord.getChallenge(), challengeResponse.getResponse());
 
-        validSignature.setText(""+isValid);
+        validSignature.setText("" + isValid);
         challengeResponseView.setText(Hex.toHexString(challengeResponse.getResponse()));
 
         signButton = (Button) view.findViewById(R.id.sign_button);
