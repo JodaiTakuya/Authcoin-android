@@ -55,18 +55,22 @@
                   tools:context=".ui.activity.AuthenticationActivity">
 
         <Button
+            style="?android:attr/buttonBarNegativeButtonStyle"
+            android:id="@+id/cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/textColorSecondary"
+            android:text="@string/invalid_response"/>
+
+        <Button
+            style="?android:attr/buttonBarPositiveButtonStyle"
             android:id="@+id/sign_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Sign Response"/>
-
-        <Button
-            android:id="@+id/invalid_response"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Invalid Response"/>
+            android:textColor="@color/colorAccent"
+            android:text="@string/sign_response"/>
 
     </LinearLayout>
 

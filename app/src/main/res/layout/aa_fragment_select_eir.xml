@@ -45,7 +45,7 @@
         android:layout_marginBottom="48dp"
         android:gravity="center_horizontal"
         android:textSize="16sp"
-        android:text="wants to verify your identity."/>
+        android:text="@string/wants_to_verify_your_identity"/>
 
     <TextView
         android:id="@+id/tv_select_identity"
@@ -82,17 +82,21 @@
                   tools:context=".ui.activity.AuthenticationActivity">
 
         <Button
+            style="?android:attr/buttonBarNegativeButtonStyle"
             android:id="@+id/cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/textColorSecondary"
             android:text="@string/cancel"/>
 
         <Button
+            style="?android:attr/buttonBarPositiveButtonStyle"
             android:id="@+id/authenticate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/colorAccent"
             android:text="@string/select_identity"/>
 
     </LinearLayout>

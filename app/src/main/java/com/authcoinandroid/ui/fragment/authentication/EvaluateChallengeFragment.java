@@ -1,5 +1,6 @@
 package com.authcoinandroid.ui.fragment.authentication;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import org.spongycastle.util.encoders.Hex;
 public class EvaluateChallengeFragment extends Fragment {
 
     private View.OnClickListener listener;
+    private TextView applicationName;
+    private TextView applicationUrl;
     private TextView challengeType;
     private TextView challengeContent;
     private Button approveButton;
@@ -36,6 +39,12 @@ public class EvaluateChallengeFragment extends Fragment {
 
         approveButton = (Button) view.findViewById(R.id.approve_challenge);
         approveButton.setOnClickListener(listener);
+
+        Uri uri = getActivity().getIntent().getData();
+        applicationName = (TextView) view.findViewById(R.id.tv_app_name);
+        applicationUrl = (TextView) view.findViewById(R.id.tv_app_url);
+        applicationName.setText("" + uri.getQueryParameter("appName"));
+        applicationUrl.setText("" + uri.getQueryParameter("serverUrl"));
 
         return view;
     }
