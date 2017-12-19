@@ -1,9 +1,11 @@
 package com.authcoinandroid.module.challenges;
 
 import com.authcoinandroid.AbstractTest;
+import com.authcoinandroid.model.EntityIdentityRecord;
 
 import org.junit.Test;
 
+import java.security.KeyPair;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -39,16 +41,30 @@ public class ChallengesTest extends AbstractTest {
                     }
                 };
             }
-        }, null);
+        }, null, null);
         assertEquals(2, Challenges.getAllTypes().size());
     }
 
     @Test
     public void testGetSigningChallenge() throws Exception {
+        EntityIdentityRecord eir = createEir("test");
+
         Challenge challenge = Challenges.get(CHALLENGE_NAME_SIGN_CONTENT);
         assertNotNull(challenge);
-        assertNotNull(challenge.getContent());
+        byte[] content = challenge.getContent();
+        assertNotNull(content);
         assertEquals("Sign Content", challenge.getType());
-        assertTrue(challenge.getContent().length > 0);
+        assertTrue(content.length > 0);
+
+        ChallengeExecutor executor = Challenges.getExecutor(CHALLENGE_NAME_SIGN_CONTENT);
+        assertNotNull(executor);
+
+        byte[] result = executor.execute(content, eir);
+
+        ChallengeVerifier challengeVerifier = Challenges.getVerifier(CHALLENGE_NAME_SIGN_CONTENT);
+        assertNotNull(executor);
+
+        assertTrue(challengeVerifier.verify(eir, content, result));
     }
+
 }

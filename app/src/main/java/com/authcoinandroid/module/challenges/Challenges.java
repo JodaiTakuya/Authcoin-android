@@ -1,9 +1,9 @@
 package com.authcoinandroid.module.challenges;
 
-import android.util.Pair;
-
 import com.authcoinandroid.module.challenges.signing.SigningChallengeExecutor;
 import com.authcoinandroid.module.challenges.signing.SigningChallengeFactory;
+import com.authcoinandroid.module.challenges.signing.SigningChallengeVerifier;
+import com.authcoinandroid.module.v2.Triplet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,12 +15,19 @@ import java.util.Set;
  */
 public final class Challenges {
 
-    private static Map<String, Pair<ChallengeFactory, ChallengeExecutor>> factories = new HashMap<>();
+    private static Map<String, Triplet<ChallengeFactory, ChallengeExecutor, ChallengeVerifier>> factories = new HashMap<>();
 
 
     static {
         factories.put(
-                ChallengeType.SIGN_CONTENT.getValue(), Pair.create(new SigningChallengeFactory(), new SigningChallengeExecutor()));
+                ChallengeType.SIGN_CONTENT.getValue(),
+                new Triplet<>(
+                        new SigningChallengeFactory(),
+                        new SigningChallengeExecutor(),
+                        new SigningChallengeVerifier()
+                )
+
+        );
         // TODO add more challenges :)
 
     }
@@ -33,27 +40,35 @@ public final class Challenges {
         return factories.keySet();
     }
 
-    public static void add(String type, ChallengeFactory factory, ChallengeExecutor executor) {
+    public static void add(String type, ChallengeFactory factory, ChallengeExecutor executor, ChallengeVerifier verifier) {
         if (factories.containsKey(type)) {
             throw new IllegalArgumentException("Challenge Factory already registered");
         }
-        factories.put(type, Pair.create(factory, executor));
+        factories.put(type, new Triplet<>(factory, executor, verifier));
     }
 
     public static Challenge get(String type) {
-        ChallengeFactory factory = factories.get(type).first;
+        ChallengeFactory factory = factories.get(type).getFirst();
         if (factory == null) {
-            throw new NullPointerException("Unknown challenge type");
+            throw new IllegalArgumentException("Unknown challenge type");
         }
         return factory.create();
     }
 
     public static ChallengeExecutor getExecutor(String type) {
-        ChallengeExecutor executor = factories.get(type).second;
+        ChallengeExecutor executor = factories.get(type).getSecond();
         if (executor == null) {
-            throw new NullPointerException("Unknown challenge type");
+            throw new IllegalArgumentException("Unknown challenge type");
         }
         return executor;
+    }
+
+    public static ChallengeVerifier getVerifier(String type) {
+        ChallengeVerifier verifier = factories.get(type).getThird();
+        if (verifier == null) {
+            throw new IllegalArgumentException("Unknown challenge type");
+        }
+        return verifier;
     }
 
 }

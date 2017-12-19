@@ -9,6 +9,10 @@ import com.authcoinandroid.module.messaging.EvaluateChallengeMessage;
 import com.authcoinandroid.module.messaging.MessageHandler;
 import com.authcoinandroid.util.Util;
 
+/**
+ * Differences:
+ * 1. currently doesn't check if challenge record is processed or noy.
+ */
 public class CreateResponseModule {
 
     private final MessageHandler messageHandler;
@@ -28,7 +32,10 @@ public class CreateResponseModule {
                 (EvaluateChallengeResponseMessage) messageHandler.sendAndWaitResponse(req, 2);
 
         // 3 not approved by user
-            // TODO should be handled
+        if (!resp.isApproved()) {
+            // TODO send cancel message to the server
+            // TODO throw exception
+        }
 
         // 4. fulfill challenge
         ChallengeExecutor executor = Challenges.getExecutor(verifierChallenge.getType());
