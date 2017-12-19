@@ -27,6 +27,22 @@
         android:inputType="numberSigned"
         android:text="365" />
 
+    <TextView
+        android:id="@+id/tv_challenge_valid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/et_lifespan"
+        android:text="Is challenge signature valid:" />
+
+    <TextView
+        android:id="@+id/tv_valid_siganture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_challenge_valid"
+        android:layout_centerHorizontal="true"
+        android:text="true" />
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/buttons"
