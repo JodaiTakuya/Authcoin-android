@@ -7,12 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.ChallengeRecord;
-
 import org.spongycastle.util.encoders.Hex;
-
 
 public class EvaluateChallengeFragment extends Fragment {
 

@@ -35,4 +35,7 @@
     <string name="challenge_type">Challenge type</string>
     <string name="challenge_target">Challenge target identity</string>
     <string name="send_challenge">Send challenge</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_challenge">Select challenge</string>
+    <string name="select_identity">Select identity</string>
 </resources>

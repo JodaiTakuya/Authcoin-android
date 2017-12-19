@@ -41,7 +41,7 @@ public class AuthCoinApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        Security.insertProviderAt(new BouncyCastleProvider(), 1);
+        //Security.insertProviderAt(new BouncyCastleProvider(), 1);
         // override onUpgrade to handle migrating to a new version
         DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 6);
         if (BuildConfig.DEBUG) {

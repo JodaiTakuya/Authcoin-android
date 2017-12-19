@@ -13,6 +13,11 @@ import com.authcoinandroid.service.transport.HttpRestAuthcoinTransport;
 import com.authcoinandroid.service.transport.ServerInfo;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.fragment.authentication.*;
+import com.authcoinandroid.module.messaging.*;
+import com.authcoinandroid.service.keypair.AndroidKeyPairService;
+import com.authcoinandroid.ui.fragment.authentication.*;
+
+import java.security.PublicKey;
 
 public class AuthenticationActivity extends AppCompatActivity {
 

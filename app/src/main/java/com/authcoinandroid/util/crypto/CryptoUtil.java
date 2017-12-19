@@ -19,46 +19,15 @@ public class CryptoUtil {
 
     public static KeyPair getKeyPair(String alias) {
         try {
-            KeyStore.PrivateKeyEntry entry = getEntry(alias);
-            return new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
+            KeyStore keyStore = getKeyStore();
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, null);
+            PublicKey publicKey = keyStore.getCertificate(alias).getPublicKey();
+            return new KeyPair(publicKey, privateKey);
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException(e);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public static byte[] sign(byte[] data, String alias) throws GeneralSecurityException, IOException {
-        KeyStore.PrivateKeyEntry entry = getEntry(alias);
-        PrivateKey privateKey = entry.getPrivateKey();
-        Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
-        sig.initSign(privateKey);
-        sig.update(data);
-        return sig.sign();
-    }
-
-    public static byte[] sign(byte[] data, KeyPair keyPair) throws GeneralSecurityException, IOException {
-        PrivateKey privateKey = keyPair.getPrivate();
-        Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
-        sig.initSign(privateKey);
-        sig.update(data);
-        return sig.sign();
-    }
-
-    public static boolean verify(byte[] signature, byte[] data, String alias) throws GeneralSecurityException, IOException {
-        KeyStore.PrivateKeyEntry entry = getEntry(alias);
-        final Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(entry.getPrivateKey().getAlgorithm());
-        sig.initVerify(entry.getCertificate());
-        sig.update(data);
-        return sig.verify(signature);
-    }
-
-    public static byte[] hashSha256(String data) throws NoSuchAlgorithmException {
-        return hash(MessageDigest.getInstance("SHA-256"), data);
-    }
-
-    public static List<String> getAliases() throws GeneralSecurityException, IOException {
-        return Collections.list(getKeyStore().aliases());
     }
 
     private static KeyStore.PrivateKeyEntry getEntry(String alias) throws GeneralSecurityException, IOException {
