@@ -1,5 +1,6 @@
 package com.authcoinandroid.ui.fragment.authentication;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,12 +23,11 @@ public class SignatureFragment extends Fragment {
 
     private View.OnClickListener signCallback;
     private ChallengeResponseRecord challengeResponse;
-
     private TextView challengeResponseView;
+    private TextView applicationName;
+    private TextView applicationUrl;
     private EditText lifespan;
-
     private TextView validSignature;
-
     private Button signButton;
 
     @Override
@@ -56,6 +56,12 @@ public class SignatureFragment extends Fragment {
 
         signButton = (Button) view.findViewById(R.id.sign_button);
         signButton.setOnClickListener(signCallback);
+
+        Uri uri = getActivity().getIntent().getData();
+        applicationName = (TextView) view.findViewById(R.id.tv_app_name);
+        applicationUrl = (TextView) view.findViewById(R.id.tv_app_url);
+        applicationName.setText("" + uri.getQueryParameter("appName"));
+        applicationUrl.setText("" + uri.getQueryParameter("serverUrl"));
 
         return view;
     }
