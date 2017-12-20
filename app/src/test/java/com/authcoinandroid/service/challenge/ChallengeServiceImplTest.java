@@ -5,14 +5,10 @@ import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.util.Util;
-
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import io.reactivex.Single;
+import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ChallengeServiceImplTest extends AbstractTest {
 
@@ -35,7 +31,7 @@ public class ChallengeServiceImplTest extends AbstractTest {
         );
         ChallengeRecord updatedChallenge = newResult.blockingGet();
         Assert.assertNotNull(updatedChallenge);
-        Assert.assertNotNull(updatedChallenge.getResponseRecord());
+        Assert.assertNotNull(updatedChallenge.getResponse());
     }
 
     @Test
@@ -53,13 +49,13 @@ public class ChallengeServiceImplTest extends AbstractTest {
 
         Single<ChallengeRecord> result3 = challengeService.registerSignatureRecord(
                 challenge.getId(),
-                createSignatureRecord(challengeWithResponse.getResponseRecord())
+                createSignatureRecord(challengeWithResponse.getResponse())
         );
         ChallengeRecord challengeWithSignature = result3.blockingGet();
 
         Assert.assertNotNull(challengeWithSignature);
-        Assert.assertNotNull(challengeWithSignature.getResponseRecord());
-        Assert.assertNotNull(challengeWithSignature.getResponseRecord().getSignatureRecord());
+        Assert.assertNotNull(challengeWithSignature.getResponse());
+        Assert.assertNotNull(challengeWithSignature.getResponse().getSignatureRecord());
     }
 
     private ChallengeResponseRecord createResponseRecord(ChallengeRecord challenge) {

@@ -2,10 +2,8 @@ package com.authcoinandroid.module;
 
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
-import com.authcoinandroid.module.challenges.Challenge;
 import com.authcoinandroid.module.challenges.ChallengeExecutor;
 import com.authcoinandroid.module.challenges.Challenges;
-import com.authcoinandroid.module.challenges.signing.SigningChallenge;
 import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.util.Util;
 
@@ -25,7 +23,7 @@ public class CreateResponseModule {
     }
 
     public ChallengeResponseRecord declineChallenge(ChallengeRecord cr) {
-        if(cr.getResponseRecord() != null) {
+        if(cr.getResponse() != null) {
             throw new IllegalStateException("Challenge response already present");
         }
         // TODO decline challenge
@@ -33,7 +31,7 @@ public class CreateResponseModule {
     }
 
     public ChallengeResponseRecord acceptChallenge(ChallengeRecord cr) {
-        if(cr.getResponseRecord() != null) {
+        if(cr.getResponse() != null) {
             throw new IllegalStateException("Challenge response already present");
         }
         ChallengeExecutor executor = Challenges.getExecutor(cr.getType());

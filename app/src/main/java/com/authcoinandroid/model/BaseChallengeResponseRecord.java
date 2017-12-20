@@ -1,10 +1,6 @@
 package com.authcoinandroid.model;
 
-import io.requery.Column;
-import io.requery.Entity;
-import io.requery.ForeignKey;
-import io.requery.Key;
-import io.requery.OneToOne;
+import io.requery.*;
 
 @Entity
 public class BaseChallengeResponseRecord {
@@ -25,11 +21,11 @@ public class BaseChallengeResponseRecord {
 
     byte[] signature;
 
-    @ForeignKey
-    @OneToOne
+    @OneToOne(mappedBy = "response")
     ChallengeRecord challenge;
 
-    @OneToOne(mappedBy = "challengeResponse")
+    @ForeignKey(delete = ReferentialAction.CASCADE, update = ReferentialAction.CASCADE)
+    @OneToOne
     SignatureRecord signatureRecord;
 
     public BaseChallengeResponseRecord(byte[] id, byte[] vaeId, int blockNumber, byte[] response, byte[] hash, byte[] signature, ChallengeRecord challenge) {
@@ -48,6 +44,8 @@ public class BaseChallengeResponseRecord {
         this.vaeId = challenge.getVaeId();
         this.timestamp = System.currentTimeMillis();
         this.response = response;
+        // TODO to avoid NULL constraint violations in DB
+        this.blockNumber = 1;
         //TODO calculate hash
         this.hash = new byte[32];
         //TODO calculate signature

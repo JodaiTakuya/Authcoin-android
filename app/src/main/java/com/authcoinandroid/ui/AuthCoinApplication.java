@@ -11,7 +11,6 @@ import com.authcoinandroid.service.identity.EirRepository;
 import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.keypair.AndroidKeyPairService;
 import com.authcoinandroid.service.wallet.WalletService;
-
 import io.requery.Persistable;
 import io.requery.android.BuildConfig;
 import io.requery.android.sqlite.DatabaseSource;
@@ -48,7 +47,7 @@ public class AuthCoinApplication extends MultiDexApplication {
         Provider[] providers = Security.getProviders();
         Security.insertProviderAt(new BouncyCastleProvider(), providers.length);
         // override onUpgrade to handle migrating to a new version
-        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 7);
+        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 10);
         if (BuildConfig.DEBUG) {
             // use this in development mode to drop and recreate the tables on every upgrade
             source.setTableCreationMode(TableCreationMode.DROP_CREATE);

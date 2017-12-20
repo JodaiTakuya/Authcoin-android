@@ -52,7 +52,6 @@ class ValidationAndAuthenticationModule {
         // 3. CreateSendResponses
         // the first parameter is target's RR; the second parameter is verifier's RR
         Pair<ChallengeResponseRecord, ChallengeResponseRecord> responses = createSendResponsesModule.process(challenges);
-        // TODO: currently saving to db is broken - when saving challenge then its rr and sr are not saved
         challengeService.registerChallengeResponse(responses.first.getChallenge().getId(), responses.first).blockingGet();
         challengeService.registerChallengeResponse(responses.second.getChallenge().getId(), responses.second).blockingGet();
         // 4. PostCRAndRRsToBlockchain
@@ -62,10 +61,8 @@ class ValidationAndAuthenticationModule {
         // 5. CreateAndPostSignatures
         Pair<SignatureRecord, SignatureRecord> signatures = createSignatureModule.process(responses.first);
 
-        // TODO: currently saving to db is broken - when saving challenge then its rr and sr are not saved
-        // at the moment this will throw an exception
-        // challengeService.registerSignatureRecord(signatures.first.getChallengeResponse().getChallenge().getId(), signatures.first).blockingGet();
-        // challengeService.registerSignatureRecord(signatures.second.getChallengeResponse().getChallenge().getId(), signatures.second).blockingGet();
+//         challengeService.registerSignatureRecord(signatures.first.getChallengeResponse().getChallenge().getId(), signatures.first).blockingGet();
+//         challengeService.registerSignatureRecord(signatures.second.getChallengeResponse().getChallenge().getId(), signatures.second).blockingGet();
         return new Triplet<>(challenges, responses, signatures);
     }
 

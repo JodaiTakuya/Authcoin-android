@@ -110,12 +110,12 @@ public class HttpRestAuthcoinTransport implements AuthcoinTransport {
                     Util.generateId(),
                     body.getVaeId(),
                     0, // TODO i suppose
-                    body.getLifespan(),
+                    42, // TODO body.getLifespan() is currently null
                     body.isRevoked(),
                     body.isSuccessful(),
                     null,
                     null,
-                    challengeService.get(body.getChallengeId()).blockingGet().getResponseRecord()
+                    challengeService.get(body.getChallengeId()).blockingGet().getResponse()
             );
             return signatureRecord;
         } catch (IOException e) {
