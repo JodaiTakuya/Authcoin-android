@@ -2,42 +2,47 @@ package com.authcoinandroid.module;
 
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
-import com.authcoinandroid.module.challenges.Challenge;
 import com.authcoinandroid.module.challenges.ChallengeExecutor;
 import com.authcoinandroid.module.challenges.Challenges;
-import com.authcoinandroid.module.challenges.signing.SigningChallenge;
-import com.authcoinandroid.service.challenge.ChallengeService;
+import com.authcoinandroid.module.messaging.EvaluateChallengeResponseMessage;
+import com.authcoinandroid.module.messaging.EvaluateChallengeMessage;
+import com.authcoinandroid.module.messaging.MessageHandler;
 import com.authcoinandroid.util.Util;
 
 /**
- * "CreateResponse" module
- *
  * Differences:
- * 1. RR_ID counter is replaced by java.util.UUID.randomUUID()o
- *
+ * 1. currently doesn't check if challenge record is processed or noy.
  */
 public class CreateResponseModule {
 
-    private ChallengeService challengeService;
+    private final MessageHandler messageHandler;
 
-    public CreateResponseModule(ChallengeService challengeService) {
-        this.challengeService = challengeService;
+    public CreateResponseModule(MessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
     }
 
-    public ChallengeResponseRecord declineChallenge(ChallengeRecord cr) {
-        if(cr.getResponseRecord() != null) {
-            throw new IllegalStateException("Challenge response already present");
+    public ChallengeResponseRecord process(ChallengeRecord verifierChallenge) {
+        // 1. is challenge already processed
+        //TODO  processed challenge? use challenge service? ignored for now.
+
+        // 2. evaluate challenge
+        EvaluateChallengeMessage req = new EvaluateChallengeMessage(verifierChallenge);
+        // this is a blocking call
+        EvaluateChallengeResponseMessage resp =
+                (EvaluateChallengeResponseMessage) messageHandler.sendAndWaitResponse(req, 2);
+
+        // 3 not approved by user
+        if (!resp.isApproved()) {
+            // TODO send cancel message to the server
+            // TODO throw exception
         }
-        // TODO decline challenge
-        return null;
+
+        // 4. fulfill challenge
+        ChallengeExecutor executor = Challenges.getExecutor(verifierChallenge.getType());
+        byte[] result = executor.execute(verifierChallenge.getChallenge(), verifierChallenge.getTarget());
+
+        // 5. create RR
+        return new ChallengeResponseRecord(Util.generateId(), result, verifierChallenge);
     }
 
-    public ChallengeResponseRecord acceptChallenge(ChallengeRecord cr) {
-        if(cr.getResponseRecord() != null) {
-            throw new IllegalStateException("Challenge response already present");
-        }
-        ChallengeExecutor executor = Challenges.getExecutor(cr.getType());
-        byte[] result = executor.execute(cr.getChallenge(), cr.getTarget());
-        return new ChallengeResponseRecord(Util.generateId(), result, cr);
-    }
 }

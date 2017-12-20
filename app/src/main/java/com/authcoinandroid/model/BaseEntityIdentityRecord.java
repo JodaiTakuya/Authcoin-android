@@ -116,7 +116,7 @@ public class BaseEntityIdentityRecord {
     }
 
     private byte[] calcId() {
-        return Hash.sha3(keyPair.getPublic().getEncoded());
+        return Hash.sha3(publicKey.getEncoded());
     }
 
     public void setRevoked(boolean revoked) {

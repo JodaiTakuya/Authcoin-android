@@ -3,7 +3,7 @@ package com.authcoinandroid.module.challenges;
 import com.authcoinandroid.module.challenges.signing.SigningChallengeExecutor;
 import com.authcoinandroid.module.challenges.signing.SigningChallengeFactory;
 import com.authcoinandroid.module.challenges.signing.SigningChallengeVerifier;
-import com.authcoinandroid.module.v2.Triplet;
+import com.authcoinandroid.module.Triplet;
 
 import java.util.HashMap;
 import java.util.Map;

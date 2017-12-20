@@ -46,11 +46,6 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public boolean isProcessed(byte[] vaeId) {
-        return challengeRepository.findByVaeId(vaeId).toList().size() < 1;
-    }
-
-    @Override
     public Single<ChallengeRecord> registerChallengeResponse(byte[] challengeId, ChallengeResponseRecord response) {
         ChallengeRecord challenge = getChallengeRecord(challengeId);
         if (challenge.getResponseRecord() != null) {

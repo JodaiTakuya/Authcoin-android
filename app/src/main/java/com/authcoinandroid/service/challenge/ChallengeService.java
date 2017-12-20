@@ -20,8 +20,6 @@ public interface ChallengeService {
 
     Observable<SendRawTransactionResponse> saveChallengeToBc(DeterministicKey key, ChallengeRecord challenge);
 
-    boolean isProcessed(byte[] vaeId);
-
     Observable<List<ChallengeRecord>> getChallengeRecordsForEir(EntityIdentityRecord eir);
 
     Single<ChallengeRecord> registerChallengeResponse(byte[] challengeId, ChallengeResponseRecord response);

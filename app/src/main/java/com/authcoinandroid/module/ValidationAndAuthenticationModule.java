@@ -1,4 +1,4 @@
-package com.authcoinandroid.module.v2;
+package com.authcoinandroid.module;
 
 import android.util.Pair;
 import com.authcoinandroid.model.ChallengeRecord;

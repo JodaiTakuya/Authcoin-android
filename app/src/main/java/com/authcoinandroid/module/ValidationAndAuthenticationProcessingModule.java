@@ -1,9 +1,14 @@
 package com.authcoinandroid.module;
 
-
+import android.util.Pair;
 import com.authcoinandroid.model.ChallengeRecord;
+import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
+import com.authcoinandroid.model.SignatureRecord;
+import com.authcoinandroid.module.messaging.MessageHandler;
 import com.authcoinandroid.service.challenge.ChallengeService;
+import com.authcoinandroid.service.transport.AuthcoinTransport;
+import com.authcoinandroid.service.wallet.WalletService;
 import com.authcoinandroid.util.Util;
 
 import java.util.Arrays;
@@ -15,53 +20,51 @@ import static com.authcoinandroid.util.Util.notNull;
  * <p>
  * Differences:
  * 1. VAE_ID counter is replaced by java.util.UUID.randomUUID()
- * 2. See differences in submodules.
- * <p>
- * // TODO currently only challenge creation is implemented
+ * 2. If something fails an exception is thrown
  */
-public class ValidationAndAuthenticationProcessingModule {
+public class ValidationAndAuthenticationProcessingModule extends AbstractModule {
 
     private FormalValidationModule formalValidationModule;
-    private CreateSendChallengeToTarget targetChallengeCreator;
-    private CreateSendChallengeToVerifier verifierChallengeCreator;
+    private ValidationAndAuthenticationModule vaModule;
 
     public ValidationAndAuthenticationProcessingModule(
+            MessageHandler messageHandler,
             FormalValidationModule formalValidationModule,
-            ChallengeService challengeService) {
+            AuthcoinTransport transporter,
+            ChallengeService challengeService,
+            WalletService walletService) {
+        super(messageHandler);
         notNull(formalValidationModule, "Formal validation module");
+        notNull(transporter, "AuthcoinTransport");
         this.formalValidationModule = formalValidationModule;
-        this.targetChallengeCreator = new CreateSendChallengeToTarget(challengeService);
-        this.verifierChallengeCreator = new CreateSendChallengeToVerifier(challengeService);
+        this.vaModule = new ValidationAndAuthenticationModule(messageHandler, transporter, challengeService, walletService);
     }
 
-    public ChallengeRecord createChallengeForTarget(
+    public Triplet<
+            Pair<ChallengeRecord, ChallengeRecord>,
+            Pair<ChallengeResponseRecord, ChallengeResponseRecord>,
+            Pair<SignatureRecord, SignatureRecord>> process(
             EntityIdentityRecord target,
-            EntityIdentityRecord verifier,
-            String challengeType) {
+            EntityIdentityRecord verifier) {
+
         // 1. prepare verifier and target for processing. generate VAE id.
         notNull(target, "Target EIR");
         notNull(verifier, "Verifier EIR");
-        notNull(challengeType, "Challenge Type");
         if (Arrays.equals(target.getId(), verifier.getId())) {
             throw new IllegalArgumentException("target EIR == verifier EIR");
         }
         byte[] vaeId = Util.generateId();
+        Triplet<byte[], EntityIdentityRecord, EntityIdentityRecord> vae =
+                new Triplet<>(vaeId, verifier, target);
 
-        // 2. formal validation.
+        // 2. formal validation. CPN uses VAE as input.
         boolean success = formalValidationModule.verify(target, verifier);
         if (!success) {
             throw new IllegalStateException("formal validation failed");
         }
 
-        return targetChallengeCreator.createAndSend(vaeId, verifier, target, challengeType);
-    }
-
-    public ChallengeRecord createChallengeForVerifier(ChallengeRecord crForTarget, String challengeType) {
-        notNull(crForTarget, "Target Challenge Record");
-        notNull(challengeType, "Challenge Type");
-        // TODO do we need to verify  EIR values?
-        // TODO formal validation
-        return verifierChallengeCreator.createAndSend(crForTarget, challengeType);
+        // 3. VA module
+        return vaModule.process(vae);
     }
 
 }

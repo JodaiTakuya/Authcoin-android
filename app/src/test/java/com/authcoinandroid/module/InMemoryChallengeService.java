@@ -34,11 +34,6 @@ public class InMemoryChallengeService implements ChallengeService {
     }
 
     @Override
-    public boolean isProcessed(byte[] vaeId) {
-        return vaeIdToChallenges.get(vaeId).size() > 1;
-    }
-
-    @Override
     public Observable<List<ChallengeRecord>> getChallengeRecordsForEir(EntityIdentityRecord eir) {
         return null;
     }
@@ -80,6 +75,11 @@ public class InMemoryChallengeService implements ChallengeService {
     }
 
     public Observable<SendRawTransactionResponse> saveSignatureRecordToBc(DeterministicKey key, SignatureRecord signatureRecord) {
+        return null;
+    }
+
+    @Override
+    public List<ChallengeRecord> getByEirId(byte[] id) {
         return null;
     }
 }

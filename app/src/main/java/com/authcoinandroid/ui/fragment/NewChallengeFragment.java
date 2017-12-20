@@ -15,15 +15,14 @@ import butterknife.OnClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.module.EcKeyFormalValidationModule;
-import com.authcoinandroid.module.FormalValidationModule;
-import com.authcoinandroid.module.ValidationAndAuthenticationProcessingModule;
+import com.authcoinandroid.module.challenges.Challenge;
 import com.authcoinandroid.module.challenges.Challenges;
-import com.authcoinandroid.service.wallet.WalletService;
 import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
 import com.authcoinandroid.util.AndroidUtil;
+import com.authcoinandroid.util.Util;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -99,13 +98,10 @@ public class NewChallengeFragment extends Fragment {
 
                     @Override
                     public void onNext(EntityIdentityRecord target) {
-                        FormalValidationModule fvm = new EcKeyFormalValidationModule();
-                        ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(
-                                fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
-
                         try {
-                            ((AuthCoinApplication) getActivity().getApplication()).getEirRepository().save(target).blockingGet();
-                            ChallengeRecord challengeRecord = module.createChallengeForTarget(target, verifier, challengeTypeValue);
+                            Challenge challenge = Challenges.get(challengeTypeValue);
+                            byte[] crId = Util.generateId();
+                            ChallengeRecord challengeRecord =  new ChallengeRecord(crId, Util.generateId(), challenge.getType(), challenge.getContent(), verifier, target);
 
                             ((AuthCoinApplication) getActivity().getApplication())
                                     .getChallengeService()

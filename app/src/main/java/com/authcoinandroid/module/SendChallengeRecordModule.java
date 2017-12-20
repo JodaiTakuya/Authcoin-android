@@ -1,4 +1,4 @@
-package com.authcoinandroid.module.v2;
+package com.authcoinandroid.module;
 
 import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.service.transport.AuthcoinTransport;
