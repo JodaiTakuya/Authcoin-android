@@ -8,8 +8,4 @@
         android:id="@+id/action_challenges"
         android:title="@string/challenges"
         android:icon="@drawable/challenge_icon"/>
-    <item
-        android:id="@+id/action_trust"
-        android:title="@string/trusted_parties"
-        android:icon="@drawable/trusted_parties_icon"/>
 </menu>

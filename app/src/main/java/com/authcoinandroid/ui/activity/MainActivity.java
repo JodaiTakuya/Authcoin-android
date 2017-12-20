@@ -18,7 +18,6 @@ import android.widget.EditText;
 import com.authcoinandroid.R;
 import com.authcoinandroid.ui.fragment.ChallengeFragment;
 import com.authcoinandroid.ui.fragment.IdentityFragment;
-import com.authcoinandroid.ui.fragment.TrustFragment;
 
 public class MainActivity extends AppCompatActivity {
     private final static String LOG_TAG = "MainActivity";
@@ -44,10 +43,6 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.action_challenges:
                             selectedFragment = ChallengeFragment.class;
                             Log.d(LOG_TAG, "User opened challenges fragment");
-                            break;
-                        case R.id.action_trust:
-                            selectedFragment = TrustFragment.class;
-                            Log.d(LOG_TAG, "User opened trust fragment");
                             break;
                     }
 
