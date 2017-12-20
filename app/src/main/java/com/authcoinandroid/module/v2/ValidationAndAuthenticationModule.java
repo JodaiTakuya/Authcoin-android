@@ -61,8 +61,8 @@ class ValidationAndAuthenticationModule {
         // 5. CreateAndPostSignatures
         Pair<SignatureRecord, SignatureRecord> signatures = createSignatureModule.process(responses.first);
 
-         challengeService.registerSignatureRecord(signatures.first.getChallengeResponse().getChallenge().getId(), signatures.first).blockingGet();
-         challengeService.registerSignatureRecord(signatures.second.getChallengeResponse().getChallenge().getId(), signatures.second).blockingGet();
+//         challengeService.registerSignatureRecord(signatures.first.getChallengeResponse().getChallenge().getId(), signatures.first).blockingGet();
+//         challengeService.registerSignatureRecord(signatures.second.getChallengeResponse().getChallenge().getId(), signatures.second).blockingGet();
         return new Triplet<>(challenges, responses, signatures);
     }
 
