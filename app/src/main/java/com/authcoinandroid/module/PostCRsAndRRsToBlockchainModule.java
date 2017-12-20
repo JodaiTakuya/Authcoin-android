@@ -27,10 +27,10 @@ public class PostCRsAndRRsToBlockchainModule {
     }
 
     public void post(Pair<ChallengeRecord, ChallengeRecord> challenges, Pair<ChallengeResponseRecord, ChallengeResponseRecord> responses) {
-      /*  post(challenges.first);
+        post(challenges.first);
         post(challenges.second);
         post(responses.first);
-        post(responses.second);*/
+        post(responses.second);
     }
 
     private void post(ChallengeRecord rc) {

@@ -2,6 +2,7 @@ package com.authcoinandroid.ui.activity;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -46,7 +47,9 @@ public class AuthenticationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_authentication);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        String demoServer = "http://authcoin-demo-server.cfapps.io";
+        Uri uri = getIntent().getData();
+
+        String demoServer = uri.getQueryParameter("serverUrl");
         ChallengeServiceImpl challengeService = ((AuthCoinApplication) getApplication()).getChallengeService();
         HttpRestAuthcoinTransport transport =
                 new HttpRestAuthcoinTransport(demoServer, challengeService);
