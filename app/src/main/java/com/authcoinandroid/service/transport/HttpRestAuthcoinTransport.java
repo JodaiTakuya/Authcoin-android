@@ -87,8 +87,8 @@ public class HttpRestAuthcoinTransport implements AuthcoinTransport {
                     body.getVaeId(),
                     0, //TODO
                     body.getResponse(),
-                    null,
-                    null,
+                    new byte[32],
+                    new byte[32],
                     challengeService.get(body.getChallengeId()).blockingGet() //TODO
             );
             return challengeRecord;
