@@ -48,10 +48,11 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public Single<ChallengeRecord> registerChallengeResponse(byte[] challengeId, ChallengeResponseRecord response) {
         ChallengeRecord challenge = getChallengeRecord(challengeId);
-        if (challenge.getResponseRecord() != null) {
+        if (challenge.getResponse() != null) {
             throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " already has response record");
         }
-        challenge.setResponseRecord(response);
+        challengeRepository.save(response).blockingGet();
+        challenge.setResponse(response);
         return challengeRepository.save(challenge);
     }
 
@@ -63,13 +64,16 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public Single<ChallengeRecord> registerSignatureRecord(byte[] challengeId, SignatureRecord signature) {
         ChallengeRecord challenge = getChallengeRecord(challengeId);
-        if (challenge.getResponseRecord() == null) {
-            throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " doesn't response record");
+        ChallengeResponseRecord response = challenge.getResponse();
+        if (response == null) {
+            throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " doesn't have a response record");
         }
-        if (challenge.getResponseRecord().getSignatureRecord() != null) {
-            throw new IllegalStateException("ChallengeRecord with id " + Hex.toHexString(challengeId) + " already has signature record");
+        if (response.getSignatureRecord() != null) {
+            throw new IllegalStateException("ChallengeRecord with id " + Hex.toHexString(challengeId) + " already has a signature record");
         }
-        challenge.getResponseRecord().setSignatureRecord(signature);
+        challengeRepository.save(signature).blockingGet();
+        response.setSignatureRecord(signature);
+        challengeRepository.save(response).blockingGet();
         return challengeRepository.save(challenge);
     }
 

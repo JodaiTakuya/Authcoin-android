@@ -1,6 +1,8 @@
 package com.authcoinandroid.service.challenge;
 
 import com.authcoinandroid.model.ChallengeRecord;
+import com.authcoinandroid.model.ChallengeResponseRecord;
+import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.util.Util;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -27,6 +29,24 @@ public class ChallengeRepository {
             return dataStore.insert(cr);
         }
         return dataStore.update(cr);
+    }
+
+    public Single<ChallengeResponseRecord> save(ChallengeResponseRecord cr) {
+        byte[] id = cr.getId();
+        ChallengeResponseRecord result = dataStore.findByKey(ChallengeResponseRecord.class, id).blockingGet();
+        if (result == null) {
+            return dataStore.insert(cr);
+        }
+        return dataStore.update(cr);
+    }
+
+    public Single<SignatureRecord> save(SignatureRecord sr) {
+        byte[] id = sr.getId();
+        SignatureRecord result = dataStore.findByKey(SignatureRecord.class, id).blockingGet();
+        if (result == null) {
+            return dataStore.insert(sr);
+        }
+        return dataStore.update(sr);
     }
 
     /**

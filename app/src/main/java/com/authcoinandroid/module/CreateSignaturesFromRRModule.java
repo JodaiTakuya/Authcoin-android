@@ -22,7 +22,7 @@ public class CreateSignaturesFromRRModule {
         this.messageHandler = messageHandler;
         this.sendSignatureRecordModule = new SendSignatureRecordModule(transporter);
     }
-
+    
     /**
      * @param rr - target's response record.
      * @return first parameter is target's RR; second parameter is verifiers RR.

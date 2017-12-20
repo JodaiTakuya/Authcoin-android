@@ -1,10 +1,8 @@
 package com.authcoinandroid.model;
 
 import io.requery.Entity;
-import io.requery.ForeignKey;
 import io.requery.Key;
 import io.requery.OneToOne;
-import io.requery.ReferentialAction;
 
 @Entity
 public class BaseSignatureRecord {
@@ -28,8 +26,7 @@ public class BaseSignatureRecord {
 
     byte[] signature;
 
-    @ForeignKey(delete = ReferentialAction.CASCADE, update = ReferentialAction.CASCADE)
-    @OneToOne
+    @OneToOne(mappedBy = "signatureRecord")
     ChallengeResponseRecord challengeResponse;
 
     public BaseSignatureRecord(byte[] id, byte[] vaeId, Integer blockNumber, Integer expirationBlock, boolean revoked, boolean successful, byte[] hash, byte[] signature, ChallengeResponseRecord challengeResponse) {

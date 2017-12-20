@@ -41,7 +41,7 @@ public class InMemoryChallengeService implements ChallengeService {
     @Override
     public Single<ChallengeRecord> registerChallengeResponse(byte[] challengeId, ChallengeResponseRecord response) {
         ChallengeRecord cr = get(challengeId).blockingGet();
-        cr.setResponseRecord(response);
+        cr.setResponse(response);
         List<ChallengeRecord> challenges = vaeIdToChallenges.get(response.getChallenge().getVaeId());
         for(int i = 0; i < challenges.size(); i++) {
             if(Arrays.equals(challenges.get(i).getId(), cr.getId())) {
