@@ -12,6 +12,7 @@ import com.authcoinandroid.module.v2.Triplet;
 import com.authcoinandroid.module.v2.ValidationAndAuthenticationProcessingModule;
 import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.service.transport.HttpRestAuthcoinTransport;
+import com.authcoinandroid.service.wallet.WalletService;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -27,6 +28,7 @@ public class VAProcessRunnable implements Runnable {
     public static Object lock = new Object();
     private final EntityIdentityRecord verifier;
     private final EntityIdentityRecord target;
+    private final WalletService walletService;
 
     private MessageHandler messageHandler;
     private HttpRestAuthcoinTransport transporter;
@@ -37,13 +39,15 @@ public class VAProcessRunnable implements Runnable {
             EntityIdentityRecord verifier,
             EntityIdentityRecord target,
             HttpRestAuthcoinTransport transporter,
-            ChallengeService challengeService
+            ChallengeService challengeService,
+            WalletService walletService
     ) {
         this.messageHandler = new MessageHandler(mainHandler);
         this.verifier = verifier;
         this.target = target;
         this.transporter = transporter;
         this.challengeService = challengeService;
+        this.walletService = walletService;
     }
 
     @Override
@@ -54,7 +58,8 @@ public class VAProcessRunnable implements Runnable {
                 messageHandler,
                 new EcKeyFormalValidationModule(),
                 transporter,
-                challengeService
+                challengeService,
+                walletService
         );
         Triplet<Pair<ChallengeRecord, ChallengeRecord>, Pair<ChallengeResponseRecord, ChallengeResponseRecord>, Pair<SignatureRecord, SignatureRecord>> resp = t.process(target, verifier);
         messageHandler.send(new UserAuthenticatedMessage(resp.getFirst(), resp.getSecond()), 10);

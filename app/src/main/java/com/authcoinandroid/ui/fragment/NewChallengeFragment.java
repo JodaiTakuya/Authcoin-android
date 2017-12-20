@@ -19,7 +19,7 @@ import com.authcoinandroid.module.EcKeyFormalValidationModule;
 import com.authcoinandroid.module.FormalValidationModule;
 import com.authcoinandroid.module.ValidationAndAuthenticationProcessingModule;
 import com.authcoinandroid.module.challenges.Challenges;
-import com.authcoinandroid.service.identity.WalletService;
+import com.authcoinandroid.service.wallet.WalletService;
 import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
@@ -108,7 +108,7 @@ public class NewChallengeFragment extends Fragment {
 
                             ((AuthCoinApplication) getActivity().getApplication())
                                     .getChallengeService()
-                                    .saveChallengeToBc(WalletService.getInstance().getReceiveKey(getContext()), challengeRecord)
+                                    .saveChallengeToBc(((AuthCoinApplication)getActivity().getApplication()).getWalletService().getReceiveKey(), challengeRecord)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new DisposableObserver<SendRawTransactionResponse>() {

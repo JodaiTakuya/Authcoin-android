@@ -9,12 +9,15 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+
+import com.authcoinandroid.R;
+import com.authcoinandroid.task.WalletCreationTask;
+import com.authcoinandroid.ui.AuthCoinApplication;
+import com.authcoinandroid.util.AndroidUtil;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.authcoinandroid.R;
-import com.authcoinandroid.task.WalletCreationTask;
-import com.authcoinandroid.util.AndroidUtil;
 
 public class WelcomeActivity extends AppCompatActivity {
     private final static String LOG_TAG = "WelcomeActivity";
@@ -48,7 +51,8 @@ public class WelcomeActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
-            }).execute();
+            },
+                    ((AuthCoinApplication) getApplication()).getWalletService()).execute();
         }
     }
 

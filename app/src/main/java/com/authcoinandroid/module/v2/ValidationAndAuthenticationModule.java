@@ -8,6 +8,7 @@ import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.module.messaging.MessageHandler;
 import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.service.transport.AuthcoinTransport;
+import com.authcoinandroid.service.wallet.WalletService;
 
 // differences:
 // 1. CreateSendChallengeToVerifier is skipped (a verifier challenge is sent as a response to 'sendChallengeToTarget')
@@ -17,13 +18,20 @@ class ValidationAndAuthenticationModule {
     private CreateSendChallengeToTargetModule createAndSendChallengeModule;
     private CreateSendResponsesModule createSendResponsesModule;
     private CreateSignaturesModule createSignatureModule;
+    private ChallengeService challengeService;
+    private PostCRsAndRRsToBlockchainModule postCrAndRrModule;
 
     public ValidationAndAuthenticationModule(
             MessageHandler messageHandler,
-            AuthcoinTransport transporter) {
+            AuthcoinTransport transporter,
+            ChallengeService challengeService,
+            WalletService walletService
+    ) {
+        this.challengeService = challengeService;
         this.createAndSendChallengeModule = new CreateSendChallengeToTargetModule(messageHandler, transporter);
         this.createSendResponsesModule = new CreateSendResponsesModule(transporter, messageHandler);
         this.createSignatureModule = new CreateSignaturesModule(messageHandler, transporter);
+        this.postCrAndRrModule = new PostCRsAndRRsToBlockchainModule(challengeService, walletService);
     }
 
     public Triplet<
@@ -31,7 +39,7 @@ class ValidationAndAuthenticationModule {
             Pair<ChallengeResponseRecord, ChallengeResponseRecord>,
             Pair<SignatureRecord, SignatureRecord>> process(
             // VAE_ID, verifier EIR, target EIR
-            Triplet<byte[], EntityIdentityRecord, EntityIdentityRecord> vae, ChallengeService challengeService) {
+            Triplet<byte[], EntityIdentityRecord, EntityIdentityRecord> vae) {
 
         // 1. create and send challenge to target
         // the first parameter is target's CR; the second parameter is verifier's CR
@@ -48,7 +56,9 @@ class ValidationAndAuthenticationModule {
         challengeService.registerChallengeResponse(responses.first.getChallenge().getId(), responses.first).blockingGet();
         challengeService.registerChallengeResponse(responses.second.getChallenge().getId(), responses.second).blockingGet();
         // 4. PostCRAndRRsToBlockchain
-        // TODO
+
+        postCrAndRrModule.post(challenges, responses);
+
         // 5. CreateAndPostSignatures
         Pair<SignatureRecord, SignatureRecord> signatures = createSignatureModule.process(responses.first);
 

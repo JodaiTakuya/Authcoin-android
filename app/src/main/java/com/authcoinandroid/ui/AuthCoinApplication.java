@@ -10,6 +10,8 @@ import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.EirRepository;
 import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.keypair.AndroidKeyPairService;
+import com.authcoinandroid.service.wallet.WalletService;
+
 import io.requery.Persistable;
 import io.requery.android.BuildConfig;
 import io.requery.android.sqlite.DatabaseSource;
@@ -38,6 +40,7 @@ public class AuthCoinApplication extends MultiDexApplication {
     private AuthcoinContractService authcoinContractService;
     private IdentityService identityService;
     private KeyGenerationAndEstablishBindingModule keyGenerationAndEstablishBindingModule;
+    private WalletService walletService;
 
     @Override
     public void onCreate() {
@@ -45,7 +48,7 @@ public class AuthCoinApplication extends MultiDexApplication {
         Provider[] providers = Security.getProviders();
         Security.insertProviderAt(new BouncyCastleProvider(), providers.length);
         // override onUpgrade to handle migrating to a new version
-        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 6);
+        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 7);
         if (BuildConfig.DEBUG) {
             // use this in development mode to drop and recreate the tables on every upgrade
             source.setTableCreationMode(TableCreationMode.DROP_CREATE);
@@ -66,6 +69,9 @@ public class AuthCoinApplication extends MultiDexApplication {
         this.identityService = new IdentityService(this.eirRepository, keyGenerationAndEstablishBindingModule, authcoinContractService);
         this.challengeService = new ChallengeServiceImpl(challengeRepository, authcoinContractService, identityService);
 
+        // create wallet service
+        this.walletService = new WalletService(dataStore);
+
         // start periodic jobs
         new JobsScheduler(this.getBaseContext()).init();
     }
@@ -77,7 +83,6 @@ public class AuthCoinApplication extends MultiDexApplication {
         return dataStore;
     }
 
-
     public EirRepository getEirRepository() {
         return eirRepository;
     }
@@ -88,5 +93,9 @@ public class AuthCoinApplication extends MultiDexApplication {
 
     public IdentityService getIdentityService() {
         return identityService;
+    }
+
+    public WalletService getWalletService() {
+        return walletService;
     }
 }

@@ -9,6 +9,7 @@ import com.authcoinandroid.module.FormalValidationModule;
 import com.authcoinandroid.module.messaging.MessageHandler;
 import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.service.transport.AuthcoinTransport;
+import com.authcoinandroid.service.wallet.WalletService;
 import com.authcoinandroid.util.Util;
 
 import java.util.Arrays;
@@ -25,24 +26,21 @@ import static com.authcoinandroid.util.Util.notNull;
 public class ValidationAndAuthenticationProcessingModule extends AbstractModule {
 
     private FormalValidationModule formalValidationModule;
-
     private ValidationAndAuthenticationModule vaModule;
-    private ChallengeService challengeService;
 
     public ValidationAndAuthenticationProcessingModule(
             MessageHandler messageHandler,
             FormalValidationModule formalValidationModule,
             AuthcoinTransport transporter,
-            ChallengeService challengeService) {
+            ChallengeService challengeService,
+            WalletService walletService) {
         super(messageHandler);
-        this.challengeService = challengeService;
         notNull(formalValidationModule, "Formal validation module");
         notNull(transporter, "AuthcoinTransport");
         this.formalValidationModule = formalValidationModule;
-        this.vaModule = new ValidationAndAuthenticationModule(messageHandler, transporter);
+        this.vaModule = new ValidationAndAuthenticationModule(messageHandler, transporter, challengeService, walletService);
     }
 
-    //                      crForTarget, crForVerifier
     public Triplet<
             Pair<ChallengeRecord, ChallengeRecord>,
             Pair<ChallengeResponseRecord, ChallengeResponseRecord>,
@@ -67,7 +65,7 @@ public class ValidationAndAuthenticationProcessingModule extends AbstractModule 
         }
 
         // 3. VA module
-        return vaModule.process(vae, challengeService);
+        return vaModule.process(vae);
     }
 
 }
