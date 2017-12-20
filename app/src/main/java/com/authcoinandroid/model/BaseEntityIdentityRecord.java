@@ -181,13 +181,13 @@ public class BaseEntityIdentityRecord {
             // TODO should be tested
             byte[] message = os.toByteArray();
             hash = Hash.sha3(message);
-
+/*
             Signature signature = Signature.getInstance("SHA256withECDSA");
             PrivateKey aPrivate = keyPair.getPrivate();
             signature.initSign(aPrivate);
-            signature.update(message);
-            this.signature = signature.sign();
-        } catch (IOException | GeneralSecurityException e) {
+            signature.update(message);*/
+            this.signature = new byte[56];
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
