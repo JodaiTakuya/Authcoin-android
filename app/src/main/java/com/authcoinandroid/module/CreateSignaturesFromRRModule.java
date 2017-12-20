@@ -5,11 +5,9 @@ import com.authcoinandroid.model.ChallengeResponseRecord;
 import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.util.Util;
-
-import org.spongycastle.util.encoders.Hex;
-
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import org.spongycastle.util.encoders.Hex;
 
 /**
  * "CreateSignaturesFromRR" module:
@@ -31,7 +29,7 @@ public class CreateSignaturesFromRRModule {
         byte[] challengeId = rr.getChallenge().getId();
         Maybe<ChallengeRecord> m = challengeService.get(challengeId);
         ChallengeRecord challenge = m.blockingGet();
-        ChallengeResponseRecord resp = challenge.getResponseRecord();
+        ChallengeResponseRecord resp = challenge.getResponse();
         if (resp == null) {
             throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " doesn't have response record");
         }

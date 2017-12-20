@@ -1,9 +1,6 @@
 package com.authcoinandroid.model;
 
-import io.requery.Entity;
-import io.requery.Key;
-import io.requery.ManyToOne;
-import io.requery.OneToOne;
+import io.requery.*;
 
 @Entity
 public class BaseChallengeRecord {
@@ -25,11 +22,12 @@ public class BaseChallengeRecord {
     @ManyToOne
     EntityIdentityRecord target;
 
-    @OneToOne(mappedBy = "challenge")
+    @ForeignKey(delete = ReferentialAction.CASCADE, update = ReferentialAction.CASCADE)
+    @OneToOne
     ChallengeResponseRecord response;
 
-    private byte[] hash;
-    private byte[] signature;
+    byte[] hash;
+    byte[] signature;
 
     public BaseChallengeRecord(byte[] id, byte[] vaeId, String type, byte[] challenge, EntityIdentityRecord verifier, EntityIdentityRecord target) {
         this.id = id;
@@ -45,29 +43,5 @@ public class BaseChallengeRecord {
 
     public BaseChallengeRecord() {
         // Don't use this constructor. It is required by requery.
-    }
-
-    public void setResponseRecord(ChallengeResponseRecord response) {
-        this.response = response;
-    }
-
-    public ChallengeResponseRecord getResponseRecord() {
-        return response;
-    }
-
-    public void setHash(byte[] hash) {
-        this.hash = hash;
-    }
-
-    public byte[] getHash() {
-        return hash;
-    }
-
-    public void setSignature(byte[] signature) {
-        this.signature = signature;
-    }
-
-    public byte[] getSignature() {
-        return signature;
     }
 }
