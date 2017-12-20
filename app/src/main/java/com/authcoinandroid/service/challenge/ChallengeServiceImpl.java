@@ -121,6 +121,10 @@ public class ChallengeServiceImpl implements ChallengeService {
                 .flatMap(this::getChallengeRecordsForVae);
     }
 
+    public List<ChallengeRecord> getByEirId(byte[] eirId) {
+        return challengeRepository.findByEirId(eirId).toList();
+    }
+
     private Observable<List<ChallengeRecord>> getChallengeRecordsForVae(Address address) {
         //  get ids of all challenges for VAE address
         return this.authcoinContractService.getChallengeIds(address)

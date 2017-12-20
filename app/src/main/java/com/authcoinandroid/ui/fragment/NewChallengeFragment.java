@@ -104,6 +104,7 @@ public class NewChallengeFragment extends Fragment {
                                 fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
 
                         try {
+                            ((AuthCoinApplication) getActivity().getApplication()).getEirRepository().save(target).blockingGet();
                             ChallengeRecord challengeRecord = module.createChallengeForTarget(target, verifier, challengeTypeValue);
 
                             ((AuthCoinApplication) getActivity().getApplication())

@@ -2,7 +2,6 @@ package com.authcoinandroid.service.challenge;
 
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.util.Util;
-
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.requery.Persistable;
@@ -49,6 +48,10 @@ public class ChallengeRepository {
      */
     public ReactiveResult<ChallengeRecord> findByVaeId(byte[] vaeId) {
         return dataStore.select(ChallengeRecord.class).where(ChallengeRecord.VAE_ID.eq(vaeId)).get();
+    }
+
+    public ReactiveResult<ChallengeRecord> findByEirId(byte[] eirId) {
+        return dataStore.select(ChallengeRecord.class).where(ChallengeRecord.VERIFIER_ID.eq(eirId)).get();
     }
 
 }

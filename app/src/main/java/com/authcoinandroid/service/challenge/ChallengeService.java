@@ -33,4 +33,6 @@ public interface ChallengeService {
     Maybe<ChallengeRecord> get(byte[] id);
 
     Observable<SendRawTransactionResponse> saveSignatureRecordToBc(DeterministicKey key, SignatureRecord signatureRecord);
+
+    List<ChallengeRecord> getByEirId(byte[] id);
 }
