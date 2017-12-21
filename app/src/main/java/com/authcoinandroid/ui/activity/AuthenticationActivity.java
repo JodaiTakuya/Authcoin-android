@@ -1,13 +1,10 @@
 package com.authcoinandroid.ui.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
+import android.os.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,25 +13,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.module.messaging.ChallengeTypeMessageResponse;
-import com.authcoinandroid.module.messaging.EvaluateChallengeMessage;
-import com.authcoinandroid.module.messaging.EvaluateChallengeResponseMessage;
-import com.authcoinandroid.module.messaging.SignatureMessage;
-import com.authcoinandroid.module.messaging.SignatureResponseMessage;
-import com.authcoinandroid.module.messaging.UserAuthenticatedMessage;
-import com.authcoinandroid.module.messaging.VAProcessRunnable;
+import com.authcoinandroid.module.messaging.*;
 import com.authcoinandroid.service.challenge.ChallengeServiceImpl;
 import com.authcoinandroid.service.transport.HttpRestAuthcoinTransport;
 import com.authcoinandroid.service.transport.ServerInfo;
 import com.authcoinandroid.ui.AuthCoinApplication;
-import com.authcoinandroid.ui.fragment.authentication.AuthenticationSuccessfulFragment;
-import com.authcoinandroid.ui.fragment.authentication.ChallengeTypeSelectorFragment;
-import com.authcoinandroid.ui.fragment.authentication.EirSelectorFragment;
-import com.authcoinandroid.ui.fragment.authentication.EvaluateChallengeFragment;
-import com.authcoinandroid.ui.fragment.authentication.SignatureFragment;
+import com.authcoinandroid.ui.fragment.authentication.*;
 
 public class AuthenticationActivity extends AppCompatActivity {
 
@@ -45,6 +31,15 @@ public class AuthenticationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+
+        Boolean isUnlocked = getIntent().getBooleanExtra("isUnlocked", false);
+        if (!isUnlocked) {
+            Intent unlockIntent = new Intent(getApplicationContext(), UnlockWithPinActivity.class);
+            unlockIntent.putExtra("isAuthenticationProcess", true);
+            unlockIntent.setData(getIntent().getData());
+            startActivity(unlockIntent);
+            finish();
+        }
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Uri uri = getIntent().getData();
@@ -161,5 +156,4 @@ public class AuthenticationActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(event);
     }
-
 }
