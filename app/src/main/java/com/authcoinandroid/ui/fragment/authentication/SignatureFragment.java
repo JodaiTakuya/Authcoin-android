@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.ChallengeResponseRecord;
@@ -17,7 +19,6 @@ import com.authcoinandroid.module.challenges.Challenges;
 import org.spongycastle.util.encoders.Hex;
 
 import static android.support.v4.content.ContextCompat.getColor;
-
 
 public class SignatureFragment extends Fragment {
 
@@ -38,6 +39,7 @@ public class SignatureFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.aa_fragment_signature, container, false);
+        ButterKnife.bind(this, view);
 
         lifespan = (EditText) view.findViewById(R.id.et_lifespan);
 
@@ -64,6 +66,11 @@ public class SignatureFragment extends Fragment {
         applicationUrl.setText("" + uri.getQueryParameter("serverUrl"));
 
         return view;
+    }
+
+    @OnClick(R.id.cancel)
+    public void onCancel() {
+        getActivity().finish();
     }
 
     public int getLifespan() {

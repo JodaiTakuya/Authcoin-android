@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.identity.EirRepository;
@@ -34,6 +36,7 @@ public class EirSelectorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.aa_fragment_select_eir, container, false);
+        ButterKnife.bind(this, view);
 
         EirRepository eirRepository = ((AuthCoinApplication) getActivity().getApplication()).getEirRepository();
         List<EntityIdentityRecord> eirs = eirRepository.findAll();
@@ -56,6 +59,11 @@ public class EirSelectorFragment extends Fragment {
         String serverEir = uri.getQueryParameter("serverEir");
 
         return view;
+    }
+
+    @OnClick(R.id.cancel)
+    public void onCancel() {
+        getActivity().finish();
     }
 
     public void setNextButtonListener(View.OnClickListener o) {

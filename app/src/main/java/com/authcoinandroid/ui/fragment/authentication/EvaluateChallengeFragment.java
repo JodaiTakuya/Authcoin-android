@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.ChallengeRecord;
 import org.spongycastle.util.encoders.Hex;
@@ -30,6 +32,7 @@ public class EvaluateChallengeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.aa_fragment_evaluate_challenge, container, false);
+        ButterKnife.bind(this, view);
 
         challengeType = (TextView) view.findViewById(R.id.tv_challenge_type);
         challengeContent = (TextView) view.findViewById(R.id.tv_challenge_content);
@@ -47,6 +50,11 @@ public class EvaluateChallengeFragment extends Fragment {
         applicationUrl.setText("" + uri.getQueryParameter("serverUrl"));
 
         return view;
+    }
+
+    @OnClick(R.id.cancel)
+    public void onCancel() {
+        getActivity().finish();
     }
 
     public boolean isApproved() {
