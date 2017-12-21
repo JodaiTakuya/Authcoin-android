@@ -9,6 +9,15 @@ public class ServerInfo {
     private UUID id;
     private String appName;
 
+    public ServerInfo(String serverEir, UUID id, String appName) {
+        this.serverEir = serverEir;
+        this.id = id;
+        this.appName = appName;
+    }
+
+    public ServerInfo() {
+    }
+
     public String getServerEir() {
         return serverEir;
     }

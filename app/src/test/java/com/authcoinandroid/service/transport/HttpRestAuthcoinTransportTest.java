@@ -26,7 +26,7 @@ public class HttpRestAuthcoinTransportTest extends AbstractTest {
     public void setUp() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         challengeService = new InMemoryChallengeService();
-        t = new HttpRestAuthcoinTransport("http://localhost:8080/", challengeService);
+        t = new HttpRestAuthcoinTransport("http://localhost:8080/", new ServerInfo(), challengeService);
     }
 
     @Test

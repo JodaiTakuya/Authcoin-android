@@ -54,10 +54,6 @@ public class EirSelectorFragment extends Fragment {
         applicationUrl = (TextView) view.findViewById(R.id.tv_app_url);
         applicationName.setText("" + uri.getQueryParameter("appName"));
         applicationUrl.setText("" + uri.getQueryParameter("serverUrl"));
-
-        String serverSessionId = uri.getQueryParameter("sessionId");
-        String serverEir = uri.getQueryParameter("serverEir");
-
         return view;
     }
 

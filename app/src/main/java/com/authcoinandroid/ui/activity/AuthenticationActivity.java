@@ -22,6 +22,8 @@ import com.authcoinandroid.service.transport.ServerInfo;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.fragment.authentication.*;
 
+import java.util.UUID;
+
 public class AuthenticationActivity extends AppCompatActivity {
 
     private Handler mainThreadHandler;
@@ -45,16 +47,20 @@ public class AuthenticationActivity extends AppCompatActivity {
         Uri uri = getIntent().getData();
 
         String demoServer = uri.getQueryParameter("serverUrl");
+        String serverSessionId = uri.getQueryParameter("sessionId");
+        String serverEir = uri.getQueryParameter("serverEir");
+        String appName = uri.getQueryParameter("appName");
+
         ChallengeServiceImpl challengeService = ((AuthCoinApplication) getApplication()).getChallengeService();
+        ServerInfo serverInfo = new ServerInfo(serverEir, UUID.fromString(serverSessionId), appName);
         HttpRestAuthcoinTransport transport =
-                new HttpRestAuthcoinTransport(demoServer, challengeService);
+                new HttpRestAuthcoinTransport(demoServer, serverInfo, challengeService);
         EirSelectorFragment eirSelectionFragment = new EirSelectorFragment();
         eirSelectionFragment.setNextButtonListener(v -> {
             EntityIdentityRecord selectedEir = eirSelectionFragment.getSelectedEir();
 
             new Thread(() -> {
-                ServerInfo serverInfo = transport.start();
-                EntityIdentityRecord target = ((AuthCoinApplication) getApplication()).getIdentityService().getEirById(serverInfo.getServerEir()).blockingSingle();
+                EntityIdentityRecord target = ((AuthCoinApplication) getApplication()).getIdentityService().getEirById(serverEir).blockingSingle();
                 ((AuthCoinApplication) getApplication()).getEirRepository().save(target).blockingGet();
                 vaThreadHandler.post(
                         new VAProcessRunnable(

@@ -27,8 +27,9 @@ public class HttpRestAuthcoinTransport implements AuthcoinTransport {
     private final ChallengeService challengeService;
     private ServerInfo serverInfo;
 
-    public HttpRestAuthcoinTransport(String baseUrl, ChallengeService challengeService) {
+    public HttpRestAuthcoinTransport(String baseUrl, ServerInfo serverInfo, ChallengeService challengeService) {
         this.challengeService = challengeService;
+        this.serverInfo = serverInfo;
         Gson gson = new GsonBuilder().registerTypeHierarchyAdapter(byte[].class,
                 new ByteArrayToBase64TypeAdapter()).create();
         Retrofit retrofit = new Retrofit.Builder()
