@@ -84,7 +84,6 @@ public class AuthenticationActivity extends AppCompatActivity {
 
             @Override
             public void handleMessage(Message msg) {
-                Log.e("MT", "Main thread: " + Thread.currentThread().getName());
                 switch (msg.what) {
                     case 1:
                         // challenge type

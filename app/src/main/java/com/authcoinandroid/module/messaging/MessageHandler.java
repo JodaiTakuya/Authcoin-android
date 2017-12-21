@@ -26,7 +26,6 @@ public final class MessageHandler {
             throw new IllegalStateException("VA process was interrupted", e);
         }
 
-        Log.e("GOT RESPONSE", "IT WORKS " + response);
         return response;
     }
 

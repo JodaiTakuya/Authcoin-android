@@ -30,7 +30,7 @@ class ValidationAndAuthenticationModule {
         this.challengeService = challengeService;
         this.createAndSendChallengeModule = new CreateSendChallengeToTargetModule(messageHandler, transporter);
         this.createSendResponsesModule = new CreateSendResponsesModule(transporter, messageHandler);
-        this.createSignatureModule = new CreateSignaturesModule(messageHandler, transporter);
+        this.createSignatureModule = new CreateSignaturesModule(messageHandler, transporter, challengeService, walletService);
         this.postCrAndRrModule = new PostCRsAndRRsToBlockchainModule(challengeService, walletService);
     }
 
@@ -54,8 +54,8 @@ class ValidationAndAuthenticationModule {
         Pair<ChallengeResponseRecord, ChallengeResponseRecord> responses = createSendResponsesModule.process(challenges);
         challengeService.registerChallengeResponse(responses.first.getChallenge().getId(), responses.first).blockingGet();
         challengeService.registerChallengeResponse(responses.second.getChallenge().getId(), responses.second).blockingGet();
-        // 4. PostCRAndRRsToBlockchain
 
+        // 4. PostCRAndRRsToBlockchain
         postCrAndRrModule.post(challenges, responses);
 
         // 5. CreateAndPostSignatures

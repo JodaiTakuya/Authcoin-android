@@ -114,8 +114,8 @@ public class HttpRestAuthcoinTransport implements AuthcoinTransport {
                     42, // TODO body.getLifespan() is currently null
                     body.isRevoked(),
                     body.isSuccessful(),
-                    null,
-                    null,
+                    new byte[32],
+                    new byte[32],
                     challengeService.get(body.getChallengeId()).blockingGet().getResponse()
             );
             return signatureRecord;

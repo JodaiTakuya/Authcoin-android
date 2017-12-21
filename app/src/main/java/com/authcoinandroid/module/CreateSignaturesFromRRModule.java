@@ -7,7 +7,9 @@ import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.module.messaging.MessageHandler;
 import com.authcoinandroid.module.messaging.SignatureMessage;
 import com.authcoinandroid.module.messaging.SignatureResponseMessage;
+import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.service.transport.AuthcoinTransport;
+import com.authcoinandroid.service.wallet.WalletService;
 import com.authcoinandroid.util.Util;
 
 // Differences:
@@ -17,10 +19,16 @@ public class CreateSignaturesFromRRModule {
 
     private final MessageHandler messageHandler;
     private final SendSignatureRecordModule sendSignatureRecordModule;
+    private final PostSRsToBlockchainModule postModule;
 
-    public CreateSignaturesFromRRModule(MessageHandler messageHandler, AuthcoinTransport transporter) {
+    public CreateSignaturesFromRRModule(
+            MessageHandler messageHandler,
+            AuthcoinTransport transporter,
+            ChallengeService challengeService,
+            WalletService walletService) {
         this.messageHandler = messageHandler;
         this.sendSignatureRecordModule = new SendSignatureRecordModule(transporter);
+        this.postModule = new PostSRsToBlockchainModule(challengeService, walletService);
     }
     
     /**
@@ -44,7 +52,7 @@ public class CreateSignaturesFromRRModule {
         SignatureRecord targetSignature = sendSignatureRecordModule.send(verifierSignature);
 
         // 5. post to BC.
-        // TODO implement
+        postModule.post(Pair.create(targetSignature, verifierSignature));
 
         return Pair.create(targetSignature, verifierSignature);
     }
