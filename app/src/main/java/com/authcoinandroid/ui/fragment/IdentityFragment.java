@@ -152,11 +152,15 @@ public class IdentityFragment extends Fragment {
                         public void onNext(List<UnspentOutput> unspentOutputs) {
                             if (isAdded()) {
                                 BigDecimal sum = BigDecimal.ZERO;
+                                BigDecimal availableToPay= BigDecimal.ZERO;;
                                 for (UnspentOutput unspentOutput : unspentOutputs) {
+                                    if(unspentOutput.isOutputAvailableToPay()) {
+                                        availableToPay = availableToPay.add(unspentOutput.getAmount());
+                                    }
                                     sum = sum.add(unspentOutput.getAmount());
                                 }
                                 unspentOutput.setText(
-                                        String.format(Locale.getDefault(), "%f QTUM", sum)
+                                        String.format(Locale.getDefault(), "%f QTUM (%f)", sum, availableToPay)
                                 );
                             }
                         }
