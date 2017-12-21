@@ -4,9 +4,9 @@ import com.authcoinandroid.service.keypair.KeyPairException;
 import com.authcoinandroid.service.keypair.KeyPairService;
 
 import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.junit.Ignore;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -28,7 +28,7 @@ public class JdkKeyPairService implements KeyPairService {
     public KeyPair create(String alias) {
         try {
             ECNamedCurveParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("prime192v1");
-            KeyPairGenerator g = KeyPairGenerator.getInstance("ECDSA", "BC");
+            KeyPairGenerator g = KeyPairGenerator.getInstance("ECDSA", org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
             g.initialize(ecSpec);
             KeyPair keyPair = g.generateKeyPair();
             keyPairs.put(alias, keyPair);

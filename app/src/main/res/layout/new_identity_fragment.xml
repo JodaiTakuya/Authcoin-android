@@ -43,6 +43,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:inputType="text"
+            android:maxLength="32"
             android:hint="@string/alias"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -72,6 +73,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:inputType="text"
+                android:maxLength="32"
                 android:hint="@string/first_identifier"/>
         </android.support.design.widget.TextInputLayout>
 

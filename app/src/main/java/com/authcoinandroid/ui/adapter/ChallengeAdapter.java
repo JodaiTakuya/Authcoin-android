@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.ChallengeRecord;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class ChallengeAdapter extends ArrayAdapter<ChallengeRecord> {
@@ -29,7 +31,9 @@ public class ChallengeAdapter extends ArrayAdapter<ChallengeRecord> {
 
         TextView challengeTimestamp = (TextView) convertView.findViewById(R.id.tv_subtitle);
         challengeTimestamp.setTag(position);
-        challengeTimestamp.setText(String.valueOf(challengeRecord.getTimestamp()));
+        challengeTimestamp.setText(String.valueOf(
+                new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(challengeRecord.getTimestamp())))
+        );
         return convertView;
     }
 }

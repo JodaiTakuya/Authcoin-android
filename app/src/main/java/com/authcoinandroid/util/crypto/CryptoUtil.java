@@ -2,14 +2,21 @@ package com.authcoinandroid.util.crypto;
 
 import android.security.keystore.KeyProperties;
 
-import org.spongycastle.jce.spec.ECPublicKeySpec;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.IOException;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Collections;
-import java.util.List;
 
 public class CryptoUtil {
 
@@ -19,46 +26,18 @@ public class CryptoUtil {
 
     public static KeyPair getKeyPair(String alias) {
         try {
-            KeyStore.PrivateKeyEntry entry = getEntry(alias);
-            return new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
+            KeyStore keyStore = getKeyStore();
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, null);
+            PublicKey publicKey = keyStore.getCertificate(alias).getPublicKey();
+            PublicKey unrestrictedPublicKey =
+                    KeyFactory.getInstance(publicKey.getAlgorithm()).generatePublic(
+                            new X509EncodedKeySpec(publicKey.getEncoded()));
+            return new KeyPair(unrestrictedPublicKey, privateKey);
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException(e);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public static byte[] sign(byte[] data, String alias) throws GeneralSecurityException, IOException {
-        KeyStore.PrivateKeyEntry entry = getEntry(alias);
-        PrivateKey privateKey = entry.getPrivateKey();
-        Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
-        sig.initSign(privateKey);
-        sig.update(data);
-        return sig.sign();
-    }
-
-    public static byte[] sign(byte[] data, KeyPair keyPair) throws GeneralSecurityException, IOException {
-        PrivateKey privateKey = keyPair.getPrivate();
-        Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(privateKey.getAlgorithm());
-        sig.initSign(privateKey);
-        sig.update(data);
-        return sig.sign();
-    }
-
-    public static boolean verify(byte[] signature, byte[] data, String alias) throws GeneralSecurityException, IOException {
-        KeyStore.PrivateKeyEntry entry = getEntry(alias);
-        final Signature sig = resolveSignatureAlgorithmByKeyAlgorithm(entry.getPrivateKey().getAlgorithm());
-        sig.initVerify(entry.getCertificate());
-        sig.update(data);
-        return sig.verify(signature);
-    }
-
-    public static byte[] hashSha256(String data) throws NoSuchAlgorithmException {
-        return hash(MessageDigest.getInstance("SHA-256"), data);
-    }
-
-    public static List<String> getAliases() throws GeneralSecurityException, IOException {
-        return Collections.list(getKeyStore().aliases());
     }
 
     private static KeyStore.PrivateKeyEntry getEntry(String alias) throws GeneralSecurityException, IOException {
@@ -95,10 +74,8 @@ public class CryptoUtil {
 
     public static PublicKey toPublicKey(byte[] content) {
         try {
-            return KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_EC).generatePublic(new X509EncodedKeySpec(content));
-        } catch (InvalidKeySpecException e) {
-            throw new IllegalStateException(e);
-        } catch (NoSuchAlgorithmException e) {
+            return KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_EC, BouncyCastleProvider.PROVIDER_NAME).generatePublic(new X509EncodedKeySpec(content));
+        } catch (GeneralSecurityException e) {
             throw new IllegalStateException(e);
         }
     }

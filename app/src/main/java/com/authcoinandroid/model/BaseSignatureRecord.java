@@ -1,10 +1,8 @@
 package com.authcoinandroid.model;
 
 import io.requery.Entity;
-import io.requery.ForeignKey;
 import io.requery.Key;
 import io.requery.OneToOne;
-import io.requery.ReferentialAction;
 
 @Entity
 public class BaseSignatureRecord {
@@ -14,9 +12,9 @@ public class BaseSignatureRecord {
 
     byte[] vaeId;
 
-    int blockNumber;
+    Integer blockNumber;
 
-    int expirationBlock;
+    Integer expirationBlock;
 
     boolean revoked;
 
@@ -28,11 +26,10 @@ public class BaseSignatureRecord {
 
     byte[] signature;
 
-    @ForeignKey(delete = ReferentialAction.CASCADE, update = ReferentialAction.CASCADE)
-    @OneToOne
+    @OneToOne(mappedBy = "signatureRecord")
     ChallengeResponseRecord challengeResponse;
 
-    public BaseSignatureRecord(byte[] id, byte[] vaeId, int blockNumber, int expirationBlock, boolean revoked, boolean successful, byte[] hash, byte[] signature, ChallengeResponseRecord challengeResponse) {
+    public BaseSignatureRecord(byte[] id, byte[] vaeId, Integer blockNumber, Integer expirationBlock, boolean revoked, boolean successful, byte[] hash, byte[] signature, ChallengeResponseRecord challengeResponse) {
         this.id = id;
         this.vaeId = vaeId;
         this.blockNumber = blockNumber;
@@ -45,6 +42,15 @@ public class BaseSignatureRecord {
         this.challengeResponse = challengeResponse;
     }
 
+    public BaseSignatureRecord(byte[] id, Integer blockNumber, Integer expirationBlock, boolean successful,
+                               ChallengeResponseRecord challengeResponse) {
+        // TODO calculate hash and signature
+        this(id, challengeResponse.getVaeId(), blockNumber, expirationBlock, false, successful, new byte[32], new byte[128],
+                challengeResponse);
+    }
+
+
     public BaseSignatureRecord() {
+        // Don't use this constructor. It is required by requery.
     }
 }

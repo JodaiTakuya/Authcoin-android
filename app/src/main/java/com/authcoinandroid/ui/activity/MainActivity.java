@@ -3,6 +3,7 @@ package com.authcoinandroid.ui.activity;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,6 @@ import android.widget.EditText;
 import com.authcoinandroid.R;
 import com.authcoinandroid.ui.fragment.ChallengeFragment;
 import com.authcoinandroid.ui.fragment.IdentityFragment;
-import com.authcoinandroid.ui.fragment.TrustFragment;
 
 public class MainActivity extends AppCompatActivity {
     private final static String LOG_TAG = "MainActivity";
@@ -43,10 +43,6 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.action_challenges:
                             selectedFragment = ChallengeFragment.class;
                             Log.d(LOG_TAG, "User opened challenges fragment");
-                            break;
-                        case R.id.action_trust:
-                            selectedFragment = TrustFragment.class;
-                            Log.d(LOG_TAG, "User opened trust fragment");
                             break;
                     }
 
@@ -82,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (hideNavigation) {
-                findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
+                hideBottomNavigation();
             } else {
                 findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
             }
@@ -101,11 +97,21 @@ public class MainActivity extends AppCompatActivity {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, fragment);
             transaction.addToBackStack(null);
-            findViewById(R.id.bottom_navigation).setVisibility(View.INVISIBLE);
+            hideBottomNavigation();
             transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void hideBottomNavigation() {
+        // Set visibility to GONE after INVISIBLE,
+        // since setting straight to INVISIBLE will cause other components
+        // like the FloatingActionButton to jump down before switching fragments.
+        View bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setVisibility(View.INVISIBLE);
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> bottomNav.setVisibility(View.GONE), 250);
     }
 
     @Override

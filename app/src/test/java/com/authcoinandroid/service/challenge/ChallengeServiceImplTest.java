@@ -10,7 +10,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class ChallengeServiceImplTest extends AbstractTest {
 
     private ChallengeServiceImpl challengeService;
@@ -32,7 +31,7 @@ public class ChallengeServiceImplTest extends AbstractTest {
         );
         ChallengeRecord updatedChallenge = newResult.blockingGet();
         Assert.assertNotNull(updatedChallenge);
-        Assert.assertNotNull(updatedChallenge.getResponseRecord());
+        Assert.assertNotNull(updatedChallenge.getResponse());
     }
 
     @Test
@@ -50,13 +49,13 @@ public class ChallengeServiceImplTest extends AbstractTest {
 
         Single<ChallengeRecord> result3 = challengeService.registerSignatureRecord(
                 challenge.getId(),
-                createSignatureRecord(challengeWithResponse.getResponseRecord())
+                createSignatureRecord(challengeWithResponse.getResponse())
         );
         ChallengeRecord challengeWithSignature = result3.blockingGet();
 
         Assert.assertNotNull(challengeWithSignature);
-        Assert.assertNotNull(challengeWithSignature.getResponseRecord());
-        Assert.assertNotNull(challengeWithSignature.getResponseRecord().getSignatureRecord());
+        Assert.assertNotNull(challengeWithSignature.getResponse());
+        Assert.assertNotNull(challengeWithSignature.getResponse().getSignatureRecord());
     }
 
     private ChallengeResponseRecord createResponseRecord(ChallengeRecord challenge) {

@@ -10,6 +10,7 @@ import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.EirRepository;
 import com.authcoinandroid.service.identity.IdentityService;
 import com.authcoinandroid.service.keypair.AndroidKeyPairService;
+import com.authcoinandroid.service.wallet.WalletService;
 import io.requery.Persistable;
 import io.requery.android.BuildConfig;
 import io.requery.android.sqlite.DatabaseSource;
@@ -20,6 +21,7 @@ import io.requery.sql.EntityDataStore;
 import io.requery.sql.TableCreationMode;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
+import java.security.Provider;
 import java.security.Security;
 
 /**
@@ -37,13 +39,15 @@ public class AuthCoinApplication extends MultiDexApplication {
     private AuthcoinContractService authcoinContractService;
     private IdentityService identityService;
     private KeyGenerationAndEstablishBindingModule keyGenerationAndEstablishBindingModule;
+    private WalletService walletService;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Security.insertProviderAt(new BouncyCastleProvider(), 1);
+        Provider[] providers = Security.getProviders();
+        Security.insertProviderAt(new BouncyCastleProvider(), providers.length);
         // override onUpgrade to handle migrating to a new version
-        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 5);
+        DatabaseSource source = new DatabaseSource(this, Models.DEFAULT, 10);
         if (BuildConfig.DEBUG) {
             // use this in development mode to drop and recreate the tables on every upgrade
             source.setTableCreationMode(TableCreationMode.DROP_CREATE);
@@ -64,6 +68,9 @@ public class AuthCoinApplication extends MultiDexApplication {
         this.identityService = new IdentityService(this.eirRepository, keyGenerationAndEstablishBindingModule, authcoinContractService);
         this.challengeService = new ChallengeServiceImpl(challengeRepository, authcoinContractService, identityService);
 
+        // create wallet service
+        this.walletService = new WalletService(dataStore);
+
         // start periodic jobs
         new JobsScheduler(this.getBaseContext()).init();
     }
@@ -75,7 +82,6 @@ public class AuthCoinApplication extends MultiDexApplication {
         return dataStore;
     }
 
-
     public EirRepository getEirRepository() {
         return eirRepository;
     }
@@ -86,5 +92,9 @@ public class AuthCoinApplication extends MultiDexApplication {
 
     public IdentityService getIdentityService() {
         return identityService;
+    }
+
+    public WalletService getWalletService() {
+        return walletService;
     }
 }

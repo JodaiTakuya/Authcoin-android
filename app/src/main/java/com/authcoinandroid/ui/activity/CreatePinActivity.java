@@ -5,11 +5,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
+
 import com.andrognito.pinlockview.IndicatorDots;
 import com.andrognito.pinlockview.PinLockListener;
 import com.andrognito.pinlockview.PinLockView;
 import com.authcoinandroid.R;
-import com.authcoinandroid.service.identity.WalletService;
+import com.authcoinandroid.ui.AuthCoinApplication;
 
 import static com.authcoinandroid.util.AndroidUtil.SHARED_PREFERENCES;
 
@@ -35,7 +36,7 @@ public class CreatePinActivity extends AppCompatActivity {
                 editor.putString("pin", pin);
                 editor.apply();
 
-                Boolean isWalletCreated = WalletService.getInstance().isWalletCreated(getApplicationContext());
+                Boolean isWalletCreated = ((AuthCoinApplication) getApplication()).getWalletService().isWalletCreated(getApplicationContext());
 
                 Intent intent = new Intent(getApplicationContext(), isWalletCreated
                         ? MainActivity.class

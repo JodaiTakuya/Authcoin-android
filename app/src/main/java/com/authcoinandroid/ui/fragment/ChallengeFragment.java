@@ -16,13 +16,11 @@ import butterknife.ButterKnife;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
+import com.authcoinandroid.service.challenge.ChallengeService;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
 import com.authcoinandroid.ui.adapter.ChallengeAdapter;
 import com.authcoinandroid.util.AndroidUtil;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +79,7 @@ public class ChallengeFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 EntityIdentityRecord currentEir = (EntityIdentityRecord) parent.getItemAtPosition(position);
-                getChallengeRecordsAndPopulateChallengeList(currentEir);
+                populateChallengeList(currentEir);
             }
 
             @Override
@@ -90,41 +88,66 @@ public class ChallengeFragment extends Fragment {
         };
     }
 
-    private void getChallengeRecordsAndPopulateChallengeList(EntityIdentityRecord eir) {
-        List<ChallengeRecord> challengeRecords = new ArrayList<>();
 
-        ((AuthCoinApplication) getActivity().getApplication()).getChallengeService()
-                .getChallengeRecordsForEir(eir)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<List<ChallengeRecord>>() {
-                    @Override
-                    public void onComplete() {
-                        ChallengeAdapter adapter = new ChallengeAdapter(getContext(), challengeRecords);
-                        challengeList.setAdapter(adapter);
+    private void populateChallengeList(EntityIdentityRecord eir) {
+        try {
+            ChallengeService challengeService = ((AuthCoinApplication) getActivity().getApplication()).getChallengeService();
+            List<ChallengeRecord> challengeRecords = new ArrayList<>(challengeService.getByEirId(eir.getId()));
 
-                        challengeList.setOnItemClickListener((parent, view, position, id) -> {
-                            ChallengeRecord challengeRecord = challengeRecords.get(position);
-                            Bundle bundle = new Bundle();
-                            bundle.putByteArray("challengeRecord", challengeRecord.getId());
+            ChallengeAdapter adapter = new ChallengeAdapter(getContext(), challengeRecords);
+            challengeList.setAdapter(adapter);
 
-                            if (getContext() instanceof MainActivity) {
-                                // TODO Open a new Fragment (perhaps separate ones for sent/received challenges?)
-                                // ((MainActivity) getContext()).applyFullFragmentWithBundle(/* CrFragment */, bundle);
-                            }
-                        });
-                    }
+            challengeList.setOnItemClickListener((parent, view, position, id) -> {
+                ChallengeRecord challengeRecord = challengeRecords.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putByteArray("challengeRecord", challengeRecord.getId());
 
-                    @Override
-                    public void onNext(List<ChallengeRecord> nextChallengeRecords) {
-                        challengeRecords.addAll(nextChallengeRecords);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        AndroidUtil.displayNotification(getContext(), e.getMessage());
-                        Log.d(LOG_TAG, e.getMessage());
-                    }
-                });
+                if (getContext() instanceof MainActivity) {
+                    // TODO Open a new Fragment (perhaps separate ones for sent/received challenges?)
+                    // ((MainActivity) getContext()).applyFullFragmentWithBundle(/* CrFragment */, bundle);
+                }
+            });
+        } catch (Exception e) {
+            Log.d(LOG_TAG, e.getMessage());
+        }
     }
+
+//    This method got the CR-s from block-chain
+//    private void getChallengeRecordsAndPopulateChallengeList(EntityIdentityRecord eir) {
+//        List<ChallengeRecord> challengeRecords = new ArrayList<>();
+//
+//        ((AuthCoinApplication) getActivity().getApplication()).getChallengeService()
+//                .getChallengeRecordsForEir(eir)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new DisposableObserver<List<ChallengeRecord>>() {
+//                    @Override
+//                    public void onComplete() {
+//                        ChallengeAdapter adapter = new ChallengeAdapter(getContext(), challengeRecords);
+//                        challengeList.setAdapter(adapter);
+//
+//                        challengeList.setOnItemClickListener((parent, view, position, id) -> {
+//                            ChallengeRecord challengeRecord = challengeRecords.get(position);
+//                            Bundle bundle = new Bundle();
+//                            bundle.putByteArray("challengeRecord", challengeRecord.getId());
+//
+//                            if (getContext() instanceof MainActivity) {
+//                                // TODO Open a new Fragment (perhaps separate ones for sent/received challenges?)
+//                                // ((MainActivity) getContext()).applyFullFragmentWithBundle(/* CrFragment */, bundle);
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onNext(List<ChallengeRecord> nextChallengeRecords) {
+//                        challengeRecords.addAll(nextChallengeRecords);
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        AndroidUtil.displayNotification(getContext(), e.getMessage());
+//                        Log.d(LOG_TAG, e.getMessage());
+//                    }
+//                });
+//    }
 }

@@ -9,7 +9,7 @@ import com.andrognito.pinlockview.IndicatorDots;
 import com.andrognito.pinlockview.PinLockListener;
 import com.andrognito.pinlockview.PinLockView;
 import com.authcoinandroid.R;
-import com.authcoinandroid.service.identity.WalletService;
+import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.util.AndroidUtil;
 
 import static com.authcoinandroid.util.AndroidUtil.SHARED_PREFERENCES;
@@ -35,11 +35,20 @@ public class UnlockWithPinActivity extends AppCompatActivity {
             @Override
             public void onComplete(String pin) {
                 if (pin.equals(storedPin)) {
-                    Boolean isWalletCreated = WalletService.getInstance().isWalletCreated(getApplicationContext());
+                    Boolean isWalletCreated = ((AuthCoinApplication) getApplication())
+                            .getWalletService()
+                            .isWalletCreated(getApplicationContext());
 
                     Intent intent = new Intent(getApplicationContext(), isWalletCreated
                             ? MainActivity.class
                             : WelcomeActivity.class);
+
+                    if (getIntent().getBooleanExtra("isAuthenticationProcess", false)) {
+                        intent.setClass(getApplicationContext(), AuthenticationActivity.class);
+                        intent.putExtra("isUnlocked", true);
+                        intent.setData(getIntent().getData());
+                    }
+
                     startActivity(intent);
                     finish();
                 } else {

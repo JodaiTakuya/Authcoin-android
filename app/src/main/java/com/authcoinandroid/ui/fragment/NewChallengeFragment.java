@@ -15,19 +15,17 @@ import butterknife.OnClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.model.ChallengeRecord;
 import com.authcoinandroid.model.EntityIdentityRecord;
-import com.authcoinandroid.module.EcKeyFormalValidationModule;
-import com.authcoinandroid.module.FormalValidationModule;
-import com.authcoinandroid.module.ValidationAndAuthenticationProcessingModule;
+import com.authcoinandroid.module.challenges.Challenge;
 import com.authcoinandroid.module.challenges.Challenges;
-import com.authcoinandroid.service.identity.WalletService;
 import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
 import com.authcoinandroid.util.AndroidUtil;
+import com.authcoinandroid.util.Util;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import org.bitcoinj.wallet.UnreadableWalletException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,14 +98,14 @@ public class NewChallengeFragment extends Fragment {
 
                     @Override
                     public void onNext(EntityIdentityRecord target) {
-                        FormalValidationModule fvm = new EcKeyFormalValidationModule();
-                        ValidationAndAuthenticationProcessingModule module = new ValidationAndAuthenticationProcessingModule(fvm, ((AuthCoinApplication) getActivity().getApplication()).getChallengeService());
-                        ChallengeRecord challengeRecord = module.createChallengeForTarget(target, verifier, challengeTypeValue);
-
                         try {
+                            Challenge challenge = Challenges.get(challengeTypeValue);
+                            byte[] crId = Util.generateId();
+                            ChallengeRecord challengeRecord =  new ChallengeRecord(crId, Util.generateId(), challenge.getType(), challenge.getContent(), verifier, target);
+
                             ((AuthCoinApplication) getActivity().getApplication())
                                     .getChallengeService()
-                                    .saveChallengeToBc(WalletService.getInstance().getReceiveKey(getContext()), challengeRecord)
+                                    .saveChallengeToBc(((AuthCoinApplication)getActivity().getApplication()).getWalletService().getReceiveKey(), challengeRecord)
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new DisposableObserver<SendRawTransactionResponse>() {
@@ -128,7 +126,7 @@ public class NewChallengeFragment extends Fragment {
 
                                         }
                                     });
-                        } catch (UnreadableWalletException e) {
+                        } catch (Exception e) {
                             AndroidUtil.displayNotification(getContext(), e.getMessage());
                         }
                     }

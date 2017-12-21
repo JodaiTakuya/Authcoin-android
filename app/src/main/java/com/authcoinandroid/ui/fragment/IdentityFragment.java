@@ -22,7 +22,7 @@ import com.authcoinandroid.R;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.service.contract.AuthcoinContractService;
 import com.authcoinandroid.service.identity.IdentityService;
-import com.authcoinandroid.service.identity.WalletService;
+import com.authcoinandroid.service.wallet.WalletService;
 import com.authcoinandroid.service.qtum.model.UnspentOutput;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
@@ -76,7 +76,7 @@ public class IdentityFragment extends Fragment {
 
     @OnLongClick({R.id.iv_wallet})
     boolean onDeleteWallet(View view) {
-        WalletService.getInstance().deleteWallet(this.getContext());
+        ((AuthCoinApplication)getActivity().getApplication()).getWalletService().deleteWallet();
         Intent intent = new Intent(getActivity(), WelcomeActivity.class);
         startActivity(intent);
         return true;
@@ -120,10 +120,10 @@ public class IdentityFragment extends Fragment {
 
     private void attachWalletAddressToCopyImage() {
         try {
-            String walletAddress = WalletService.getInstance().getWalletAddress(this.getContext());
+            String walletAddress = ((AuthCoinApplication)getActivity().getApplication()).getWalletService().getWalletAddress();
             Log.d(LOG_TAG, "Wallet address is: " + walletAddress);
             walletAddressCopy.setContentDescription(walletAddress);
-        } catch (UnreadableWalletException e) {
+        } catch (Exception e) {
             Log.e(LOG_TAG, "Unable to load wallet address: " + e.getMessage());
             AndroidUtil.displayNotification(getContext(), e.getMessage());
         }
@@ -131,7 +131,9 @@ public class IdentityFragment extends Fragment {
 
     private void displayUnspentOutputAmount() {
         try {
-            AuthcoinContractService.getInstance().getUnspentOutputs(WalletService.getInstance().getReceiveKey(this.getContext()))
+            AuthcoinContractService.getInstance().getUnspentOutputs(
+                    ((AuthCoinApplication)getActivity().getApplication()).getWalletService().getReceiveKey()
+            )
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new DisposableObserver<List<UnspentOutput>>() {
@@ -150,16 +152,20 @@ public class IdentityFragment extends Fragment {
                         public void onNext(List<UnspentOutput> unspentOutputs) {
                             if (isAdded()) {
                                 BigDecimal sum = BigDecimal.ZERO;
+                                BigDecimal availableToPay= BigDecimal.ZERO;;
                                 for (UnspentOutput unspentOutput : unspentOutputs) {
+                                    if(unspentOutput.isOutputAvailableToPay()) {
+                                        availableToPay = availableToPay.add(unspentOutput.getAmount());
+                                    }
                                     sum = sum.add(unspentOutput.getAmount());
                                 }
                                 unspentOutput.setText(
-                                        String.format(Locale.getDefault(), "%f QTUM", sum)
+                                        String.format(Locale.getDefault(), "%f QTUM (%f)", sum, availableToPay)
                                 );
                             }
                         }
                     });
-        } catch (UnreadableWalletException e) {
+        } catch (Exception e) {
             AndroidUtil.displayNotification(getContext(), e.getMessage());
         }
     }

@@ -1,18 +1,40 @@
 package com.authcoinandroid.model;
 
 import com.authcoinandroid.util.crypto.CryptoUtil;
-import io.requery.*;
-import org.spongycastle.util.encoders.Hex;
-import org.web3j.crypto.Hash;
 
+import org.spongycastle.jce.ECNamedCurveTable;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.spongycastle.util.encoders.Hex;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Hash;
+import org.web3j.crypto.Sign;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.util.List;
+
+import io.requery.CascadeAction;
+import io.requery.Entity;
+import io.requery.Key;
+import io.requery.OneToMany;
+import io.requery.PostLoad;
+import io.requery.Transient;
 
 import static org.web3j.utils.Numeric.cleanHexPrefix;
 
 /**
- * This is requery class. Based on this class EntityIdentityRecord is generated.
+ * This is a requery class. Based on this class EntityIdentityRecord is generated.
  */
 @Entity
 public class BaseEntityIdentityRecord {
@@ -43,34 +65,50 @@ public class BaseEntityIdentityRecord {
 
     @Transient
     KeyPair keyPair;
+
     @Transient
     PublicKey publicKey;
 
     /*
-    * Creates a new entity identity record.
+    * Constructor for creating a new entity identity record for this device
     */
-    public BaseEntityIdentityRecord(String contentType, String keyStoreAlias, KeyPair keyPair) {
+    public BaseEntityIdentityRecord(String keyStoreAlias, KeyPair keyPair) {
         this.revoked = false;
-        this.contentType = contentType;
+        this.contentType = "test"; // TODO
         this.keyStoreAlias = keyStoreAlias;
         this.status = AssetBlockChainStatus.SUBMITTED;
         this.keyPair = keyPair;
         this.publicKey = keyPair.getPublic();
         this.content = publicKey.getEncoded();
         this.id = calcId();
-        this.hash = new byte[32]; // TODO calculate correct hash
-        this.signature = new byte[128]; // TODO calculate correct signature
+        calculateHashAndSignature();
+    }
+
+    /*
+    * Constructor for creating a new entity identity record without key pair (EIR doesn't belong to
+    * current device.
+    */
+    public BaseEntityIdentityRecord(PublicKey publicKey) {
+        this.revoked = false;
+        this.contentType = "test"; // TODO
+        this.status = AssetBlockChainStatus.SUBMITTED;
+        this.publicKey = publicKey;
+        this.content = publicKey.getEncoded();
+        this.id = calcId();
+        calculateHashAndSignature();
     }
 
     public BaseEntityIdentityRecord() {
+        // Don't use this constructor. It is required by requery.
     }
 
     @PostLoad
     public void init() {
         this.publicKey = CryptoUtil.toPublicKey(content);
-        this.keyPair = CryptoUtil.getKeyPair(keyStoreAlias);
-        this.hash = calculateHash();
-        this.signature = sign();
+        if (keyStoreAlias != null) {
+            this.keyPair = CryptoUtil.getKeyPair(keyStoreAlias);
+        }
+        calculateHashAndSignature();
     }
 
     public void setIdentifiers(List<EirIdentifier> identifiers) {
@@ -78,9 +116,7 @@ public class BaseEntityIdentityRecord {
     }
 
     private byte[] calcId() {
-        //TODO Hash.sha3(keyPair.getPublic().getEncoded())?
-        String pubKeyAsHex = Hex.toHexString(getPublicKey().getEncoded());
-        return Hex.decode(cleanHexPrefix(Hash.sha3(pubKeyAsHex)));
+        return Hash.sha3(publicKey.getEncoded());
     }
 
     public void setRevoked(boolean revoked) {
@@ -131,14 +167,29 @@ public class BaseEntityIdentityRecord {
         return keyPair;
     }
 
-    // TODO implement
-    byte[] calculateHash() {
-        return new byte[32];
-    }
+    void calculateHashAndSignature() {
+        try {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            os.write(this.id);
+            os.write(this.contentType.getBytes());
+            os.write(this.content);
 
-    // TODO sign
-    byte[] sign() {
-        return new byte[128];
+           // for (EirIdentifier identifier : identifiers) {
+           //     os.write(identifier.getValue().getBytes());
+           // }
+            os.write(revoked ? 0 : 1);
+            // TODO should be tested
+            byte[] message = os.toByteArray();
+            hash = Hash.sha3(message);
+/*
+            Signature signature = Signature.getInstance("SHA256withECDSA");
+            PrivateKey aPrivate = keyPair.getPrivate();
+            signature.initSign(aPrivate);
+            signature.update(message);*/
+            this.signature = new byte[56];
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public void setTransactionId(String transactionId) {

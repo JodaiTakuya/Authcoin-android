@@ -1,8 +1,9 @@
 package com.authcoinandroid.service.challenge;
 
 import com.authcoinandroid.model.ChallengeRecord;
+import com.authcoinandroid.model.ChallengeResponseRecord;
+import com.authcoinandroid.model.SignatureRecord;
 import com.authcoinandroid.util.Util;
-
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import io.requery.Persistable;
@@ -30,6 +31,24 @@ public class ChallengeRepository {
         return dataStore.update(cr);
     }
 
+    public Single<ChallengeResponseRecord> save(ChallengeResponseRecord cr) {
+        byte[] id = cr.getId();
+        ChallengeResponseRecord result = dataStore.findByKey(ChallengeResponseRecord.class, id).blockingGet();
+        if (result == null) {
+            return dataStore.insert(cr);
+        }
+        return dataStore.update(cr);
+    }
+
+    public Single<SignatureRecord> save(SignatureRecord sr) {
+        byte[] id = sr.getId();
+        SignatureRecord result = dataStore.findByKey(SignatureRecord.class, id).blockingGet();
+        if (result == null) {
+            return dataStore.insert(sr);
+        }
+        return dataStore.update(sr);
+    }
+
     /**
      * Get all challenge record values
      */
@@ -49,6 +68,10 @@ public class ChallengeRepository {
      */
     public ReactiveResult<ChallengeRecord> findByVaeId(byte[] vaeId) {
         return dataStore.select(ChallengeRecord.class).where(ChallengeRecord.VAE_ID.eq(vaeId)).get();
+    }
+
+    public ReactiveResult<ChallengeRecord> findByEirId(byte[] eirId) {
+        return dataStore.select(ChallengeRecord.class).where(ChallengeRecord.VERIFIER_ID.eq(eirId)).get();
     }
 
 }

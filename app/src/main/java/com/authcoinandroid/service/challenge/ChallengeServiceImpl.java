@@ -46,17 +46,13 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public boolean isProcessed(byte[] vaeId) {
-        return challengeRepository.findByVaeId(vaeId).toList().size() < 1;
-    }
-
-    @Override
     public Single<ChallengeRecord> registerChallengeResponse(byte[] challengeId, ChallengeResponseRecord response) {
         ChallengeRecord challenge = getChallengeRecord(challengeId);
-        if (challenge.getResponseRecord() != null) {
+        if (challenge.getResponse() != null) {
             throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " already has response record");
         }
-        challenge.setResponseRecord(response);
+        challengeRepository.save(response).blockingGet();
+        challenge.setResponse(response);
         return challengeRepository.save(challenge);
     }
 
@@ -68,17 +64,24 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public Single<ChallengeRecord> registerSignatureRecord(byte[] challengeId, SignatureRecord signature) {
         ChallengeRecord challenge = getChallengeRecord(challengeId);
-        if (challenge.getResponseRecord() == null) {
-            throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " doesn't response record");
+        ChallengeResponseRecord response = challenge.getResponse();
+        if (response == null) {
+            throw new IllegalStateException("Challenge with id " + Hex.toHexString(challengeId) + " doesn't have a response record");
         }
-        if (challenge.getResponseRecord().getSignatureRecord() != null) {
-            throw new IllegalStateException("ChallengeRecord with id " + Hex.toHexString(challengeId) + " already has signature record");
+        if (response.getSignatureRecord() != null) {
+            throw new IllegalStateException("ChallengeRecord with id " + Hex.toHexString(challengeId) + " already has a signature record");
         }
-        challenge.getResponseRecord().setSignatureRecord(signature);
+        challengeRepository.save(signature).blockingGet();
+        response.setSignatureRecord(signature);
+        challengeRepository.save(response).blockingGet();
         return challengeRepository.save(challenge);
     }
 
     @Override
+    public Maybe<ChallengeRecord> get(byte[] id) {
+        return challengeRepository.find(id);
+    }
+
     public Observable<SendRawTransactionResponse> saveSignatureRecordToBc(DeterministicKey key, SignatureRecord signatureRecord) {
         return this.authcoinContractService.registerSignatureRecord(key, resolveSignatureRecordContractParams(signatureRecord));
     }
@@ -115,6 +118,10 @@ public class ChallengeServiceImpl implements ChallengeService {
                 // get list of observables for address
                 // TODO save to db
                 .flatMap(this::getChallengeRecordsForVae);
+    }
+
+    public List<ChallengeRecord> getByEirId(byte[] eirId) {
+        return challengeRepository.findByEirId(eirId).toList();
     }
 
     private Observable<List<ChallengeRecord>> getChallengeRecordsForVae(Address address) {

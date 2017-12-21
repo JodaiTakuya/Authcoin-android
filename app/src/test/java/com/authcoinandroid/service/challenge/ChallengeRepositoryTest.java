@@ -6,12 +6,14 @@ import com.authcoinandroid.model.ChallengeRecord;
 import junit.framework.Assert;
 
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Single;
+
 
 public class ChallengeRepositoryTest extends AbstractTest {
 

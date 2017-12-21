@@ -12,6 +12,7 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import com.authcoinandroid.R;
+import com.authcoinandroid.model.EirIdentifier;
 import com.authcoinandroid.model.EntityIdentityRecord;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.util.ButterKnifeUtil;
@@ -20,6 +21,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import org.spongycastle.util.encoders.Base64;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EirFragment extends Fragment {
@@ -106,7 +108,12 @@ public class EirFragment extends Fragment {
 
     private void mapEirToTextViews(EntityIdentityRecord eir) {
         alias.setText(eir.getKeyStoreAlias());
-        identifiers.setText(TextUtils.join(", ", eir.getIdentifiers()));
+        List<String> list = new ArrayList<>();
+        for (EirIdentifier eirIdentifier : eir.getIdentifiers()) {
+            String value = eirIdentifier.getValue();
+            list.add(value);
+        }
+        identifiers.setText(TextUtils.join(", ", list));
         content.setText(Base64.toBase64String(eir.getContent()));
         contentType.setText(eir.getContentType());
         hash.setText(Base64.toBase64String(eir.getHash()));

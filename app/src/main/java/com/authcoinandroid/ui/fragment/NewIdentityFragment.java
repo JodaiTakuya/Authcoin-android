@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.authcoinandroid.R;
 import com.authcoinandroid.exception.RegisterEirException;
-import com.authcoinandroid.service.identity.WalletService;
+import com.authcoinandroid.service.wallet.WalletService;
 import com.authcoinandroid.service.qtum.model.SendRawTransactionResponse;
 import com.authcoinandroid.ui.AuthCoinApplication;
 import com.authcoinandroid.ui.activity.MainActivity;
@@ -97,7 +97,7 @@ public class NewIdentityFragment extends Fragment {
         try {
             ((AuthCoinApplication) getActivity().getApplication()).getIdentityService()
                     .registerEir(
-                            WalletService.getInstance().getReceiveKey(this.getContext()),
+                            ((AuthCoinApplication)getActivity().getApplication()).getWalletService().getReceiveKey(),
                             identifiers,
                             alias)
                     .subscribeOn(Schedulers.io())
@@ -119,7 +119,7 @@ public class NewIdentityFragment extends Fragment {
                             ((MainActivity) getActivity()).applyFragment(IdentityFragment.class, false, false);
                         }
                     });
-        } catch (RegisterEirException | UnreadableWalletException e) {
+        } catch (RegisterEirException e) {
             AndroidUtil.displayNotification(getContext(), e.getMessage());
         }
     }

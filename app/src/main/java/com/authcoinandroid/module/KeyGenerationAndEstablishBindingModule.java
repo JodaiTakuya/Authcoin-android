@@ -67,7 +67,6 @@ public class KeyGenerationAndEstablishBindingModule {
 
         public EntityIdentityRecord establishBinding(String[] identifiers, KeyPair keyPair, String alias) throws GeneralSecurityException, IOException {
             EntityIdentityRecord eir = new EntityIdentityRecord(
-                    "test",
                     alias,
                     keyPair
             );

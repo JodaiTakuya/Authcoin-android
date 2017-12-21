@@ -1,9 +1,6 @@
 package com.authcoinandroid.model;
 
-import io.requery.Entity;
-import io.requery.ForeignKey;
-import io.requery.Key;
-import io.requery.OneToOne;
+import io.requery.*;
 
 @Entity
 public class BaseChallengeResponseRecord {
@@ -13,7 +10,8 @@ public class BaseChallengeResponseRecord {
 
     byte[] vaeId;
 
-    int blockNumber;
+    @Column(nullable = true)
+    Integer blockNumber;
 
     long timestamp;
 
@@ -23,11 +21,11 @@ public class BaseChallengeResponseRecord {
 
     byte[] signature;
 
-    @ForeignKey
-    @OneToOne
+    @OneToOne(mappedBy = "response")
     ChallengeRecord challenge;
 
-    @OneToOne(mappedBy = "challengeResponse")
+    @ForeignKey(delete = ReferentialAction.CASCADE, update = ReferentialAction.CASCADE)
+    @OneToOne
     SignatureRecord signatureRecord;
 
     public BaseChallengeResponseRecord(byte[] id, byte[] vaeId, int blockNumber, byte[] response, byte[] hash, byte[] signature, ChallengeRecord challenge) {
@@ -41,7 +39,22 @@ public class BaseChallengeResponseRecord {
         this.challenge = challenge;
     }
 
+    public BaseChallengeResponseRecord(byte[] id, byte[] response, ChallengeRecord challenge) {
+        this.id = id;
+        this.vaeId = challenge.getVaeId();
+        this.timestamp = System.currentTimeMillis();
+        this.response = response;
+        // TODO to avoid NULL constraint violations in DB
+        this.blockNumber = 1;
+        //TODO calculate hash
+        this.hash = new byte[32];
+        //TODO calculate signature
+        this.signature = new byte[128];
+        this.challenge = challenge;
+    }
+
     public BaseChallengeResponseRecord() {
+        // Don't use this constructor. It is required by requery.
     }
 
     public SignatureRecord getSignatureRecord() {
